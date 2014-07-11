@@ -132,11 +132,11 @@ bool CEnvironment::LoadEnvironmentList() {
 		return false;
 	}
 
-	locs.resize(list.Count());
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		locs[i].name = SPStrN(line, "location");
-		locs[i].high_res = SPBoolN(line, "high_res", false);
+	locs.resize(list.size());
+	size_t i = 0;
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line, i++) {
+		locs[i].name = SPStrN(*line, "location");
+		locs[i].high_res = SPBoolN(*line, "high_res", false);
 	}
 	list.MakeIndex(EnvIndex, "location");
 	return true;
@@ -181,23 +181,22 @@ void CEnvironment::LoadLight(const string& EnvDir) {
 		return;
 	}
 
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		string item = SPStrN(line, "light", "none");
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		string item = SPStrN(*line, "light", "none");
 		int idx = SPIntN(idxstr, item, -1);
 		if (idx < 0) {
-			fog.is_on = SPBoolN(line, "fog", true);
-			fog.start = SPFloatN(line, "fogstart", 20);
-			fog.end = SPFloatN(line, "fogend", param.forward_clip_distance);
-			fog.height = SPFloatN(line, "fogheight", 0);
-			SPArrN(line, "fogcol", fog.color, 4, 1);
-			fog.part_color = SPColorN(line, "partcol", def_partcol);
+			fog.is_on = SPBoolN(*line, "fog", true);
+			fog.start = SPFloatN(*line, "fogstart", 20);
+			fog.end = SPFloatN(*line, "fogend", param.forward_clip_distance);
+			fog.height = SPFloatN(*line, "fogheight", 0);
+			SPArrN(*line, "fogcol", fog.color, 4, 1);
+			fog.part_color = SPColorN(*line, "partcol", def_partcol);
 		} else if (idx < 4) {
 			lights[idx].is_on = true;
-			SPArrN(line, "amb", lights[idx].ambient, 4, 1);
-			SPArrN(line, "diff", lights[idx].diffuse, 4, 1);
-			SPArrN(line, "spec", lights[idx].specular, 4, 1);
-			SPArrN(line, "pos", lights[idx].position, 4, 1);
+			SPArrN(*line, "amb", lights[idx].ambient, 4, 1);
+			SPArrN(*line, "diff", lights[idx].diffuse, 4, 1);
+			SPArrN(*line, "spec", lights[idx].specular, 4, 1);
+			SPArrN(*line, "pos", lights[idx].position, 4, 1);
 		}
 	}
 }

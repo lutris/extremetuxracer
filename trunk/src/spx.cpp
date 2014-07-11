@@ -359,31 +359,21 @@ CSPList::CSPList(size_t maxlines, bool newlineflag) {
 	fnewlineflag = newlineflag;
 }
 
-const string& CSPList::Line(size_t idx) const {
-	if (idx >= flines.size()) return emptyString;
-	return flines[idx];
-}
-
 void CSPList::Add(const string& line) {
-	if (flines.size() < fmax) {
-		flines.push_back(line);
+	if (size() < fmax) {
+		push_back(line);
 	}
 }
 
-void CSPList::AddLine() {
-	if (flines.size() < fmax) {
-		flines.push_back(emptyString);
+void CSPList::Add(string&& line) {
+	if (size() < fmax) {
+		push_back(line);
 	}
-}
-
-void CSPList::Append(const string& line, size_t idx) {
-	if (idx >= flines.size()) return;
-	flines[idx] += line;
 }
 
 void CSPList::Print() const {
-	for (size_t i = 0; i < flines.size(); i++)
-		cout << flines[i] << endl;
+	for (const_iterator line = cbegin(); line != cend(); ++line)
+		cout << *line << endl;
 }
 
 bool CSPList::Load(const string &filepath) {
@@ -406,10 +396,10 @@ bool CSPList::Load(const string &filepath) {
 			else if (line[0] == '#') valid = false;	// comment line
 
 			if (valid) {
-				if (flines.size() < fmax) {
+				if (size() < fmax) {
 					if (!fnewlineflag) {
-						if (line[0] == '*' || flines.empty()) Add(line);
-						else Append(line, flines.size()-1);
+						if (line[0] == '*' || empty()) Add(line);
+						else back() += line;
 					} else {
 						bool fwdflag;
 						if (line[line.length()-1] == '\\') {
@@ -420,7 +410,7 @@ bool CSPList::Load(const string &filepath) {
 						}
 
 						if (backflag == false) Add(line);
-						else Append(line, flines.size()-1);
+						else back() += line;
 
 						backflag = fwdflag;
 					}
@@ -444,8 +434,8 @@ bool CSPList::Save(const string &filepath) const {
 		Message("CSPList::Save - unable to open " + filepath);
 		return false;
 	} else {
-		for (size_t i=0; i<flines.size(); i++) {
-			tempfile << flines[i] << '\n';
+		for (const_iterator line = cbegin(); line != cend(); ++line) {
+			tempfile << *line << '\n';
 		}
 		return true;
 	}
@@ -459,8 +449,8 @@ void CSPList::MakeIndex(map<string, size_t>& index, const string &tag) {
 	index.clear();
 	size_t idx = 0;
 
-	for (size_t i=0; i<flines.size(); i++) {
-		string item = SPItemN(flines[i], tag);
+	for (const_iterator line = cbegin(); line != cend(); ++line) {
+		string item = SPItemN(*line, tag);
 		STrimN(item);
 		if (!item.empty()) {
 			index[item] = idx;

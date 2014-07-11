@@ -42,35 +42,31 @@ bool CEvents::LoadEventList() {
 	}
 
 	// pass 1: races
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		int type = SPIntN(line, "struct", -1);
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		int type = SPIntN(*line, "struct", -1);
 		if (type == 0) {
-			RaceList.push_back(TRace(
-			                       Course.GetCourse(SPStrN(line, "course")),
-			                       Env.GetLightIdx(SPStrN(line, "light")),
-			                       SPIntN(line, "snow", 0),
-			                       SPIntN(line, "wind", 0),
-			                       SPVector3i(line, "herring"),
-			                       SPVector3d(line, "time"),
-			                       Music.GetThemeIdx(SPStrN(line, "theme", "normal"))));
+			RaceList.emplace_back(Course.GetCourse(SPStrN(*line, "course")),
+			                      Env.GetLightIdx(SPStrN(*line, "light")),
+			                      SPIntN(*line, "snow", 0),
+			                      SPIntN(*line, "wind", 0),
+			                      SPVector3i(*line, "herring"),
+			                      SPVector3d(*line, "time"),
+			                      Music.GetThemeIdx(SPStrN(*line, "theme", "normal")));
 		}
 	}
 	list.MakeIndex(RaceIndex, "race");
 
 	// pass 2: cups
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		int type = SPIntN(line, "struct", -1);
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		int type = SPIntN(*line, "struct", -1);
 		if (type == 1) {
-			CupList.push_back(TCup(
-			                      SPStrN(line, "cup", errorString),
-			                      SPStrN(line, "name", "unknown"),
-			                      SPStrN(line, "desc", "unknown")));
-			int num = SPIntN(line, "num", 0);
+			CupList.emplace_back(SPStrN(*line, "cup", errorString),
+			                     SPStrN(*line, "name", "unknown"),
+			                     SPStrN(*line, "desc", "unknown"));
+			int num = SPIntN(*line, "num", 0);
 			CupList.back().races.resize(num);
 			for (int ii=0; ii<num; ii++) {
-				string race = SPStrN(line, Int_StrN(ii+1));
+				string race = SPStrN(*line, Int_StrN(ii+1));
 				CupList.back().races[ii] = &RaceList[GetRaceIdx(race)];
 			}
 		}
@@ -78,15 +74,14 @@ bool CEvents::LoadEventList() {
 	list.MakeIndex(CupIndex, "cup");
 
 	// pass 3: events
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		int type = SPIntN(line, "struct", -1);
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		int type = SPIntN(*line, "struct", -1);
 		if (type == 2) {
-			EventList.push_back(TEvent(SPStrN(line, "name", "unknown")));
-			int num = SPIntN(line, "num", 0);
+			EventList.emplace_back(SPStrN(*line, "name", "unknown"));
+			int num = SPIntN(*line, "num", 0);
 			EventList.back().cups.resize(num);
 			for (int ii=0; ii<num; ii++) {
-				string cup = SPStrN(line, Int_StrN(ii+1));
+				string cup = SPStrN(*line, Int_StrN(ii+1));
 				EventList.back().cups[ii] = &CupList[GetCupIdx(cup)];
 			}
 		}
@@ -159,12 +154,12 @@ CPlayers::~CPlayers() {
 }
 
 void CPlayers::AddPlayer(const string& name, const string& avatar) {
-	plyr.push_back(TPlayer(name, FindAvatar(avatar)));
+	plyr.emplace_back(name, FindAvatar(avatar));
 }
 
 void CPlayers::SetDefaultPlayers() {
-	plyr.push_back(TPlayer("Racer", FindAvatar("avatar01.png")));
-	plyr.push_back(TPlayer("Bunny", FindAvatar("avatar02.png")));
+	plyr.emplace_back("Racer", FindAvatar("avatar01.png"));
+	plyr.emplace_back("Bunny", FindAvatar("avatar02.png"));
 }
 
 bool CPlayers::LoadPlayers() {
@@ -182,14 +177,14 @@ bool CPlayers::LoadPlayers() {
 	}
 
 	g_game.start_player = 0;
-	plyr.resize(list.Count());
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		plyr[i].name = SPStrN(line, "name", "unknown");
-		plyr[i].funlocked = SPStrN(line, "unlocked");
-		plyr[i].avatar = FindAvatar(SPStrN(line, "avatar"));
+	plyr.resize(list.size());
+	size_t i = 0;
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line, i++) {
+		plyr[i].name = SPStrN(*line, "name", "unknown");
+		plyr[i].funlocked = SPStrN(*line, "unlocked");
+		plyr[i].avatar = FindAvatar(SPStrN(*line, "avatar"));
 		plyr[i].ctrl = NULL;
-		int active = SPIntN(line, "active", 0);
+		int active = SPIntN(*line, "active", 0);
 		if (active > 0) g_game.start_player = plyr.size()-1;
 	}
 	if (plyr.empty()) {
@@ -251,12 +246,11 @@ void CPlayers::LoadAvatars() {
 		return;
 	}
 
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		string filename = SPStrN(line, "file", "unknown");
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		string filename = SPStrN(*line, "file", "unknown");
 		TTexture* texture = new TTexture();
 		if (texture && texture->Load(param.player_dir, filename)) {
-			avatars.push_back(TAvatar(filename, texture));
+			avatars.emplace_back(filename, texture);
 		} else
 			delete texture;
 	}
@@ -301,12 +295,12 @@ void CCharacter::LoadCharacterList() {
 		return;
 	}
 
-	CharList.resize(list.Count());
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		CharList[i].name = SPStrN(line, "name");
-		CharList[i].dir = SPStrN(line, "dir");
-		string typestr = SPStrN(line, "type", "unknown");
+	CharList.resize(list.size());
+	size_t i = 0;
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line, i++) {
+		CharList[i].name = SPStrN(*line, "name");
+		CharList[i].dir = SPStrN(*line, "dir");
+		string typestr = SPStrN(*line, "type", "unknown");
 		CharList[i].type = SPIntN(char_type_index, typestr, -1);
 
 		string charpath = param.char_dir + SEP + CharList[i].dir;

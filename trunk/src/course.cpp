@@ -375,16 +375,15 @@ void CCourse::LoadItemList() {
 
 	CollArr.clear();
 	NocollArr.clear();
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		int x = SPIntN(line, "x", 0);
-		int z = SPIntN(line, "z", 0);
-		double height = SPFloatN(line, "height", 1);
-		double diam = SPFloatN(line, "diam", 1);
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		int x = SPIntN(*line, "x", 0);
+		int z = SPIntN(*line, "z", 0);
+		double height = SPFloatN(*line, "height", 1);
+		double diam = SPFloatN(*line, "diam", 1);
 		double xx = (nx - x) / (double)(nx - 1.0) * curr_course->size.x;
 		double zz = -(ny - z) / (double)(ny - 1.0) * curr_course->size.y;
 
-		string name = SPStrN(line, "name");
+		string name = SPStrN(*line, "name");
 		size_t type = ObjectIndex[name];
 		if (ObjTypes[type].texture == NULL && ObjTypes[type].drawable) {
 			string terrpath = param.obj_dir + SEP + ObjTypes[type].textureFile;
@@ -393,9 +392,9 @@ void CCourse::LoadItemList() {
 		}
 
 		if (ObjTypes[type].collidable)
-			CollArr.push_back(TCollidable(xx, FindYCoord(xx, zz), zz, height, diam, type));
+			CollArr.emplace_back(xx, FindYCoord(xx, zz), zz, height, diam, type);
 		else
-			NocollArr.push_back(TItem(xx, FindYCoord(xx, zz), zz, height, diam, ObjTypes[type]));
+			NocollArr.emplace_back(xx, FindYCoord(xx, zz), zz, height, diam, ObjTypes[type]);
 	}
 }
 
@@ -491,9 +490,9 @@ bool CCourse::LoadAndConvertObjectMap() {
 				}
 
 				if (ObjTypes[type].collidable)
-					CollArr.push_back(TCollidable(xx, FindYCoord(xx, zz), zz, height, diam, type));
+					CollArr.emplace_back(xx, FindYCoord(xx, zz), zz, height, diam, type);
 				else
-					NocollArr.push_back(TItem(xx, FindYCoord(xx, zz), zz, height, diam, ObjTypes[type]));
+					NocollArr.emplace_back(xx, FindYCoord(xx, zz), zz, height, diam, ObjTypes[type]);
 
 				string line = "*[name]";
 				line += ObjTypes[type].name;
@@ -523,29 +522,28 @@ bool CCourse::LoadObjectTypes() {
 		return false;
 	}
 
-	ObjTypes.resize(list.Count());
-
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		ObjTypes[i].name = SPStrN(line, "name");
+	ObjTypes.resize(list.size());
+	size_t i = 0;
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line, i++) {
+		ObjTypes[i].name = SPStrN(*line, "name");
 		ObjTypes[i].textureFile = ObjTypes[i].name;
 		ObjTypes[i].texture = NULL;
 
-		ObjTypes[i].drawable = SPBoolN(line, "draw", true);
+		ObjTypes[i].drawable = SPBoolN(*line, "draw", true);
 		if (ObjTypes[i].drawable) {
-			ObjTypes[i].textureFile = SPStrN(line, "texture");
+			ObjTypes[i].textureFile = SPStrN(*line, "texture");
 		}
-		ObjTypes[i].collectable = SPBoolN(line, "snap", -1) != 0;
+		ObjTypes[i].collectable = SPBoolN(*line, "snap", -1) != 0;
 		if (ObjTypes[i].collectable == 0) {
 			ObjTypes[i].collectable = -1;
 		}
 
-		ObjTypes[i].collidable = SPBoolN(line, "coll", false);
-		ObjTypes[i].reset_point = SPBoolN(line, "reset", false);
-		ObjTypes[i].use_normal = SPBoolN(line, "usenorm", false);
+		ObjTypes[i].collidable = SPBoolN(*line, "coll", false);
+		ObjTypes[i].reset_point = SPBoolN(*line, "reset", false);
+		ObjTypes[i].use_normal = SPBoolN(*line, "usenorm", false);
 
 		if (ObjTypes[i].use_normal) {
-			ObjTypes[i].normal = SPVector3(line, "norm", TVector3d(0, 1, 0));
+			ObjTypes[i].normal = SPVector3(*line, "norm", TVector3d(0, 1, 0));
 			ObjTypes[i].normal.Norm();
 		}
 		ObjTypes[i].poly = 1;
@@ -581,22 +579,22 @@ bool CCourse::LoadTerrainTypes() {
 		return false;
 	}
 
-	TerrList.resize(list.Count());
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		TerrList[i].textureFile = SPStrN(line, "texture");
-		TerrList[i].sound = Sound.GetSoundIdx(SPStrN(line, "sound"));
-		TerrList[i].starttex = SPIntN(line, "starttex", -1);
-		TerrList[i].tracktex = SPIntN(line, "tracktex", -1);
-		TerrList[i].stoptex = SPIntN(line, "stoptex", -1);
-		TerrList[i].col = SPColor3N(line, "col", TColor3(1, 1, 1));
-		TerrList[i].friction = SPFloatN(line, "friction", 0.5);
-		TerrList[i].depth = SPFloatN(line, "depth", 0.01);
-		TerrList[i].particles = SPBoolN(line, "part", false);
-		TerrList[i].trackmarks = SPBoolN(line, "trackmarks", false);
+	TerrList.resize(list.size());
+	size_t i = 0;
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line, i++) {
+		TerrList[i].textureFile = SPStrN(*line, "texture");
+		TerrList[i].sound = Sound.GetSoundIdx(SPStrN(*line, "sound"));
+		TerrList[i].starttex = SPIntN(*line, "starttex", -1);
+		TerrList[i].tracktex = SPIntN(*line, "tracktex", -1);
+		TerrList[i].stoptex = SPIntN(*line, "stoptex", -1);
+		TerrList[i].col = SPColor3N(*line, "col", TColor3(1, 1, 1));
+		TerrList[i].friction = SPFloatN(*line, "friction", 0.5);
+		TerrList[i].depth = SPFloatN(*line, "depth", 0.01);
+		TerrList[i].particles = SPBoolN(*line, "part", false);
+		TerrList[i].trackmarks = SPBoolN(*line, "trackmarks", false);
 		TerrList[i].texture = NULL;
-		TerrList[i].shiny = SPBoolN(line, "shiny", false);
-		TerrList[i].vol_type = SPIntN(line, "vol_type", 1);
+		TerrList[i].shiny = SPBoolN(*line, "shiny", false);
+		TerrList[i].vol_type = SPIntN(*line, "vol_type", 1);
 	}
 	return true;
 }
@@ -652,13 +650,13 @@ bool CCourse::LoadCourseList() {
 
 	CSPList paramlist(48);
 
-	CourseList.resize(list.Count());
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line1 = list.Line(i);
-		CourseList[i].name = SPStrN(line1, "name", "noname");
-		CourseList[i].dir = SPStrN(line1, "dir", "nodir");
+	CourseList.resize(list.size());
+	size_t i = 0;
+	for (CSPList::const_iterator line1 = list.cbegin(); line1 != list.cend(); ++line1, i++) {
+		CourseList[i].name = SPStrN(*line1, "name", "noname");
+		CourseList[i].dir = SPStrN(*line1, "dir", "nodir");
 
-		string desc = SPStrN(line1, "desc");
+		string desc = SPStrN(*line1, "desc");
 		FT.AutoSizeN(2);
 		vector<string> desclist = FT.MakeLineList(desc.c_str(), 335 * Winsys.scale - 16.0);
 		size_t cnt = min<size_t>(desclist.size(), MAX_DESCRIPTION_LINES);
@@ -683,7 +681,7 @@ bool CCourse::LoadCourseList() {
 				Message("could not load course.dim");
 			}
 
-			const string& line2 = paramlist.Line(0);
+			const string& line2 = paramlist.front();
 			CourseList[i].author = SPStrN(line2, "author", "unknown");
 			CourseList[i].size.x = SPFloatN(line2, "width", 100);
 			CourseList[i].size.y = SPFloatN(line2, "length", 1000);
@@ -697,7 +695,7 @@ bool CCourse::LoadCourseList() {
 			CourseList[i].music_theme = Music.GetThemeIdx(SPStrN(line2, "theme", "normal"));
 			CourseList[i].use_keyframe = SPBoolN(line2, "use_keyframe", false);
 			CourseList[i].finish_brake = SPFloatN(line2, "finish_brake", 20);
-			paramlist.Clear();	// the list is used several times
+			paramlist.clear();	// the list is used several times
 		}
 	}
 	list.MakeIndex(CourseIndex, "dir");

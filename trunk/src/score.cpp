@@ -125,16 +125,15 @@ bool CScore::LoadHighScore() {
 		return false;
 	}
 
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		string course = SPStrN(line, "course", "unknown");
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		string course = SPStrN(*line, "course", "unknown");
 		TCourse* cidx = Course.GetCourse(course);
 
 		TScore score;
-		score.player = SPStrN(line, "plyr", "unknown");
-		score.points = SPIntN(line, "pts", 0);
-		score.herrings = SPIntN(line, "herr", 0);
-		score.time = SPFloatN(line, "time", 0);
+		score.player = SPStrN(*line, "plyr", "unknown");
+		score.points = SPIntN(*line, "pts", 0);
+		score.herrings = SPIntN(*line, "herr", 0);
+		score.time = SPFloatN(*line, "time", 0);
 
 		AddScore(cidx, score);
 	}

@@ -27,6 +27,10 @@ class CCharShape;
 
 struct TKeyframe {
 	double val[MAX_FRAME_VALUES];
+	TKeyframe() {
+		for (int i = 1; i < 32; i++) val[i] = 0.0;
+		val[0] = 0.5; // time
+	}
 };
 
 class CKeyframe {

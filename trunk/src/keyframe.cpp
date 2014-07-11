@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "tux.h"
 #include "game_ctrl.h"
 #include "physics.h"
+#include <iterator>
 
 static const int numJoints = 19;
 
@@ -111,32 +112,32 @@ bool CKeyframe::Load(const string& dir, const string& filename) {
 	CSPList list(1000);
 
 	if (list.Load(dir, filename)) {
-		frames.resize(list.Count());
-		for (size_t i=0; i<list.Count(); i++) {
-			const string& line = list.Line(i);
-			frames[i].val[0] = SPFloatN(line, "time", 0);
-			TVector3d posit = SPVector3d(line, "pos");
+		frames.resize(list.size());
+		size_t i = 0;
+		for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line, i++) {
+			frames[i].val[0] = SPFloatN(*line, "time", 0);
+			TVector3d posit = SPVector3d(*line, "pos");
 			frames[i].val[1] = posit.x;
 			frames[i].val[2] = posit.y;
 			frames[i].val[3] = posit.z;
-			frames[i].val[4] = SPFloatN(line, "yaw", 0);
-			frames[i].val[5] = SPFloatN(line, "pitch", 0);
-			frames[i].val[6] = SPFloatN(line, "roll", 0);
-			frames[i].val[7] = SPFloatN(line, "neck", 0);
-			frames[i].val[8] = SPFloatN(line, "head", 0);
-			TVector2d pp = SPVector2d(line, "sh");
+			frames[i].val[4] = SPFloatN(*line, "yaw", 0);
+			frames[i].val[5] = SPFloatN(*line, "pitch", 0);
+			frames[i].val[6] = SPFloatN(*line, "roll", 0);
+			frames[i].val[7] = SPFloatN(*line, "neck", 0);
+			frames[i].val[8] = SPFloatN(*line, "head", 0);
+			TVector2d pp = SPVector2d(*line, "sh");
 			frames[i].val[9] = pp.x;
 			frames[i].val[10] = pp.y;
-			pp = SPVector2d(line, "arm");
+			pp = SPVector2d(*line, "arm");
 			frames[i].val[11] = pp.x;
 			frames[i].val[12] = pp.y;
-			pp = SPVector2d(line, "hip");
+			pp = SPVector2d(*line, "hip");
 			frames[i].val[13] = pp.x;
 			frames[i].val[14] = pp.y;
-			pp = SPVector2d(line, "knee");
+			pp = SPVector2d(*line, "knee");
 			frames[i].val[15] = pp.x;
 			frames[i].val[16] = pp.y;
-			pp = SPVector2d(line, "ankle");
+			pp = SPVector2d(*line, "ankle");
 			frames[i].val[17] = pp.x;
 			frames[i].val[18] = pp.y;
 		}
@@ -327,7 +328,7 @@ void CKeyframe::UpdateTest(double timestep, CCharShape *shape) {
 }
 
 void CKeyframe::ResetFrame2(TKeyframe *frame) {
-	for (int i=1; i<32; i++) frame->val[i] = 0.0;
+	for (int i = 1; i<32; i++) frame->val[i] = 0.0;
 	frame->val[0] = 0.5; // time
 }
 
@@ -402,34 +403,25 @@ void CKeyframe::CopyFrame(size_t prim_idx, size_t sec_idx) {
 }
 
 void CKeyframe::AddFrame() {
-	frames.push_back(TKeyframe());
-	ResetFrame2(&frames.back());
+	frames.emplace_back();
 }
 
 size_t CKeyframe::DeleteFrame(size_t idx) {
 	if (frames.size() < 2) return idx;
-	size_t lastframe = frames.size()-1;
-	if (idx > lastframe) return 0;
+	if (idx > frames.size() - 1) return 0;
 
-	if (idx == lastframe) {
-		frames.pop_back();
-		return frames.size()-1;
-
-	} else {
-		for (size_t i=idx; i<lastframe-1; i++) CopyFrame(i+1, i);
-		frames.pop_back();
-		return idx;
-	}
+	std::vector<TKeyframe>::iterator i = frames.begin();
+	std::advance(i, idx);
+	frames.erase(i);
+	return max(idx, frames.size() - 2);
 }
 
 void CKeyframe::InsertFrame(size_t idx) {
-	size_t lastframe = frames.size()-1;
-	if (idx > lastframe) return;
+	if (idx > frames.size() - 1) return;
 
-	frames.push_back(TKeyframe());
-
-	for (size_t i=frames.size()-1; i>idx; i--) CopyFrame(i-1, i);
-	ResetFrame2(&frames[idx]);
+	std::vector<TKeyframe>::iterator i = frames.begin();
+	std::advance(i, idx);
+	frames.emplace(i);
 }
 
 void CKeyframe::CopyToClipboard(size_t idx) {

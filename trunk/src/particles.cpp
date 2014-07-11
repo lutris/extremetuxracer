@@ -148,7 +148,7 @@ void TGuiParticle::Update(double time_step, double push_timestep, const TVector2
 void init_ui_snow() {
 	particles_2d.clear();
 	for (int i = 0; i < BASE_snowparticles * Winsys.resolution.width; i++)
-		particles_2d.push_back(TGuiParticle(FRandom(), FRandom()));
+		particles_2d.emplace_back(FRandom(), FRandom());
 	push_position = TVector2d(0.0, 0.0);
 }
 
@@ -171,7 +171,7 @@ void update_ui_snow(double time_step) {
 	}
 
 	if (FRandom() < time_step*20.0*(MAX_num_snowparticles - particles_2d.size()) / 1000.0) {
-		particles_2d.push_back(TGuiParticle(FRandom(), 1));
+		particles_2d.emplace_back(FRandom(), 1);
 	}
 
 	for (list<TGuiParticle>::iterator p = particles_2d.begin(); p != particles_2d.end();) {
@@ -348,7 +348,7 @@ void create_new_particles(const TVector3d& loc, const TVector3d& vel, int num) {
 		Message("maximum number of particles exceeded");
 	}
 	for (int i=0; i<num; i++) {
-		particles.push_back(Particle());
+		particles.emplace_back();
 		Particle* newp = &particles.back();
 		newp->pt.x = loc.x + 2.*(FRandom() - 0.5) * START_RADIUS;
 		newp->pt.y = loc.y;
@@ -633,37 +633,37 @@ void CFlakes::Init(int grade, const CControl *ctrl) {
 	Reset();
 	switch (grade) {
 		case 1:
-//			areas.push_back(TFlakeArea(400, 5, 4, 4,     -2, 4, 0.01, 0.02,    5, true));
-//			areas.push_back(TFlakeArea(400, 12, 5, 8,      2, 8, 0.03, 0.045,    5, false));
-//			areas.push_back(TFlakeArea(400, 30, 6, 15,      10, 15, 0.06, 0.12,    5, false));
-			areas.push_back(TFlakeArea(400, 5, 4, 4,     -2, 4, 0.015, 0.03,    5, true));
-			areas.push_back(TFlakeArea(400, 12, 5, 8,      2, 8, 0.045, 0.07,    5, false));
-			areas.push_back(TFlakeArea(400, 30, 6, 15,      10, 15, 0.09, 0.18,    5, false));
-//			areas.push_back(TFlakeArea(400, 5, 4, 4,     -2, 4, 0.02, 0.04,    5, true));
-//			areas.push_back(TFlakeArea(400, 12, 5, 8,      2, 8, 0.06, 0.09,    5, false));
-//			areas.push_back(TFlakeArea(400, 30, 6, 15,      10, 15, 0.15, 0.25,    5, false));
+//			areas.emplace_back(400, 5, 4, 4,     -2, 4, 0.01, 0.02,    5, true);
+//			areas.emplace_back(400, 12, 5, 8,      2, 8, 0.03, 0.045,    5, false);
+//			areas.emplace_back(400, 30, 6, 15,      10, 15, 0.06, 0.12,    5, false);
+			areas.emplace_back(400, 5, 4, 4,     -2, 4, 0.015, 0.03,    5, true);
+			areas.emplace_back(400, 12, 5, 8,      2, 8, 0.045, 0.07,    5, false);
+			areas.emplace_back(400, 30, 6, 15,      10, 15, 0.09, 0.18,    5, false);
+//			areas.emplace_back(400, 5, 4, 4,     -2, 4, 0.02, 0.04,    5, true);
+//			areas.emplace_back(400, 12, 5, 8,      2, 8, 0.06, 0.09,    5, false);
+//			areas.emplace_back(400, 30, 6, 15,      10, 15, 0.15, 0.25,    5, false);
 			break;
 		case 2:
-//			areas.push_back(TFlakeArea(500, 5, 4, 4,     -2, 4, 0.02, 0.03,    5, true));
-//			areas.push_back(TFlakeArea(500, 12, 5, 8,      2, 8, 0.045, 0.07,    5, false));
-//			areas.push_back(TFlakeArea(500, 30, 6, 15,      10, 15, 0.1, 0.15,    5, false));
-			areas.push_back(TFlakeArea(500, 5, 4, 4,     -2, 4, 0.03, 0.045,    5, true));
-			areas.push_back(TFlakeArea(500, 12, 5, 8,      2, 8, 0.07, 0.1,    5, false));
-			areas.push_back(TFlakeArea(500, 30, 6, 15,      10, 15, 0.15, 0.22,    5, false));
-//			areas.push_back(TFlakeArea(500, 5, 4, 4,     -2, 4, 0.04, 0.06,    5, true));
-//			areas.push_back(TFlakeArea(500, 12, 5, 8,      2, 8, 0.09, 0.15,    5, false));
-//			areas.push_back(TFlakeArea(500, 30, 6, 15,      10, 15, 0.2, 0.32,    5, false));
+//			areas.emplace_back(500, 5, 4, 4,     -2, 4, 0.02, 0.03,    5, true);
+//			areas.emplace_back(500, 12, 5, 8,      2, 8, 0.045, 0.07,    5, false);
+//			areas.emplace_back(500, 30, 6, 15,      10, 15, 0.1, 0.15,    5, false);
+			areas.emplace_back(500, 5, 4, 4,     -2, 4, 0.03, 0.045,    5, true);
+			areas.emplace_back(500, 12, 5, 8,      2, 8, 0.07, 0.1,    5, false);
+			areas.emplace_back(500, 30, 6, 15,      10, 15, 0.15, 0.22,    5, false);
+//			areas.emplace_back(500, 5, 4, 4,     -2, 4, 0.04, 0.06,    5, true);
+//			areas.emplace_back(500, 12, 5, 8,      2, 8, 0.09, 0.15,    5, false);
+//			areas.emplace_back(500, 30, 6, 15,      10, 15, 0.2, 0.32,    5, false);
 			break;
 		case 3:
-//			areas.push_back(TFlakeArea(1000, 5, 4, 4,     -2, 4, 0.025, 0.04,    5, true));
-//			areas.push_back(TFlakeArea(1000, 12, 5, 9,      2, 8, 0.06, 0.10,    5, false));
-//			areas.push_back(TFlakeArea(1000, 30, 6, 15,      10, 15, 0.12, 0.2,    5, false));
-			areas.push_back(TFlakeArea(1000, 5, 4, 4,     -2, 4, 0.037, 0.05,    5, true));
-			areas.push_back(TFlakeArea(1000, 12, 5, 9,      2, 8, 0.09, 0.15,    5, false));
-			areas.push_back(TFlakeArea(1000, 30, 6, 15,      10, 15, 0.18, 0.35,    5, false));
-//			areas.push_back(TFlakeArea(800, 5, 4, 4,     -2, 4, 0.05, 0.08,    5, true));
-//			areas.push_back(TFlakeArea(800, 12, 5, 9,      2, 8, 0.12, 0.20,    5, false));
-//			areas.push_back(TFlakeArea(800, 30, 6, 15,      10, 15, 0.25, 0.5,    5, false));
+//			areas.emplace_back(1000, 5, 4, 4,     -2, 4, 0.025, 0.04,    5, true);
+//			areas.emplace_back(1000, 12, 5, 9,      2, 8, 0.06, 0.10,    5, false);
+//			areas.emplace_back(1000, 30, 6, 15,      10, 15, 0.12, 0.2,    5, false);
+			areas.emplace_back(1000, 5, 4, 4,     -2, 4, 0.037, 0.05,    5, true);
+			areas.emplace_back(1000, 12, 5, 9,      2, 8, 0.09, 0.15,    5, false);
+			areas.emplace_back(1000, 30, 6, 15,      10, 15, 0.18, 0.35,    5, false);
+//			areas.emplace_back(800, 5, 4, 4,     -2, 4, 0.05, 0.08,    5, true);
+//			areas.emplace_back(800, 12, 5, 9,      2, 8, 0.12, 0.20,    5, false);
+//			areas.emplace_back(800, 30, 6, 15,      10, 15, 0.25, 0.5,    5, false);
 			break;
 		default:
 			break;
@@ -890,37 +890,37 @@ void CCurtain::Init(const CControl *ctrl) {
 	InitChanges();
 	switch (g_game.snow_id) {
 		case 1:
-//		curtains.push_back(TCurtain(3, 60, 10,       3, -100, -10, 1));
-//		curtains.push_back(TCurtain(3, 50, 13,       3, -100, -10, 1));
-//		curtains.push_back(TCurtain(3, 40, 16,       3, -100, -10, 1));
-			curtains.push_back(TCurtain(3, 60, 15,       3, -100, -10, 1));
-			curtains.push_back(TCurtain(3, 50, 19,       3, -100, -10, 1));
-			curtains.push_back(TCurtain(3, 40, 23,       3, -100, -10, 1));
-//		curtains.push_back(TCurtain(3, 60, 20,       3, -100, -10, 1));
-//		curtains.push_back(TCurtain(3, 50, 25,       3, -100, -10, 1));
-//		curtains.push_back(TCurtain(3, 40, 30,       3, -100, -10, 1));
+//			curtains.emplace_back(3, 60, 10,       3, -100, -10, 1);
+//			curtains.emplace_back(3, 50, 13,       3, -100, -10, 1);
+//			curtains.emplace_back(3, 40, 16,       3, -100, -10, 1);
+			curtains.emplace_back(3, 60, 15,       3, -100, -10, 1);
+			curtains.emplace_back(3, 50, 19,       3, -100, -10, 1);
+			curtains.emplace_back(3, 40, 23,       3, -100, -10, 1);
+//			curtains.emplace_back(3, 60, 20,       3, -100, -10, 1);
+//			curtains.emplace_back(3, 50, 25,       3, -100, -10, 1);
+//			curtains.emplace_back(3, 40, 30,       3, -100, -10, 1);
 			break;
 		case 2:
-//		curtains.push_back(TCurtain(3, 60, 15,       3, -100, -10, 2));
-//		curtains.push_back(TCurtain(3, 50, 17,       3, -100, -10, 2));
-//		curtains.push_back(TCurtain(3, 40, 20,       3, -100, -10, 2));
-			curtains.push_back(TCurtain(3, 60, 22,       3, -100, -10, 2));
-			curtains.push_back(TCurtain(3, 50, 25,       3, -100, -10, 2));
-			curtains.push_back(TCurtain(3, 40, 30,       3, -100, -10, 2));
-//		curtains.push_back(TCurtain(3, 60, 30,       3, -100, -10, 2));
-//		curtains.push_back(TCurtain(3, 50, 35,       3, -100, -10, 2));
-//		curtains.push_back(TCurtain(3, 40, 40,       3, -100, -10, 2));
+//			curtains.emplace_back(3, 60, 15,       3, -100, -10, 2);
+//			curtains.emplace_back(3, 50, 17,       3, -100, -10, 2);
+//			curtains.emplace_back(3, 40, 20,       3, -100, -10, 2);
+			curtains.emplace_back(3, 60, 22,       3, -100, -10, 2);
+			curtains.emplace_back(3, 50, 25,       3, -100, -10, 2);
+			curtains.emplace_back(3, 40, 30,       3, -100, -10, 2);
+//			curtains.emplace_back(3, 60, 30,       3, -100, -10, 2);
+//			curtains.emplace_back(3, 50, 35,       3, -100, -10, 2);
+//			curtains.emplace_back(3, 40, 40,       3, -100, -10, 2);
 			break;
 		case 3:
-//		curtains.push_back(TCurtain(3, 60, 20,       3, -100, -10, 3));
-//		curtains.push_back(TCurtain(3, 50, 25,       3, -100, -10, 2));
-//		curtains.push_back(TCurtain(3, 40, 30,       3, -100, -10, 2));
-			curtains.push_back(TCurtain(3, 60, 22,       3, -100, -10, 3));
-			curtains.push_back(TCurtain(3, 50, 27,       3, -100, -10, 2));
-			curtains.push_back(TCurtain(3, 40, 32,       3, -100, -10, 2));
-//		curtains.push_back(TCurtain(3, 60, 25,       3, -100, -10, 3));
-//		curtains.push_back(TCurtain(3, 50, 30,       3, -100, -10, 2));
-//		curtains.push_back(TCurtain(3, 40, 35,       3, -100, -10, 2));
+//			curtains.emplace_back(3, 60, 20,       3, -100, -10, 3);
+//			curtains.emplace_back(3, 50, 25,       3, -100, -10, 2);
+//			curtains.emplace_back(3, 40, 30,       3, -100, -10, 2);
+			curtains.emplace_back(3, 60, 22,       3, -100, -10, 3);
+			curtains.emplace_back(3, 50, 27,       3, -100, -10, 2);
+			curtains.emplace_back(3, 40, 32,       3, -100, -10, 2);
+//			curtains.emplace_back(3, 60, 25,       3, -100, -10, 3);
+//			curtains.emplace_back(3, 50, 30,       3, -100, -10, 2);
+//			curtains.emplace_back(3, 40, 35,       3, -100, -10, 2);
 			break;
 		default:
 			break;
