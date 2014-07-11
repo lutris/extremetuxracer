@@ -38,14 +38,14 @@ static void MakeWordList(vector<string>& wordlist, const char *s) {
 	for (size_t i = 0; s[i] != '\0'; i++) {
 		if (s[i] == ' ') {
 			if (i != start)
-				wordlist.push_back(string(s+start, i-start));
+				wordlist.emplace_back(s + start, i - start);
 			while (s[i+1] == ' ')
 				i++;
 			start = i+1;
 		}
 	}
 	if (s[start] != '0')
-		wordlist.push_back(string(s+start));
+		wordlist.emplace_back(s + start);
 }
 
 static size_t MakeLine(size_t first, const vector<string>& wordlist, vector<string>& linelist, float width) {
@@ -161,11 +161,12 @@ int CFont::LoadFont(const string& name, const string& dir, const string& filenam
 
 bool CFont::LoadFontlist() {
 	CSPList list(MAX_FONTS);
-	if (!list.Load(param.font_dir, "fonts.lst")) return false;
-	for (size_t i=0; i<list.Count(); i++) {
-		const string& line = list.Line(i);
-		string fontfile = SPStrN(line, "file");
-		string name = SPStrN(line, "name");
+	if (!list.Load(param.font_dir, "fonts.lst"))
+		return false;
+
+	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		string fontfile = SPStrN(*line, "file");
+		string name = SPStrN(*line, "name");
 
 		int ftidx = LoadFont(name, param.font_dir, fontfile);
 		if (ftidx < 0) {

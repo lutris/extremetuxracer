@@ -19,7 +19,7 @@ GNU General Public License for more details.
 
 #include "bh.h"
 #include <string>
-#include <vector>
+#include <list>
 #include <map>
 
 using namespace std;
@@ -95,20 +95,15 @@ void     SPSetStrN(string &s, const string &tag, const string &val);
 //		 string list
 // --------------------------------------------------------------------
 
-class CSPList {
+class CSPList : public std::list<string> {
 private:
-	vector<string> flines;
 	size_t fmax;
 	bool fnewlineflag;
 public:
 	CSPList(size_t maxlines, bool newlineflag = false);
 
-	const string& Line(size_t idx) const;
-	size_t Count() const { return flines.size(); }
-	void Clear() { flines.clear(); }
-	void Add(const string& line);
-	void AddLine();
-	void Append(const string& line, size_t idx);
+	void Add(const string& line = emptyString);
+	void Add(string&& line);
 	void Print() const;
 	bool Load(const string &filepath);
 	bool Load(const string& dir, const string& filename);

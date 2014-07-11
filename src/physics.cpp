@@ -184,7 +184,6 @@ void CControl::CheckItemCollection(const TVector3d& pos) {
 		if (items[i].collectable != 1) continue;
 
 		double diam = items[i].diam;
-		double height = items[i].height;
 		const TVector3d& loc = items[i].pt;
 
 		TVector3d distvec(loc.x - pos.x, loc.y - pos.y, loc.z - pos.z);

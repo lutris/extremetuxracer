@@ -24,7 +24,6 @@ GNU General Public License for more details.
 #include "font.h"
 #include "ogl.h"
 #include "winsys.h"
-#include <list>
 #include <vector>
 
 

@@ -371,35 +371,32 @@ void RenderChar(double timestep) {
 	}
 
 	size_t num = action->num;
-	int type;
-	if (num > 0) {
-		for (size_t i=0; i<num; i++) {
-			is_visible = false;
-			type = action->type[i];
-			int yt = Winsys.resolution.height - 120 + (int)i * 18;
-			switch (type) {
-				case 0:
-					DrawActionVec(i, "trans", yt, action->vec[i]);
-					break;
-				case 1:
-					DrawActionFloat(i, "x-rot", yt, action->dval[i]);
-					break;
-				case 2:
-					DrawActionFloat(i, "y-rot", yt, action->dval[i]);
-					break;
-				case 3:
-					DrawActionFloat(i, "z-rot", yt, action->dval[i]);
-					break;
-				case 4:
-					DrawActionVec(i, "scale", yt, action->vec[i]);
-					break;
-				case 5:
-					DrawActionFloat(i, "vis", yt, action->dval[i]);
-					is_visible = true;
-					break;
-				default:
-					break;
-			}
+	for (size_t i=0; i<num; i++) {
+		is_visible = false;
+		int type = action->type[i];
+		int yt = Winsys.resolution.height - 120 + (int)i * 18;
+		switch (type) {
+			case 0:
+				DrawActionVec(i, "trans", yt, action->vec[i]);
+				break;
+			case 1:
+				DrawActionFloat(i, "x-rot", yt, action->dval[i]);
+				break;
+			case 2:
+				DrawActionFloat(i, "y-rot", yt, action->dval[i]);
+				break;
+			case 3:
+				DrawActionFloat(i, "z-rot", yt, action->dval[i]);
+				break;
+			case 4:
+				DrawActionVec(i, "scale", yt, action->vec[i]);
+				break;
+			case 5:
+				DrawActionFloat(i, "vis", yt, action->dval[i]);
+				is_visible = true;
+				break;
+			default:
+				break;
 		}
 	}
 

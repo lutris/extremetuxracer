@@ -100,10 +100,9 @@ static void draw_herring_count(int herring_count) {
 }
 
 TVector2d calc_new_fan_pt(double angle) {
-	TVector2d pt;
-	pt.x = ENERGY_GAUGE_CENTER_X + cos(ANGLES_TO_RADIANS(angle)) * SPEEDBAR_OUTER_RADIUS;
-	pt.y = ENERGY_GAUGE_CENTER_Y + sin(ANGLES_TO_RADIANS(angle)) * SPEEDBAR_OUTER_RADIUS;
-	return pt;
+	return TVector2d(
+	           ENERGY_GAUGE_CENTER_X + cos(ANGLES_TO_RADIANS(angle)) * SPEEDBAR_OUTER_RADIUS,
+	           ENERGY_GAUGE_CENTER_Y + sin(ANGLES_TO_RADIANS(angle)) * SPEEDBAR_OUTER_RADIUS);
 }
 
 void start_tri_fan() {

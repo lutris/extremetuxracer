@@ -538,13 +538,11 @@ void CTexture::LoadTextureList() {
 	FreeTextureList();
 	CSPList list(200);
 	if (list.Load(param.tex_dir, "textures.lst")) {
-		for (size_t i=0; i<list.Count(); i++) {
-			const string& line = list.Line(i);
-			string name = SPStrN(line, "name");
-			int id = SPIntN(line, "id", -1);
+		for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+			int id = SPIntN(*line, "id", -1);
 			CommonTex.resize(max(CommonTex.size(), (size_t)id+1));
-			string texfile = SPStrN(line, "file");
-			bool rep = SPBoolN(line, "repeat", false);
+			string texfile = SPStrN(*line, "file");
+			bool rep = SPBoolN(*line, "repeat", false);
 			if (id >= 0) {
 				CommonTex[id] = new TTexture();
 				if (rep)

@@ -221,7 +221,7 @@ void PrintFrameParams(int ytop, TKeyframe *frame) {
 
 		FT.DrawString(x, y, TestFrame.GetJointName(i));
 		if (i < 4) FT.DrawString(x+80, y, Float_StrN(frame->val[i], 2));
-		else FT.DrawString(x+80, y, Float_StrN(frame->val[i], 0));
+		else FT.DrawString(x+80, y, Int_StrN((int)frame->val[i]));
 	}
 }
 
