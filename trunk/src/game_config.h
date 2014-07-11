@@ -19,9 +19,6 @@ GNU General Public License for more details.
 
 #include "bh.h"
 
-#define CONFIG_DIR ".etr"
-#define PLAYER_FILE "players"
-
 struct TParam {
 	// defined at runtime:
 	//	string	prog_dir;
@@ -78,8 +75,8 @@ struct TParam {
 	TViewMode view_mode;
 };
 
-void InitConfig (const char *arg0);
-void SaveConfigFile ();
+void InitConfig();
+void SaveConfigFile();
 
 extern TParam param;
 

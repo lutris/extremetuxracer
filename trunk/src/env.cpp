@@ -35,7 +35,7 @@ static const float def_diff[]    = {1.0, 0.9, 1.0, 1.0};
 static const float def_spec[]    = {0.6, 0.6, 0.6, 1.0};
 static const float def_pos[]     = {1, 2, 2, 0.0};
 static const float def_fogcol[]  = {0.9, 0.9, 1.0, 0.0};
-static const TColor def_partcol    (0.8, 0.8, 0.9, 0.0);
+static const TColor def_partcol(0.8, 0.8, 0.9, 0.0);
 
 void TLight::Enable(GLenum num) const {
 	glLightfv(num, GL_POSITION, position);
@@ -47,7 +47,7 @@ void TLight::Enable(GLenum num) const {
 
 CEnvironment Env;
 
-CEnvironment::CEnvironment () {
+CEnvironment::CEnvironment() {
 	EnvID = -1;
 	lightcond[0] = "sunny";
 	lightcond[1] = "cloudy";
@@ -75,12 +75,12 @@ CEnvironment::CEnvironment () {
 	default_fog.part_color = def_partcol;
 }
 
-void CEnvironment::ResetSkybox () {
+void CEnvironment::ResetSkybox() {
 	delete[] Skybox;
 	Skybox = NULL;
 }
 
-void CEnvironment::SetupLight () {
+void CEnvironment::SetupLight() {
 	lights[0].Enable(GL_LIGHT0);
 	if (lights[1].is_on)
 		lights[1].Enable(GL_LIGHT1);
@@ -92,43 +92,43 @@ void CEnvironment::SetupLight () {
 	glEnable(GL_LIGHTING);
 }
 
-void CEnvironment::SetupFog () {
-	glEnable (GL_FOG);
-	glFogi   (GL_FOG_MODE, fog.mode);
-	glFogf   (GL_FOG_START, fog.start);
-	glFogf   (GL_FOG_END, fog.end);
-	glFogfv  (GL_FOG_COLOR, fog.color);
+void CEnvironment::SetupFog() {
+	glEnable(GL_FOG);
+	glFogi(GL_FOG_MODE, fog.mode);
+	glFogf(GL_FOG_START, fog.start);
+	glFogf(GL_FOG_END, fog.end);
+	glFogfv(GL_FOG_COLOR, fog.color);
 
 	if (param.perf_level > 1) {
-		glHint (GL_FOG_HINT, GL_NICEST);
+		glHint(GL_FOG_HINT, GL_NICEST);
 	} else {
-		glHint (GL_FOG_HINT, GL_FASTEST);
+		glHint(GL_FOG_HINT, GL_FASTEST);
 	}
 }
 
-void CEnvironment::ResetLight () {
+void CEnvironment::ResetLight() {
 	lights[0] = default_light;
 	for (int i=1; i<4; i++) lights[i].is_on = false;
-	glDisable (GL_LIGHT1);
-	glDisable (GL_LIGHT2);
-	glDisable (GL_LIGHT3);
+	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHT2);
+	glDisable(GL_LIGHT3);
 }
 
-void CEnvironment::ResetFog () {
+void CEnvironment::ResetFog() {
 	fog = default_fog;
 }
 
-void CEnvironment::Reset () {
+void CEnvironment::Reset() {
 	EnvID = -1;
-	ResetSkybox ();
-	ResetLight ();
-	ResetFog ();
+	ResetSkybox();
+	ResetLight();
+	ResetFog();
 }
 
-bool CEnvironment::LoadEnvironmentList () {
-	CSPList list (32, true);
-	if (!list.Load (param.env_dir2, "environment.lst")) {
-		Message ("could not load environment.lst");
+bool CEnvironment::LoadEnvironmentList() {
+	CSPList list(32, true);
+	if (!list.Load(param.env_dir2, "environment.lst")) {
+		Message("could not load environment.lst");
 		return false;
 	}
 
@@ -138,11 +138,11 @@ bool CEnvironment::LoadEnvironmentList () {
 		locs[i].name = SPStrN(line, "location");
 		locs[i].high_res = SPBoolN(line, "high_res", false);
 	}
-	list.MakeIndex (EnvIndex, "location");
+	list.MakeIndex(EnvIndex, "location");
 	return true;
 }
 
-string CEnvironment::GetDir (size_t location, size_t light) const {
+string CEnvironment::GetDir(size_t location, size_t light) const {
 	if (location >= locs.size()) return "";
 	if (light >= 4) return "";
 	string res =
@@ -160,7 +160,7 @@ void CEnvironment::LoadSkyboxSide(size_t index, const string& EnvDir, const stri
 		Skybox[index].Load(EnvDir, name + ".png");
 }
 
-void CEnvironment::LoadSkybox (const string& EnvDir, bool high_res) {
+void CEnvironment::LoadSkybox(const string& EnvDir, bool high_res) {
 	Skybox = new TTexture[param.full_skybox ? 6 : 3];
 	LoadSkyboxSide(0, EnvDir, "front", high_res);
 	LoadSkyboxSide(1, EnvDir, "left", high_res);
@@ -172,37 +172,37 @@ void CEnvironment::LoadSkybox (const string& EnvDir, bool high_res) {
 	}
 }
 
-void CEnvironment::LoadLight (const string& EnvDir) {
+void CEnvironment::LoadLight(const string& EnvDir) {
 	static const string idxstr = "[fog]-1[0]0[1]1[2]2[3]3[4]4[5]5[6]6";
 
 	CSPList list(24);
-	if (!list.Load (EnvDir, "light.lst")) {
-		Message ("could not load light file");
+	if (!list.Load(EnvDir, "light.lst")) {
+		Message("could not load light file");
 		return;
 	}
 
 	for (size_t i=0; i<list.Count(); i++) {
 		const string& line = list.Line(i);
-		string item = SPStrN (line, "light", "none");
-		int idx = SPIntN (idxstr, item, -1);
+		string item = SPStrN(line, "light", "none");
+		int idx = SPIntN(idxstr, item, -1);
 		if (idx < 0) {
-			fog.is_on = SPBoolN (line, "fog", true);
-			fog.start = SPFloatN (line, "fogstart", 20);
-			fog.end = SPFloatN (line, "fogend", param.forward_clip_distance);
-			fog.height = SPFloatN (line, "fogheight", 0);
-			SPArrN (line, "fogcol", fog.color, 4, 1);
-			fog.part_color = SPColorN (line, "partcol", def_partcol);
+			fog.is_on = SPBoolN(line, "fog", true);
+			fog.start = SPFloatN(line, "fogstart", 20);
+			fog.end = SPFloatN(line, "fogend", param.forward_clip_distance);
+			fog.height = SPFloatN(line, "fogheight", 0);
+			SPArrN(line, "fogcol", fog.color, 4, 1);
+			fog.part_color = SPColorN(line, "partcol", def_partcol);
 		} else if (idx < 4) {
 			lights[idx].is_on = true;
-			SPArrN (line, "amb", lights[idx].ambient, 4, 1);
-			SPArrN (line, "diff", lights[idx].diffuse, 4, 1);
-			SPArrN (line, "spec", lights[idx].specular, 4, 1);
-			SPArrN (line, "pos", lights[idx].position, 4, 1);
+			SPArrN(line, "amb", lights[idx].ambient, 4, 1);
+			SPArrN(line, "diff", lights[idx].diffuse, 4, 1);
+			SPArrN(line, "spec", lights[idx].specular, 4, 1);
+			SPArrN(line, "pos", lights[idx].position, 4, 1);
 		}
 	}
 }
 
-void CEnvironment::DrawSkybox (const TVector3d& pos) {
+void CEnvironment::DrawSkybox(const TVector3d& pos) {
 	ScopedRenderMode rm(SKY);
 
 #if defined (OS_LINUX)
@@ -213,8 +213,8 @@ void CEnvironment::DrawSkybox (const TVector3d& pos) {
 	static const float bb = 0.995f;
 #endif
 
-	glColor4f (1.0, 1.0, 1.0, 1.0);
-	glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glPushMatrix();
 	glTranslate(pos);
 
@@ -308,7 +308,7 @@ void CEnvironment::DrawSkybox (const TVector3d& pos) {
 	glPopMatrix();
 }
 
-void CEnvironment::DrawFog () {
+void CEnvironment::DrawFog() {
 	if (!fog.is_on)
 		return;
 
@@ -318,32 +318,32 @@ void CEnvironment::DrawFog () {
 	TVector3d bottomleft, bottomright;
 
 	// the clipping planes are calculated by view frustum (view.cpp)
-	const TPlane& leftclip = get_left_clip_plane ();
-	const TPlane& rightclip = get_right_clip_plane ();
-	const TPlane& farclip = get_far_clip_plane ();
-	const TPlane& bottomclip = get_bottom_clip_plane ();
+	const TPlane& leftclip = get_left_clip_plane();
+	const TPlane& rightclip = get_right_clip_plane();
+	const TPlane& farclip = get_far_clip_plane();
+	const TPlane& bottomclip = get_bottom_clip_plane();
 
 	// --------------- calculate the planes ---------------------------
 
-	double slope = tan (ANGLES_TO_RADIANS (Course.GetCourseAngle()));
+	double slope = tan(ANGLES_TO_RADIANS(Course.GetCourseAngle()));
 //	TPlane left_edge_plane = MakePlane (1.0, 0.0, 0.0, 0.0);
 //	TPlane right_edge_plane = MakePlane (-1.0, 0.0, 0.0, Course.width);
 
 	bottom_plane.nml = TVector3d(0.0, 1, -slope);
-	float height = Course.GetBaseHeight (0);
+	float height = Course.GetBaseHeight(0);
 	bottom_plane.d = -height * bottom_plane.nml.y;
 
 	top_plane.nml = bottom_plane.nml;
-	height = Course.GetMaxHeight (0) + fog.height;
+	height = Course.GetMaxHeight(0) + fog.height;
 	top_plane.d = -height * top_plane.nml.y;
 
 
-	if (!IntersectPlanes (bottom_plane, farclip, leftclip,  &left)) return;
-	if (!IntersectPlanes (bottom_plane, farclip, rightclip, &right)) return;
-	if (!IntersectPlanes (top_plane,    farclip, leftclip,  &topleft)) return;
-	if (!IntersectPlanes (top_plane,    farclip, rightclip, &topright)) return;
-	if (!IntersectPlanes (bottomclip,   farclip, leftclip,  &bottomleft)) return;
-	if (!IntersectPlanes (bottomclip,   farclip, rightclip, &bottomright)) return;
+	if (!IntersectPlanes(bottom_plane, farclip, leftclip,  &left)) return;
+	if (!IntersectPlanes(bottom_plane, farclip, rightclip, &right)) return;
+	if (!IntersectPlanes(top_plane,    farclip, leftclip,  &topleft)) return;
+	if (!IntersectPlanes(top_plane,    farclip, rightclip, &topright)) return;
+	if (!IntersectPlanes(bottomclip,   farclip, leftclip,  &bottomleft)) return;
+	if (!IntersectPlanes(bottomclip,   farclip, rightclip, &bottomright)) return;
 
 	TVector3d leftvec  = topleft - left;
 	TVector3d rightvec = topright - right;
@@ -351,7 +351,7 @@ void CEnvironment::DrawFog () {
 	// --------------- draw the fog plane -----------------------------
 
 	ScopedRenderMode rm(FOG_PLANE);
-	glEnable (GL_FOG);
+	glEnable(GL_FOG);
 
 	// only the alpha channel is used
 	static const GLfloat bottom_dens[4]     = {0, 0, 0, 1.0};
@@ -359,24 +359,24 @@ void CEnvironment::DrawFog () {
 	static const GLfloat leftright_dens[4]  = { 0, 0, 0, 0.3 };
 	static const GLfloat top_bottom_dens[4] = { 0, 0, 0, 0.0 };
 
-	glBegin (GL_QUAD_STRIP);
-	glColor4fv (bottom_dens);
+	glBegin(GL_QUAD_STRIP);
+	glColor4fv(bottom_dens);
 	glVertex3(bottomleft);
 	glVertex3(bottomright);
 	glVertex3(left);
 	glVertex3(right);
 
-	glColor4fv (top_dens);
+	glColor4fv(top_dens);
 	glVertex3(topleft);
 	glVertex3(topright);
 
-	glColor4fv (leftright_dens);
+	glColor4fv(leftright_dens);
 	vpoint = topleft + leftvec;
 	glVertex3(vpoint);
 	vpoint = topright + rightvec;
 	glVertex3(vpoint);
 
-	glColor4fv (top_bottom_dens);
+	glColor4fv(top_bottom_dens);
 	vpoint = topleft + 3.0 * leftvec;
 	glVertex3(vpoint);
 	vpoint = topright + 3.0 * rightvec;
@@ -385,7 +385,7 @@ void CEnvironment::DrawFog () {
 }
 
 
-void CEnvironment::LoadEnvironment (size_t loc, size_t light) {
+void CEnvironment::LoadEnvironment(size_t loc, size_t light) {
 	if (loc >= locs.size()) loc = 0;
 	if (light >= 4) light = 0;
 	// remember: with (example) 3 locations and 4 lights there
@@ -397,24 +397,24 @@ void CEnvironment::LoadEnvironment (size_t loc, size_t light) {
 	EnvID = env_id;
 
 	// Set directory. The dir is used several times.
-	string EnvDir = GetDir (loc, light);
+	string EnvDir = GetDir(loc, light);
 
 	// Load skybox. If the sky can't be loaded for any reason, the
 	// texture id's are set to 0 and the sky will not be drawn.
 	// There is no error handling, you see the result on the screen.
-	ResetSkybox ();
+	ResetSkybox();
 	LoadSkybox(EnvDir, locs[loc].high_res);
 
 	// Load light conditions.
-	ResetFog ();
-	ResetLight ();
-	LoadLight (EnvDir);
+	ResetFog();
+	ResetLight();
+	LoadLight(EnvDir);
 }
 
-size_t CEnvironment::GetEnvIdx (const string& tag) const {
+size_t CEnvironment::GetEnvIdx(const string& tag) const {
 	return EnvIndex.at(tag);
 }
 
-size_t CEnvironment::GetLightIdx (const string& tag) const {
+size_t CEnvironment::GetLightIdx(const string& tag) const {
 	return LightIndex.at(tag);
 }

@@ -78,17 +78,17 @@ struct TGameData {
 
 	// course and race params
 	TPlayer* player;
+	TCharacter* character;
 	size_t start_player;
 	TCup* cup;
-	bool mirrorred;
-	TCharacter* character;
+	TRace* race; // Only valid if not in practice mode
 	TCourse* course;
+	bool mirrorred;
 	size_t location_id;
 	size_t light_id;
 	int snow_id;
 	int wind_id;
 	size_t theme_id;
-	TRace* race; // Only valid if not in practice mode
 
 	// race results (better in player.ctrl ?)
 	double time;			// reached time

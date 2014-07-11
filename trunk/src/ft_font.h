@@ -211,9 +211,9 @@ public:
 	typedef signed long GlyphIndex;
 
 	enum {
-	    NumberOfBuckets = 256,
-	    BucketSize = 256,
-	    IndexNotFound = -1
+		NumberOfBuckets = 256,
+		BucketSize = 256,
+		IndexNotFound = -1
 	};
 	FTCharToGlyphIndexMap() {this->Indices = 0;}
 	virtual ~FTCharToGlyphIndexMap() {
@@ -444,7 +444,7 @@ public:
 		upperY = static_cast<float>(bbox.yMax) / 64.0f;
 		upperZ = 0.0f;
 	}
-	FTBBox &Move (FTPoint distance) {
+	FTBBox &Move(FTPoint distance) {
 		lowerX += distance.X();
 		lowerY += distance.Y();
 		lowerZ += distance.Z();
@@ -521,7 +521,7 @@ private:
 class FTGL_EXPORT FTGlyphContainer {
 	typedef FTVector<FTGlyph*> GlyphVector;
 public:
-	FTGlyphContainer (FTFace* face);
+	FTGlyphContainer(FTFace* face);
 	~FTGlyphContainer();
 	bool CharMap(FT_Encoding encoding);
 	unsigned int FontIndex(const unsigned int characterCode) const;
@@ -566,13 +566,13 @@ private:
 
 class FTGL_EXPORT FTFont {
 public:
-	FTFont (const char* fontFilePath);
-	FTFont (const unsigned char *pBufferBytes, size_t bufferSizeInBytes);
+	FTFont(const char* fontFilePath);
+	FTFont(const unsigned char *pBufferBytes, size_t bufferSizeInBytes);
 	virtual ~FTFont();
 
-	bool Attach (const char* fontFilePath);
-	bool Attach (const unsigned char *pBufferBytes, size_t bufferSizeInBytes);
-	bool CharMap (FT_Encoding encoding);
+	bool Attach(const char* fontFilePath);
+	bool Attach(const unsigned char *pBufferBytes, size_t bufferSizeInBytes);
+	bool CharMap(FT_Encoding encoding);
 	unsigned int CharMapCount();
 	FT_Encoding* CharMapList();
 	virtual bool FaceSize(const unsigned int size, const unsigned int res = 72);
@@ -583,12 +583,12 @@ public:
 	float LineHeight() const;
 	void BBox(const char* string, float& llx, float& lly,
 	          float& llz, float& urx, float& ury, float& urz);
-	void BBox (const wchar_t* string, float& llx, float& lly,
-	           float& llz, float& urx, float& ury, float& urz);
-	float Advance (const wchar_t* string);
-	float Advance (const char* string);
-	virtual void Render (const char* string);
-	virtual void Render (const wchar_t* string);
+	void BBox(const wchar_t* string, float& llx, float& lly,
+	          float& llz, float& urx, float& ury, float& urz);
+	float Advance(const wchar_t* string);
+	float Advance(const char* string);
+	virtual void Render(const char* string);
+	virtual void Render(const wchar_t* string);
 	FT_Error Error() const { return err;}
 
 protected:
@@ -633,22 +633,22 @@ private:
 
 class FTGL_EXPORT FTGLPixmapFont : public FTFont {
 public:
-	FTGLPixmapFont( const char* fontFilePath);
-	FTGLPixmapFont( const unsigned char *pBufferBytes, size_t bufferSizeInBytes);
+	FTGLPixmapFont(const char* fontFilePath);
+	FTGLPixmapFont(const unsigned char *pBufferBytes, size_t bufferSizeInBytes);
 	~FTGLPixmapFont();
-	void Render( const char* string);
-	void Render( const wchar_t* string);
+	void Render(const char* string);
+	void Render(const wchar_t* string);
 
 private:
-	inline virtual FTGlyph* MakeGlyph( unsigned int g);
+	inline virtual FTGlyph* MakeGlyph(unsigned int g);
 
 };
 
 class FTGL_EXPORT FTPixmapGlyph : public FTGlyph {
 public:
-	FTPixmapGlyph( FT_GlyphSlot glyph);
+	FTPixmapGlyph(FT_GlyphSlot glyph);
 	virtual ~FTPixmapGlyph();
-	virtual const FTPoint& Render( const FTPoint& pen);
+	virtual const FTPoint& Render(const FTPoint& pen);
 private:
 	int destWidth;
 	int destHeight;

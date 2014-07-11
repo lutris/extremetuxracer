@@ -70,8 +70,8 @@ public:
 	TTextButton(int x, int y, const string& text_, double ftsize_);
 	void Draw() const;
 };
-TTextButton* AddTextButton (const string& text, int x, int y, double ftsize);
-TTextButton* AddTextButtonN (const string& text, int x, int y, int rel_ftsize);
+TTextButton* AddTextButton(const string& text, int x, int y, double ftsize);
+TTextButton* AddTextButtonN(const string& text, int x, int y, int rel_ftsize);
 
 class TTextField : public TWidget {
 	string text;
@@ -105,7 +105,7 @@ public:
 	bool Click(int x, int y);
 	void Key(unsigned int key, unsigned int mod, bool released);
 };
-TCheckbox* AddCheckbox (int x, int y, int width, const string& tag);
+TCheckbox* AddCheckbox(int x, int y, int width, const string& tag);
 
 class TIconButton : public TWidget {
 	double size;
@@ -126,7 +126,7 @@ public:
 	bool Click(int x, int y);
 	void Key(unsigned int key, unsigned int mod, bool released);
 };
-TIconButton* AddIconButton (int x, int y, TTexture* texture, double size, int maximum, int value);
+TIconButton* AddIconButton(int x, int y, TTexture* texture, double size, int maximum, int value);
 
 class TArrow : public TWidget {
 public:
@@ -171,14 +171,14 @@ void ResetGUI();
 
 // --------------------------------------------------------------------
 
-void DrawFrameX (int x, int y, int w, int h, int line,
-                 const TColor& backcol, const TColor& framecol, double transp);
-void DrawBonusExt (int y, size_t numraces, size_t num);
-void DrawCursor ();
+void DrawFrameX(int x, int y, int w, int h, int line,
+                const TColor& backcol, const TColor& framecol, double transp);
+void DrawBonusExt(int y, size_t numraces, size_t num);
+void DrawCursor();
 
 // --------------------------------------------------------------------
 
-int AutoYPosN (double percent);
-TArea AutoAreaN (double top_perc, double bott_perc, int w);
+int AutoYPosN(double percent);
+TArea AutoAreaN(double top_perc, double bott_perc, int w);
 
 #endif

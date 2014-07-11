@@ -66,30 +66,30 @@ int CScore::AddScore(const TCourse* course, const TScore& score) {
 }
 
 // for testing:
-void CScore::PrintScorelist (size_t list_idx) const {
+void CScore::PrintScorelist(size_t list_idx) const {
 	if (list_idx >= Scorelist.size()) return;
 	const TScoreList *list = &Scorelist[list_idx];
 
 	if (list->numScores < 1) {
-		PrintStr ("no entries in this score list");
+		PrintStr("no entries in this score list");
 	} else {
 		for (int i=0; i<list->numScores; i++) {
 			string line = "player: " + list->scores[i].player;
-			line += " points: " + Int_StrN (list->scores[i].points);
-			line += " herrings: " + Int_StrN (list->scores[i].herrings);
-			line += " time: " + Float_StrN (list->scores[i].time, 2);
-			PrintString (line);
+			line += " points: " + Int_StrN(list->scores[i].points);
+			line += " herrings: " + Int_StrN(list->scores[i].herrings);
+			line += " time: " + Float_StrN(list->scores[i].time, 2);
+			PrintString(line);
 		}
 	}
 }
 
-const TScoreList *CScore::GetScorelist (size_t list_idx) const {
+const TScoreList *CScore::GetScorelist(size_t list_idx) const {
 	if (list_idx >= Scorelist.size()) return NULL;
 	return &Scorelist[list_idx];
 }
 
-bool CScore::SaveHighScore () const {
-	CSPList splist ((int)Scorelist.size()*MAX_SCORES);
+bool CScore::SaveHighScore() const {
+	CSPList splist((int)Scorelist.size()*MAX_SCORES);
 
 	for (size_t li=0; li<Scorelist.size(); li++) {
 		const TScoreList* lst = &Scorelist[li];
@@ -100,43 +100,43 @@ bool CScore::SaveHighScore () const {
 					const TScore& score = lst->scores[sc];
 					string line = "*[course] " + Course.CourseList[li].dir;
 					line += " [plyr] " + score.player;
-					line += " [pts] " + Int_StrN (score.points);
-					line += " [herr] " + Int_StrN (score.herrings);
-					line += " [time] " + Float_StrN (score.time, 1);
-					splist.Add (line);
+					line += " [pts] " + Int_StrN(score.points);
+					line += " [herr] " + Int_StrN(score.herrings);
+					line += " [time] " + Float_StrN(score.time, 1);
+					splist.Add(line);
 				}
 			}
 		}
 	}
-	if (!splist.Save (param.config_dir, "highscore")) {
-		Message ("could not save highscore list");
+	if (!splist.Save(param.config_dir, "highscore")) {
+		Message("could not save highscore list");
 		return false;
 	}
 	return true;
 }
 
-bool CScore::LoadHighScore () {
-	CSPList list (520);
+bool CScore::LoadHighScore() {
+	CSPList list(520);
 
 	Scorelist.resize(Course.CourseList.size());
 
-	if (!list.Load (param.config_dir, "highscore")) {
-		Message ("could not load highscore list");
+	if (!list.Load(param.config_dir, "highscore")) {
+		Message("could not load highscore list");
 		return false;
 	}
 
 	for (size_t i=0; i<list.Count(); i++) {
 		const string& line = list.Line(i);
-		string course = SPStrN (line, "course", "unknown");
+		string course = SPStrN(line, "course", "unknown");
 		TCourse* cidx = Course.GetCourse(course);
 
 		TScore score;
-		score.player = SPStrN (line, "plyr", "unknown");
-		score.points = SPIntN (line, "pts", 0);
-		score.herrings = SPIntN (line, "herr", 0);
-		score.time = SPFloatN (line, "time", 0);
+		score.player = SPStrN(line, "plyr", "unknown");
+		score.points = SPIntN(line, "pts", 0);
+		score.herrings = SPIntN(line, "herr", 0);
+		score.time = SPFloatN(line, "time", 0);
 
-		AddScore (cidx, score);
+		AddScore(cidx, score);
 	}
 	return true;
 }
@@ -163,7 +163,7 @@ int CScore::CalcRaceResult() {
 	TempScore.time = g_game.time;
 	TempScore.player = g_game.player->name;
 
-	return AddScore (g_game.course, TempScore);
+	return AddScore(g_game.course, TempScore);
 }
 
 // --------------------------------------------------------------------
@@ -174,40 +174,40 @@ static TCourse *CourseList;
 static TUpDown* course;
 static TWidget* textbutton;
 
-void CScore::Keyb (unsigned int key, bool special, bool release, int x, int y) {
+void CScore::Keyb(unsigned int key, bool special, bool release, int x, int y) {
 	KeyGUI(key, 0, release);
 	if (release) return;
 	switch (key) {
 		case SDLK_ESCAPE:
-			State::manager.RequestEnterState (GameTypeSelect);
+			State::manager.RequestEnterState(GameTypeSelect);
 			break;
 		case SDLK_q:
 			State::manager.RequestQuit();
 			break;
 		case SDLK_s:
-			Score.SaveHighScore ();
+			Score.SaveHighScore();
 			break;
 		case SDLK_l:
-			Score.LoadHighScore ();
+			Score.LoadHighScore();
 			break;
 		case SDLK_RETURN:
-			State::manager.RequestEnterState (GameTypeSelect);
+			State::manager.RequestEnterState(GameTypeSelect);
 			break;
 	}
 }
 
-void CScore::Mouse (int button, int state, int x, int y) {
+void CScore::Mouse(int button, int state, int x, int y) {
 	if (state == 1) {
 		TWidget* clicked = ClickGUI(x, y);
 		if (clicked == textbutton)
-			State::manager.RequestEnterState (GameTypeSelect);
+			State::manager.RequestEnterState(GameTypeSelect);
 	}
 }
 
-void CScore::Motion (int x, int y) {
+void CScore::Motion(int x, int y) {
 	MouseMoveGUI(x, y);
 
-	if (param.ui_snow) push_ui_snow (cursor_pos);
+	if (param.ui_snow) push_ui_snow(cursor_pos);
 }
 
 static TArea area;
@@ -216,17 +216,17 @@ static int linedist, listtop;
 static int dd1, dd2, dd3, dd4;
 
 void CScore::Enter() {
-	Winsys.ShowCursor (!param.ice_cursor);
-	Winsys.KeyRepeat (true);
-	Music.Play (param.menu_music, -1);
+	Winsys.ShowCursor(!param.ice_cursor);
+	Winsys.KeyRepeat(true);
+	Music.Play(param.menu_music, -1);
 
 	framewidth = 550 * Winsys.scale;
 	frameheight = 50 * Winsys.scale;
-	frametop = AutoYPosN (32);
-	area = AutoAreaN (30, 80, framewidth);
-	FT.AutoSizeN (3);
-	linedist = FT.AutoDistanceN (1);
-	listtop = AutoYPosN (44);
+	frametop = AutoYPosN(32);
+	area = AutoAreaN(30, 80, framewidth);
+	FT.AutoSizeN(3);
+	linedist = FT.AutoDistanceN(1);
+	listtop = AutoYPosN(44);
 	dd1 = 50 * Winsys.scale;
 	dd2 = 115 * Winsys.scale;
 	dd3 = 250 * Winsys.scale;
@@ -234,68 +234,67 @@ void CScore::Enter() {
 
 	CourseList = &Course.CourseList[0];
 
-	ResetGUI ();
+	ResetGUI();
 	course = AddUpDown(area.right + 8, frametop, 0, (int)Course.CourseList.size()-1, 0);
-	int siz = FT.AutoSizeN (5);
-	textbutton = AddTextButton (Trans.Text(64), CENTER, AutoYPosN (80), siz);
+	int siz = FT.AutoSizeN(5);
+	textbutton = AddTextButton(Trans.Text(64), CENTER, AutoYPosN(80), siz);
 }
 
 const string ordinals[10] =
 {"1:st", "2:nd", "3:rd", "4:th", "5:th", "6:th", "7:th", "8:th", "9:th", "10:th"};
 
-void CScore::Loop (double timestep) {
+void CScore::Loop(double timestep) {
 	int ww = Winsys.resolution.width;
 	int hh = Winsys.resolution.height;
 
-	Music.Update ();
-	check_gl_error();
-	ClearRenderContext ();
+	Music.Update();
+	ClearRenderContext();
 	ScopedRenderMode rm(GUI);
-	SetupGuiDisplay ();
+	SetupGuiDisplay();
 
 	if (param.ui_snow) {
-		update_ui_snow (timestep);
+		update_ui_snow(timestep);
 		draw_ui_snow();
 	}
 
-	Tex.Draw (BOTTOM_LEFT, 0, hh - 256, 1);
-	Tex.Draw (BOTTOM_RIGHT, ww-256, hh-256, 1);
-	Tex.Draw (TOP_LEFT, 0, 0, 1);
-	Tex.Draw (TOP_RIGHT, ww-256, 0, 1);
-	Tex.Draw (T_TITLE_SMALL, CENTER, AutoYPosN (5), Winsys.scale);
+	Tex.Draw(BOTTOM_LEFT, 0, hh - 256, 1);
+	Tex.Draw(BOTTOM_RIGHT, ww-256, hh-256, 1);
+	Tex.Draw(TOP_LEFT, 0, 0, 1);
+	Tex.Draw(TOP_RIGHT, ww-256, 0, 1);
+	Tex.Draw(T_TITLE_SMALL, CENTER, AutoYPosN(5), Winsys.scale);
 
 //	DrawFrameX (area.left, area.top, area.right-area.left, area.bottom - area.top,
 //			0, colMBackgr, colBlack, 0.2);
 
-	FT.AutoSizeN (7);
-	FT.SetColor (colWhite);
-	FT.DrawString (CENTER, AutoYPosN (22), Trans.Text(62));
+	FT.AutoSizeN(7);
+	FT.SetColor(colWhite);
+	FT.DrawString(CENTER, AutoYPosN(22), Trans.Text(62));
 
-	DrawFrameX (area.left, frametop, framewidth, frameheight, 3, colMBackgr, colDYell, 1.0);
-	FT.AutoSizeN (5);
-	FT.SetColor (colWhite);
-	FT.DrawString (area.left+20, frametop, CourseList[course->GetValue()].name);
+	DrawFrameX(area.left, frametop, framewidth, frameheight, 3, colMBackgr, colDYell, 1.0);
+	FT.AutoSizeN(5);
+	FT.SetColor(colWhite);
+	FT.DrawString(area.left+20, frametop, CourseList[course->GetValue()].name);
 
-	const TScoreList *list = Score.GetScorelist (course->GetValue());
+	const TScoreList *list = Score.GetScorelist(course->GetValue());
 
-	FT.SetColor (colWhite);
+	FT.SetColor(colWhite);
 	if (list != NULL) {
-		FT.AutoSizeN (3);
+		FT.AutoSizeN(3);
 		if (list->numScores < 1) {
-			FT.DrawString (CENTER, area.top + 140, Trans.Text(63));
+			FT.DrawString(CENTER, area.top + 140, Trans.Text(63));
 		} else {
 			for (int i=0; i<min(MAX_SCORES, list->numScores); i++) {
 				int y = listtop + i*linedist;
-				FT.DrawString (area.left, y, ordinals[i]);
-				FT.DrawString (area.left + dd1, y, Int_StrN (list->scores[i].points));
-				FT.DrawString (area.left + dd2, y, list->scores[i].player);
-				FT.DrawString (area.left + dd3, y,
-				               Int_StrN (list->scores[i].herrings) + "  herrings");
-				FT.DrawString (area.left + dd4, y,
-				               Float_StrN (list->scores[i].time, 1) + "  sec");
+				FT.DrawString(area.left, y, ordinals[i]);
+				FT.DrawString(area.left + dd1, y, Int_StrN(list->scores[i].points));
+				FT.DrawString(area.left + dd2, y, list->scores[i].player);
+				FT.DrawString(area.left + dd3, y,
+				              Int_StrN(list->scores[i].herrings) + "  herrings");
+				FT.DrawString(area.left + dd4, y,
+				              Float_StrN(list->scores[i].time, 1) + "  sec");
 			}
 		}
-	} else Message ("score list out of range");
+	} else Message("score list out of range");
 
 	DrawGUI();
 

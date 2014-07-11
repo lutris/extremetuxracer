@@ -55,24 +55,24 @@ struct TVector3 : public TVector2<T> {
 		: TVector2<T>(_x, _y), z(_z)
 	{}
 	double Length() const {
-          return sqrt(static_cast<double>(TVector2<T>::x*TVector2<T>::x +
-                                          TVector2<T>::y*TVector2<T>::y + z*z));
+		return sqrt(static_cast<double>(TVector2<T>::x*TVector2<T>::x +
+		                                TVector2<T>::y*TVector2<T>::y + z*z));
 	}
 	double Norm();
 	TVector3<T>& operator*=(T f) {
-                TVector2<T>::x *= f;
+		TVector2<T>::x *= f;
 		TVector2<T>::y *= f;
 		z *= f;
 		return *this;
 	}
 	TVector3<T>& operator+=(const TVector3<T>& v) {
-                TVector2<T>::x += v.x;
+		TVector2<T>::x += v.x;
 		TVector2<T>::y += v.y;
 		z += v.z;
 		return *this;
 	}
 	TVector3<T>& operator-=(const TVector3<T>& v) {
-                TVector2<T>::x -= v.x;
+		TVector2<T>::x -= v.x;
 		TVector2<T>::y -= v.y;
 		z -= v.z;
 		return *this;
@@ -86,13 +86,13 @@ struct TVector4 : public TVector3<T> {
 		: TVector3<T>(_x, _y, _z), w(_w)
 	{}
 	double Length() const {
-		return sqrt(static_cast<double>(TVector2<T>::x*TVector2<T>::x + 
-                                                TVector2<T>::y*TVector2<T>::y +
-                                                TVector3<T>::z*TVector3<T>::z + w*w));
+		return sqrt(static_cast<double>(TVector2<T>::x*TVector2<T>::x +
+		                                TVector2<T>::y*TVector2<T>::y +
+		                                TVector3<T>::z*TVector3<T>::z + w*w));
 	}
 	double Norm();
 	TVector4<T>& operator*=(T f) {
-                TVector2<T>::x *= f;
+		TVector2<T>::x *= f;
 		TVector2<T>::y *= f;
 		TVector3<T>::z *= f;
 		w *= f;

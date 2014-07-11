@@ -32,7 +32,7 @@ GNU General Public License for more details.
 
 static vector<TWidget*> Widgets;
 
-static bool Inside (int x, int y, const TRect& Rect) {
+static bool Inside(int x, int y, const TRect& Rect) {
 	return (x >= Rect.left
 	        && x <= Rect.left + Rect.width
 	        && y >= Rect.top
@@ -63,9 +63,9 @@ TTextButton::TTextButton(int x, int y, const string& text_, double ftsize_)
 	: TWidget(x, y, 0, 0)
 	, text(text_)
 	, ftsize(ftsize_) {
-	if (ftsize < 0) ftsize = FT.AutoSizeN (4);
+	if (ftsize < 0) ftsize = FT.AutoSizeN(4);
 
-	double len = FT.GetTextWidth (text);
+	double len = FT.GetTextWidth(text);
 	if (x == CENTER) position.x = (int)((Winsys.resolution.width - len) / 2);
 	int offs = (int)(ftsize / 5);
 	mouseRect.left = position.x-20;
@@ -76,21 +76,21 @@ TTextButton::TTextButton(int x, int y, const string& text_, double ftsize_)
 
 void TTextButton::Draw() const {
 	if (focus)
-		FT.SetColor (colDYell);
+		FT.SetColor(colDYell);
 	else
-		FT.SetColor (colWhite);
-	FT.SetSize (ftsize);
-	FT.DrawString (position.x, position.y, text);
+		FT.SetColor(colWhite);
+	FT.SetSize(ftsize);
+	FT.DrawString(position.x, position.y, text);
 }
 
-TTextButton* AddTextButton (const string& text, int x, int y, double ftsize) {
+TTextButton* AddTextButton(const string& text, int x, int y, double ftsize) {
 	Widgets.push_back(new TTextButton(x, y, text, ftsize));
 	return static_cast<TTextButton*>(Widgets.back());
 }
 
-TTextButton* AddTextButtonN (const string& text, int x, int y, int rel_ftsize) {
-	double siz = FT.AutoSizeN (rel_ftsize);
-	return AddTextButton (text, x, y, siz);
+TTextButton* AddTextButtonN(const string& text, int x, int y, int rel_ftsize) {
+	double siz = FT.AutoSizeN(rel_ftsize);
+	return AddTextButton(text, x, y, siz);
 }
 
 
@@ -105,22 +105,22 @@ TTextField::TTextField(int x, int y, int width, int height, const string& text_)
 
 void TTextField::Draw() const {
 	const TColor& col = focus?colDYell:colWhite;
-	FT.SetColor (col);
-	DrawFrameX (mouseRect.left, mouseRect.top, mouseRect.width, mouseRect.height, 3, colMBackgr, col, 1.0);
-	FT.AutoSizeN (5);
-	FT.DrawString (mouseRect.left+20, mouseRect.top, text);
+	FT.SetColor(col);
+	DrawFrameX(mouseRect.left, mouseRect.top, mouseRect.width, mouseRect.height, 3, colMBackgr, col, 1.0);
+	FT.AutoSizeN(5);
+	FT.DrawString(mouseRect.left+20, mouseRect.top, text);
 
 	if (cursor && focus) {
 		int x = mouseRect.left + 20 + 1;
 		if (cursorPos != 0) {
-			string temp = text.substr (0, cursorPos);
-			x += FT.GetTextWidth (temp);
+			string temp = text.substr(0, cursorPos);
+			x += FT.GetTextWidth(temp);
 		}
 		int w = 3;
 		int h = 26 * Winsys.scale;
 		int scrheight = Winsys.resolution.height;
 
-		glDisable (GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);
 		glColor(colYellow);
 		const GLshort vtx[] = {
 			x,     scrheight - mouseRect.top - h - 9,
@@ -132,18 +132,18 @@ void TTextField::Draw() const {
 		glVertexPointer(2, GL_SHORT, 0, vtx);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 		glDisableClientState(GL_VERTEX_ARRAY);
-		glEnable (GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);
 	}
 }
 
 void TTextField::Key(unsigned int key, unsigned int mod, bool released) {
-	if (islower (key)) {
+	if (islower(key)) {
 		if (text.size() < maxLng) {
 			if (mod & KMOD_SHIFT) text.insert(cursorPos, 1, toupper(key));
 			else text.insert(cursorPos, 1, key);
 			cursorPos++;
 		}
-	} else if (isdigit (key)) {
+	} else if (isdigit(key)) {
 		if (text.size() < maxLng) {
 			text.insert(cursorPos, 1, key);
 			cursorPos++;
@@ -151,10 +151,10 @@ void TTextField::Key(unsigned int key, unsigned int mod, bool released) {
 	} else {
 		switch (key) {
 			case SDLK_DELETE:
-				if (cursorPos < text.size()) text.erase (cursorPos, 1);
+				if (cursorPos < text.size()) text.erase(cursorPos, 1);
 				break;
 			case SDLK_BACKSPACE:
-				if (cursorPos > 0) { text.erase (cursorPos-1, 1); cursorPos--; }
+				if (cursorPos > 0) { text.erase(cursorPos-1, 1); cursorPos--; }
 				break;
 			case SDLK_RIGHT:
 				if (cursorPos < text.size()) cursorPos++;
@@ -189,15 +189,15 @@ TTextField* AddTextField(const string& text, int x, int y, int width, int height
 	return static_cast<TTextField*>(Widgets.back());
 }
 
-void TCheckbox::Draw () const {
-	Tex.Draw (CHECKBOX, position.x + width - 32, position.y, 1.0);
+void TCheckbox::Draw() const {
+	Tex.Draw(CHECKBOX, position.x + width - 32, position.y, 1.0);
 	if (checked)
-		Tex.Draw (CHECKMARK_SMALL, position.x + width - 32, position.y, 1.0);
+		Tex.Draw(CHECKMARK_SMALL, position.x + width - 32, position.y, 1.0);
 	if (focus)
-		FT.SetColor (colDYell);
+		FT.SetColor(colDYell);
 	else
-		FT.SetColor (colWhite);
-	FT.DrawString (position.x, position.y, tag);
+		FT.SetColor(colWhite);
+	FT.DrawString(position.x, position.y, tag);
 }
 
 bool TCheckbox::Click(int x, int y) {
@@ -216,18 +216,18 @@ void TCheckbox::Key(unsigned int key, unsigned int mod, bool released) {
 	}
 }
 
-TCheckbox* AddCheckbox (int x, int y, int width, const string& tag) {
+TCheckbox* AddCheckbox(int x, int y, int width, const string& tag) {
 	Widgets.push_back(new TCheckbox(x, y, width, tag));
 	return static_cast<TCheckbox*>(Widgets.back());
 }
 
-void TIconButton::SetValue (int _value) {
+void TIconButton::SetValue(int _value) {
 	value = _value;
 	if (value > maximum)
 		value = maximum;
 }
 
-void TIconButton::Draw () const {
+void TIconButton::Draw() const {
 	TColor framecol = colWhite;
 	if (focus) framecol = colDYell;
 
@@ -238,13 +238,13 @@ void TIconButton::Draw () const {
 	int x = position.x;
 	int r = x + size;
 
-	DrawFrameX (position.x-line, position.y-line,
-	            framesize, framesize, line, colBlack, framecol, 1.0);
+	DrawFrameX(position.x-line, position.y-line,
+	           framesize, framesize, line, colBlack, framecol, 1.0);
 
-	glEnable (GL_TEXTURE_2D);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	texture->Bind();
-	glColor4f (1.0, 1.0, 1.0, 1.0);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 
 	const GLshort vtx[] = {
 		x, y,
@@ -329,10 +329,10 @@ void TArrow::Draw() const {
 	if (down)
 		type += 3;
 
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable (GL_TEXTURE_2D);
-	Tex.BindTex (LB_ARROWS);
-	glColor4f (1.0, 1.0, 1.0, 1.0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
+	Tex.BindTex(LB_ARROWS);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 
 	const GLfloat tex[] = {
 		textl[type], texbl[type],
@@ -448,7 +448,7 @@ TUpDown* AddUpDown(int x, int y, int minimum, int maximum, int value, int distan
 
 // ------------------ Elementary drawing ---------------------------------------------
 
-void DrawFrameX (int x, int y, int w, int h, int line, const TColor& backcol, const TColor& framecol, double transp) {
+void DrawFrameX(int x, int y, int w, int h, int line, const TColor& backcol, const TColor& framecol, double transp) {
 	float yy = Winsys.resolution.height - y - h;
 	if (x < 0) x = (Winsys.resolution.width -w) / 2;
 
@@ -478,11 +478,11 @@ void DrawFrameX (int x, int y, int w, int h, int line, const TColor& backcol, co
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glEnable (GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 	glPopMatrix();
 }
 
-void DrawBonusExt (int y, size_t numraces, size_t num) {
+void DrawBonusExt(int y, size_t numraces, size_t num) {
 	size_t maxtux = numraces * 3;
 	if (num > maxtux) return;
 
@@ -502,18 +502,18 @@ void DrawBonusExt (int y, size_t numraces, size_t num) {
 	lleft[1] = xleft + framewidth + 4;
 	lleft[2] = xleft + framewidth + framewidth + 8;
 
-	DrawFrameX (lleft[0], y, framewidth, 40, 1, col2, colBlack, 1);
-	DrawFrameX (lleft[1], y, framewidth, 40, 1, col2, colBlack, 1);
-	DrawFrameX (lleft[2], y, framewidth, 40, 1, col2, colBlack, 1);
-	if (param.use_papercut_font > 0) FT.SetSize (20);
-	else FT.SetSize (15);
+	DrawFrameX(lleft[0], y, framewidth, 40, 1, col2, colBlack, 1);
+	DrawFrameX(lleft[1], y, framewidth, 40, 1, col2, colBlack, 1);
+	DrawFrameX(lleft[2], y, framewidth, 40, 1, col2, colBlack, 1);
+	if (param.use_papercut_font > 0) FT.SetSize(20);
+	else FT.SetSize(15);
 	bl.y = Winsys.resolution.height - y - 32 -4;
 	tr.y = Winsys.resolution.height - y - 0 -4;
 
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable (GL_TEXTURE_2D);
-	Tex.BindTex (TUXBONUS);
-	glColor4f (1.0, 1.0, 1.0, 1.0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
+	Tex.BindTex(TUXBONUS);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -552,9 +552,9 @@ void DrawBonusExt (int y, size_t numraces, size_t num) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void DrawCursor () {
-	Tex.Draw (MOUSECURSOR, cursor_pos.x, cursor_pos.y,
-	          CURSOR_SIZE  * (double)Winsys.resolution.width / 14000);
+void DrawCursor() {
+	Tex.Draw(MOUSECURSOR, cursor_pos.x, cursor_pos.y,
+	         CURSOR_SIZE  * (double)Winsys.resolution.width / 14000);
 }
 
 
@@ -565,7 +565,7 @@ void DrawGUI() {
 		if (Widgets[i]->GetVisible())
 			Widgets[i]->Draw();
 	if (param.ice_cursor)
-		DrawCursor ();
+		DrawCursor();
 }
 
 TWidget* ClickGUI(int x, int y) {
@@ -664,7 +664,7 @@ void DecreaseFocus() {
 		Widgets[focussed]->focus = true;
 }
 
-void ResetGUI () {
+void ResetGUI() {
 	for (size_t i = 0; i < Widgets.size(); i++)
 		delete Widgets[i];
 	Widgets.clear();
@@ -673,16 +673,16 @@ void ResetGUI () {
 
 // ------------------ new ---------------------------------------------
 
-int AutoYPosN (double percent) {
+int AutoYPosN(double percent) {
 	double hh = (double)Winsys.resolution.height;
 	double po = hh * percent / 100;
 	return (int)(po);
 }
 
-TArea AutoAreaN (double top_perc, double bott_perc, int w) {
+TArea AutoAreaN(double top_perc, double bott_perc, int w) {
 	TArea res;
-	res.top = AutoYPosN (top_perc);
-	res.bottom = AutoYPosN (bott_perc);
+	res.top = AutoYPosN(top_perc);
+	res.bottom = AutoYPosN(bott_perc);
 	if (w > Winsys.resolution.width) w = Winsys.resolution.width;
 	res.left = (Winsys.resolution.width - w) / 2;
 	res.right = Winsys.resolution.width - res.left;

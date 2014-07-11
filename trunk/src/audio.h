@@ -29,11 +29,11 @@ GNU General Public License for more details.
 class CAudio {
 private:
 public:
-	CAudio ();
+	CAudio();
 
-	void Open ();
-	void Close ();
-	static bool CheckOpen ();
+	void Open();
+	void Close();
+	static bool CheckOpen();
 	bool IsOpen;
 };
 
@@ -47,7 +47,7 @@ struct TSound {
 	int loop_count;
 	bool active;
 
-	void Play (int loop);
+	void Play(int loop);
 };
 
 class CSound {
@@ -55,23 +55,23 @@ private:
 	vector<TSound> sounds;
 	map<string, size_t> SoundIndex;
 public:
-	bool LoadChunk (const std::string& name, const char *filename);
-	void LoadSoundList ();
-	size_t GetSoundIdx (const string& name) const;
+	bool LoadChunk(const std::string& name, const char *filename);
+	void LoadSoundList();
+	size_t GetSoundIdx(const string& name) const;
 
-	void SetVolume (size_t soundid, int volume);
-	void SetVolume (const string& name, int volume);
+	void SetVolume(size_t soundid, int volume);
+	void SetVolume(const string& name, int volume);
 
-	void Play (size_t soundid, int loop);
-	void Play (const string& name, int loop); // -1 infinite, 0 once, 1 twice ...
-	void Play (size_t soundid, int loop, int volume);
-	void Play (const string& name, int loop, int volume);
+	void Play(size_t soundid, int loop);
+	void Play(const string& name, int loop);  // -1 infinite, 0 once, 1 twice ...
+	void Play(size_t soundid, int loop, int volume);
+	void Play(const string& name, int loop, int volume);
 
-	void Halt (size_t soundid);
-	void Halt (const string& name);
-	void HaltAll ();
+	void Halt(size_t soundid);
+	void Halt(const string& name);
+	void HaltAll();
 
-	void FreeSounds ();
+	void FreeSounds();
 };
 
 // --------------------------------------------------------------------
@@ -98,24 +98,24 @@ private:
 	Mix_Music* curr_music;	// current music piece
 	int curr_volume;
 
-	bool Play (Mix_Music* music, int loop, int volume);
+	bool Play(Mix_Music* music, int loop, int volume);
 public:
-	CMusic ();
+	CMusic();
 
-	bool LoadPiece (const string& name, const char *filename);
-	void LoadMusicList ();
-	size_t GetMusicIdx (const string& name) const;
-	size_t GetThemeIdx (const string& theme) const;
+	bool LoadPiece(const string& name, const char *filename);
+	void LoadMusicList();
+	size_t GetMusicIdx(const string& name) const;
+	size_t GetThemeIdx(const string& theme) const;
 
-	void SetVolume (int volume);
-	void Update ();
-	bool Play (size_t musid, int loop);
-	bool Play (const string& name, int loop);
-	bool Play (size_t musid, int loop, int volume);
-	bool Play (const string& name, int loop, int volume);
-	bool PlayTheme (size_t theme, ESituation situation);
-	void Halt ();
-	void FreeMusics ();
+	void SetVolume(int volume);
+	void Update();
+	bool Play(size_t musid, int loop);
+	bool Play(const string& name, int loop);
+	bool Play(size_t musid, int loop, int volume);
+	bool Play(const string& name, int loop, int volume);
+	bool PlayTheme(size_t theme, ESituation situation);
+	void Halt();
+	void FreeMusics();
 };
 
 // --------------------------------------------------------------------

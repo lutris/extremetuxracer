@@ -37,7 +37,7 @@ static const TLight light = {
 };
 
 
-void SetTestLight () {
+void SetTestLight() {
 	light.Enable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
 }
@@ -53,19 +53,17 @@ void COglTest::Keyb(unsigned int key, bool special, bool release, int x, int y) 
 }
 
 void COglTest::Enter() {
-	Winsys.KeyRepeat (true);
+	Winsys.KeyRepeat(true);
 }
 
 void COglTest::Loop(double timestep) {
-	check_gl_error();
-
 	// ------------- 3d scenery ---------------------------------------
 	ScopedRenderMode rm(TUX);
-	ClearRenderContext (colDDBackgr);
+	ClearRenderContext(colDDBackgr);
 
-	glLoadIdentity ();
-	glPushMatrix ();
-	SetTestLight ();
+	glLoadIdentity();
+	glPushMatrix();
+	SetTestLight();
 
 	/*
 		glTranslatef (xposition, yposition, zposition);
@@ -73,13 +71,13 @@ void COglTest::Loop(double timestep) {
 		glRotatef (yrotation, 0, 1, 0);
 		glRotatef (zrotation, 0, 0, 1);
 	*/
-	glPopMatrix ();
+	glPopMatrix();
 
 	// --------------- 2d screen --------------------------------------
-	SetupGuiDisplay ();
+	SetupGuiDisplay();
 	ScopedRenderMode rm2(TEXFONT);
 	FT.SetProps("bold", 24, colWhite);
-	FT.DrawString (CENTER, 10, "Test screen");
-	Reshape (Winsys.resolution.width, Winsys.resolution.height);
-	Winsys.SwapBuffers ();
+	FT.DrawString(CENTER, 10, "Test screen");
+	Reshape(Winsys.resolution.width, Winsys.resolution.height);
+	Winsys.SwapBuffers();
 }

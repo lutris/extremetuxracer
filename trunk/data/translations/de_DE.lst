@@ -104,3 +104,11 @@
 
 *[idx] 84 [engl] Fullscreen setting has changed, [trans] Damit die Vollbild-Einstellung geändert wird,
 *[idx] 85 [engl] You need to restart the game [trans] muss das Spiel neugestartet werden.
+
+*[idx] 86 [engl] Score [trans] Punkte
+*[idx] 87 [engl] Herring [trans] Herringe
+*[idx] 88 [engl] Time [trans] Zeit
+*[idx] 89 [engl] Path length [trans] Streckenlänge
+*[idx] 90 [engl] Average speed [trans] Durchschnittsgeschwindigkeit
+*[idx] 91 [engl] Position [trans] Platz
+*[idx] 92 [engl] in highscore list [trans] in der Punktelilste.

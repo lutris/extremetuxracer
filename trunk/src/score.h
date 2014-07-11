@@ -47,11 +47,11 @@ private:
 	void Motion(int x, int y);
 public:
 	int AddScore(const TCourse* course, const TScore& score);
-	const TScoreList *GetScorelist (size_t list_idx) const;
-	void PrintScorelist (size_t list_idx) const;
-	bool SaveHighScore () const;
-	bool LoadHighScore ();
-	int CalcRaceResult ();
+	const TScoreList *GetScorelist(size_t list_idx) const;
+	void PrintScorelist(size_t list_idx) const;
+	bool SaveHighScore() const;
+	bool LoadHighScore();
+	int CalcRaceResult();
 };
 
 extern CScore Score;

@@ -25,10 +25,8 @@ GNU General Public License for more details.
 #include "audio.h"
 #include "gui.h"
 #include "course.h"
-#include "tux.h"
 #include "env.h"
 #include "particles.h"
-#include "credits.h"
 #include "font.h"
 #include "game_ctrl.h"
 #include "translation.h"
@@ -45,48 +43,47 @@ void CSplashScreen::Keyb(unsigned int key, bool special, bool release, int x, in
 			State::manager.RequestQuit();
 			break;
 		case SDLK_RETURN:
-			State::manager.RequestEnterState (Regist);
+			State::manager.RequestEnterState(Regist);
 			break;
 	}
 }
 
 
 void CSplashScreen::Enter() {
-	Winsys.ShowCursor (!param.ice_cursor);
-	init_ui_snow ();
-	Music.Play (param.menu_music, -1);
+	Winsys.ShowCursor(!param.ice_cursor);
+	Music.Play(param.menu_music, -1);
 }
 
 void CSplashScreen::Loop(double timestep) {
-	Music.Update ();
-	check_gl_error();
-	ClearRenderContext ();
+	Music.Update();
+	ClearRenderContext();
 	ScopedRenderMode rm(GUI);
-	SetupGuiDisplay ();
-	Trans.LoadLanguages ();
-	Trans.LoadTranslations (param.language); // Before first texts are being displayed
+	SetupGuiDisplay();
+	Trans.LoadTranslations(param.language);  // Before first texts are being displayed
 
 
-	Tex.Draw (TEXLOGO, CENTER, 60, Winsys.scale);
-	FT.SetColor (colDYell);
-	FT.AutoSizeN (6);
-	int top = AutoYPosN (60);	int dist = FT.AutoDistanceN (3);
-	FT.DrawString (CENTER, top, Trans.Text(67));
-	FT.DrawString (CENTER, top+dist, Trans.Text(68));
+	Tex.Draw(TEXLOGO, CENTER, 60, Winsys.scale/2.0);
+	FT.SetColor(colDYell);
+	FT.AutoSizeN(6);
+	int top = AutoYPosN(60);
+	int dist = FT.AutoDistanceN(3);
+	FT.DrawString(CENTER, top, Trans.Text(67));
+	FT.DrawString(CENTER, top+dist, Trans.Text(68));
 
 	Winsys.SwapBuffers();
-	Course.MakeStandardPolyhedrons ();
-	Sound.LoadSoundList ();
-	Credits.LoadCreditList ();
-	Char.LoadCharacterList ();
-	Course.LoadObjectTypes ();
-	Course.LoadTerrainTypes ();
-	Env.LoadEnvironmentList ();
-	Course.LoadCourseList ();
-	Score.LoadHighScore (); // after LoadCourseList !!!
-	Events.LoadEventList ();
-	Players.LoadAvatars (); // before LoadPlayers !!!
-	Players.LoadPlayers ();
+	init_ui_snow();
 
-	State::manager.RequestEnterState (Regist);
+	Course.MakeStandardPolyhedrons();
+	Sound.LoadSoundList();
+	Char.LoadCharacterList();
+	Course.LoadObjectTypes();
+	Course.LoadTerrainTypes();
+	Env.LoadEnvironmentList();
+	Course.LoadCourseList();
+	Score.LoadHighScore();  // after LoadCourseList !!!
+	Events.LoadEventList();
+	Players.LoadAvatars();  // before LoadPlayers !!!
+	Players.LoadPlayers();
+
+	State::manager.RequestEnterState(Regist);
 }
