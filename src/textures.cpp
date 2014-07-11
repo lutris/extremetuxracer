@@ -41,7 +41,7 @@ static const GLshort fullsize_texture[] = {
 //				class CImage
 // --------------------------------------------------------------------
 
-CImage::CImage () {
+CImage::CImage() {
 	data = NULL;
 	nx = 0;
 	ny = 0;
@@ -49,22 +49,22 @@ CImage::CImage () {
 	pitch = 0;
 }
 
-CImage::~CImage () {
-	DisposeData ();
+CImage::~CImage() {
+	DisposeData();
 }
 
-void CImage::DisposeData () {
+void CImage::DisposeData() {
 	delete[] data;
 	data = NULL;
 }
 
-bool CImage::LoadPng (const char *filepath, bool mirroring) {
+bool CImage::LoadPng(const char *filepath, bool mirroring) {
 	SDL_Surface *sdlImage;
 	unsigned char *sdlData;
 
-	sdlImage = IMG_Load (filepath);
+	sdlImage = IMG_Load(filepath);
 	if (sdlImage == 0) {
-		Message ("could not load image", filepath);
+		Message("could not load image", filepath);
 		return false;
 	}
 
@@ -72,13 +72,13 @@ bool CImage::LoadPng (const char *filepath, bool mirroring) {
 	ny    = sdlImage->h;
 	depth = sdlImage->format->BytesPerPixel;
 	pitch = sdlImage->pitch;
-	DisposeData ();
+	DisposeData();
 	data  = new unsigned char[pitch * ny];
 
-	if (SDL_MUSTLOCK (sdlImage)) {
-		if (SDL_LockSurface (sdlImage) < 0) {
-			SDL_FreeSurface (sdlImage);
-			Message ("mustlock error");
+	if (SDL_MUSTLOCK(sdlImage)) {
+		if (SDL_LockSurface(sdlImage) < 0) {
+			SDL_FreeSurface(sdlImage);
+			Message("mustlock error");
 			return false;
 		};
 	}
@@ -93,67 +93,67 @@ bool CImage::LoadPng (const char *filepath, bool mirroring) {
 		memcpy(data, sdlData, ny*pitch);
 	}
 
-	if (SDL_MUSTLOCK (sdlImage)) SDL_UnlockSurface (sdlImage);
-	SDL_FreeSurface (sdlImage);
+	if (SDL_MUSTLOCK(sdlImage)) SDL_UnlockSurface(sdlImage);
+	SDL_FreeSurface(sdlImage);
 	return true;
 }
 
-bool CImage::LoadPng (const char *dir, const char *filename, bool mirroring) {
+bool CImage::LoadPng(const char *dir, const char *filename, bool mirroring) {
 	string path = dir;
 	path += SEP;
 	path += filename;
-	return LoadPng (path.c_str(), mirroring);
+	return LoadPng(path.c_str(), mirroring);
 }
 
 // ------------------ read framebuffer --------------------------------
 
-bool CImage::ReadFrameBuffer_PPM () {
+bool CImage::ReadFrameBuffer_PPM() {
 	int viewport[4];
-	glGetIntegerv (GL_VIEWPORT, viewport);
+	glGetIntegerv(GL_VIEWPORT, viewport);
 
 	nx = viewport[2];
 	ny = viewport[3];
 	depth = 3;
 
-	DisposeData ();
+	DisposeData();
 	data  = new unsigned char[nx * ny * depth];
 
-	glReadBuffer (GL_FRONT);
+	glReadBuffer(GL_FRONT);
 
 	for (int i=0; i<viewport[3]; i++) {
-		glReadPixels (viewport[0], viewport[1] + viewport[3] - 1 - i,
-		              viewport[2], 1, GL_RGB, GL_UNSIGNED_BYTE, data + viewport[2] * i * 3);
+		glReadPixels(viewport[0], viewport[1] + viewport[3] - 1 - i,
+		             viewport[2], 1, GL_RGB, GL_UNSIGNED_BYTE, data + viewport[2] * i * 3);
 	}
 
 	return true;
 }
 
-void CImage::ReadFrameBuffer_TGA () {
+void CImage::ReadFrameBuffer_TGA() {
 	nx = Winsys.resolution.width;
 	ny = Winsys.resolution.height;
 	depth = 3;
 
-	DisposeData ();
+	DisposeData();
 	data  = new unsigned char[nx * ny * depth];
 
-	glReadBuffer (GL_FRONT);
-	glReadPixels (0, 0, nx, ny, GL_BGR, GL_UNSIGNED_BYTE, data);
+	glReadBuffer(GL_FRONT);
+	glReadPixels(0, 0, nx, ny, GL_BGR, GL_UNSIGNED_BYTE, data);
 }
 
-void CImage::ReadFrameBuffer_BMP () {
+void CImage::ReadFrameBuffer_BMP() {
 	nx = Winsys.resolution.width;
 	ny = Winsys.resolution.height;
 	depth = 4;
 
-	DisposeData ();
+	DisposeData();
 	data  = new unsigned char[nx * ny * depth];
-	glReadBuffer (GL_FRONT);
-	glReadPixels (0, 0, nx, ny, GL_BGRA, GL_UNSIGNED_BYTE, data);
+	glReadBuffer(GL_FRONT);
+	glReadPixels(0, 0, nx, ny, GL_BGRA, GL_UNSIGNED_BYTE, data);
 }
 
 // ---------------------------
 
-void CImage::WritePPM (const char *filepath) {
+void CImage::WritePPM(const char *filepath) {
 	if (data == NULL)
 		return;
 
@@ -188,7 +188,7 @@ struct TTgaHeader {
 } __attribute__((packed));
 #endif
 
-void CImage::WriteTGA (const char *filepath) {
+void CImage::WriteTGA(const char *filepath) {
 	if (data == NULL)
 		return;
 
@@ -246,7 +246,7 @@ struct TBmpInfo {
 } __attribute__((packed));
 #endif
 
-void CImage::WriteBMP (const char *filepath) {
+void CImage::WriteBMP(const char *filepath) {
 	if (data == NULL)
 		return;
 
@@ -282,7 +282,7 @@ void CImage::WriteBMP (const char *filepath) {
 
 	std::ofstream out(filepath, std::ios_base::out|std::ios_base::binary);
 	if (!out) {
-		Message ("could not open bmp file", filepath);
+		Message("could not open bmp file", filepath);
 		return;
 	}
 
@@ -297,26 +297,26 @@ void CImage::WriteBMP (const char *filepath) {
 // --------------------------------------------------------------------
 
 TTexture::~TTexture() {
-	glDeleteTextures (1, &id);
+	glDeleteTextures(1, &id);
 }
 
 bool TTexture::Load(const string& filename) {
 	CImage texImage;
 
-	if (texImage.LoadPng (filename.c_str(), true) == false)
+	if (texImage.LoadPng(filename.c_str(), true) == false)
 		return false;
-	glGenTextures (1, &id);
-	glBindTexture (GL_TEXTURE_2D, id);
-	glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
 	GLenum format;
 	if (texImage.depth == 3) format = GL_RGB;
 	else format = GL_RGBA;
 
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	glTexImage2D
 	(GL_TEXTURE_2D, 0, texImage.depth, texImage.nx,
@@ -329,27 +329,27 @@ bool TTexture::Load(const string& dir, const string& filename) {
 
 bool TTexture::LoadMipmap(const string& filename, bool repeatable) {
 	CImage texImage;
-	if (texImage.LoadPng (filename.c_str(), true) == false)
+	if (texImage.LoadPng(filename.c_str(), true) == false)
 		return false;
 
-	glGenTextures (1, &id);
-	glBindTexture (GL_TEXTURE_2D, id);
-	glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
 	if (repeatable) {
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	} else {
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	}
 
 	GLenum format;
 	if (texImage.depth == 3) format = GL_RGB;
 	else format = GL_RGBA;
 
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 
 	gluBuild2DMipmaps(GL_TEXTURE_2D, texImage.depth, texImage.nx, texImage.ny, format, GL_UNSIGNED_BYTE, texImage.data);
 	return true;
@@ -359,18 +359,18 @@ bool TTexture::LoadMipmap(const string& dir, const string& filename, bool repeat
 }
 
 void TTexture::Bind() {
-	glBindTexture (GL_TEXTURE_2D, id);
+	glBindTexture(GL_TEXTURE_2D, id);
 }
 
 void TTexture::Draw() {
 	GLint w, h;
 
-	glEnable (GL_TEXTURE_2D);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture (GL_TEXTURE_2D, id);
+	glEnable(GL_TEXTURE_2D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, id);
 
-	glGetTexLevelParameteriv (GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-	glGetTexLevelParameteriv (GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
 
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 	const GLshort vtx[] = {
@@ -394,12 +394,12 @@ void TTexture::Draw(int x, int y, float size, Orientation orientation) {
 	GLint w, h;
 	GLfloat width, height, top, bott, left, right;
 
-	glEnable (GL_TEXTURE_2D);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture (GL_TEXTURE_2D, id);
+	glEnable(GL_TEXTURE_2D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, id);
 
-	glGetTexLevelParameteriv (GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-	glGetTexLevelParameteriv (GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
 
 	width  = w * size;
 	height = h * size;
@@ -437,9 +437,9 @@ void TTexture::Draw(int x, int y, float size, Orientation orientation) {
 void TTexture::Draw(int x, int y, float width, float height, Orientation orientation) {
 	GLfloat top, bott, left, right;
 
-	glEnable (GL_TEXTURE_2D);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture (GL_TEXTURE_2D, id);
+	glEnable(GL_TEXTURE_2D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	if (orientation == OR_TOP) {
 		top = Winsys.resolution.height - y;
@@ -479,17 +479,17 @@ void TTexture::DrawFrame(int x, int y, double w, double h, int frame, const TCol
 	GLint xx = x;
 	GLint yy = Winsys.resolution.height - hh - y;
 
-	glBindTexture (GL_TEXTURE_2D, id);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	if (frame > 0) {
-		if (w < 1) glGetTexLevelParameteriv (GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &ww);
-		if (h < 1) glGetTexLevelParameteriv (GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &hh);
+		if (w < 1) glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &ww);
+		if (h < 1) glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &hh);
 
 		glColor(col, 1.0);
 
-		glDisable (GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);
 		const GLint vtx [] = {
 			xx - frame, yy - frame,
 			xx + ww + frame, yy - frame,
@@ -500,10 +500,10 @@ void TTexture::DrawFrame(int x, int y, double w, double h, int frame, const TCol
 		glVertexPointer(2, GL_INT, 0, vtx);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-		glEnable (GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);
 	}
 
-	glColor4f (1.0, 1.0, 1.0, 1.0);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 
 	const GLshort vtx[] = {
 		xx, yy,
@@ -526,115 +526,83 @@ void TTexture::DrawFrame(int x, int y, double w, double h, int frame, const TCol
 
 CTexture Tex;
 
-CTexture::CTexture () {
+CTexture::CTexture() {
 	forientation = OR_TOP;
 }
 
-CTexture::~CTexture () {
+CTexture::~CTexture() {
 	FreeTextureList();
 }
 
-void CTexture::LoadTextureList () {
+void CTexture::LoadTextureList() {
 	FreeTextureList();
-	CSPList list (200);
-	if (list.Load (param.tex_dir, "textures.lst")) {
+	CSPList list(200);
+	if (list.Load(param.tex_dir, "textures.lst")) {
 		for (size_t i=0; i<list.Count(); i++) {
 			const string& line = list.Line(i);
-			string name = SPStrN (line, "name");
-			int id = SPIntN (line, "id", -1);
+			string name = SPStrN(line, "name");
+			int id = SPIntN(line, "id", -1);
 			CommonTex.resize(max(CommonTex.size(), (size_t)id+1));
-			string texfile = SPStrN (line, "file");
-			bool rep = SPBoolN (line, "repeat", false);
+			string texfile = SPStrN(line, "file");
+			bool rep = SPBoolN(line, "repeat", false);
 			if (id >= 0) {
 				CommonTex[id] = new TTexture();
 				if (rep)
 					CommonTex[id]->LoadMipmap(param.tex_dir, texfile, rep);
 				else
 					CommonTex[id]->Load(param.tex_dir, texfile);
-
-				Index[name] = CommonTex[id];
-			} else Message ("wrong texture id in textures.lst");
+			} else Message("wrong texture id in textures.lst");
 		}
-	} else Message ("failed to load common textures");
+	} else Message("failed to load common textures");
 }
 
-void CTexture::FreeTextureList () {
+void CTexture::FreeTextureList() {
 	for (size_t i=0; i<CommonTex.size(); i++) {
 		delete CommonTex[i];
 	}
 	CommonTex.clear();
-	Index.clear();
 }
 
-TTexture* CTexture::GetTexture (size_t idx) const {
+TTexture* CTexture::GetTexture(size_t idx) const {
 	if (idx >= CommonTex.size()) return NULL;
 	return CommonTex[idx];
 }
 
-TTexture* CTexture::GetTexture (const string& name) const {
-	return Index.at(name);
-}
-
-bool CTexture::BindTex (size_t idx) {
+bool CTexture::BindTex(size_t idx) {
 	if (idx >= CommonTex.size()) return false;
 	CommonTex[idx]->Bind();
 	return true;
 }
 
-bool CTexture::BindTex (const string& name) {
-	try {
-		Index.at(name)->Bind();
-	} catch (...) {
-		return false;
-	}
-	return true;
-}
-
 // ---------------------------- Draw ----------------------------------
 
-void CTexture::Draw (size_t idx) {
+void CTexture::Draw(size_t idx) {
 	if (CommonTex.size() > idx)
 		CommonTex[idx]->Draw();
 }
 
-void CTexture::Draw (const string& name) {
-	Index[name]->Draw();
-}
-
-void CTexture::Draw (size_t idx, int x, int y, float size) {
+void CTexture::Draw(size_t idx, int x, int y, float size) {
 	if (CommonTex.size() > idx)
 		CommonTex[idx]->Draw(x, y, size, forientation);
 }
 
-void CTexture::Draw (const string& name, int x, int y, float size) {
-	Index[name]->Draw(x, y, size, forientation);
-}
-
-void CTexture::Draw (size_t idx, int x, int y, int width, int height) {
+void CTexture::Draw(size_t idx, int x, int y, int width, int height) {
 	if (CommonTex.size() > idx)
-		CommonTex[idx]->Draw (x, y, width, height, forientation);
+		CommonTex[idx]->Draw(x, y, width, height, forientation);
 }
 
-void CTexture::Draw (const string& name, int x, int y, int width, int height) {
-	Index[name]->Draw (x, y, width, height, forientation);
-}
-
-void CTexture::DrawFrame (size_t idx, int x, int y, double w, double h, int frame, const TColor& col) {
+void CTexture::DrawFrame(size_t idx, int x, int y, double w, double h, int frame, const TColor& col) {
 	if (CommonTex.size() > idx)
-		CommonTex[idx]->DrawFrame (x, y, w, h, frame, col);
+		CommonTex[idx]->DrawFrame(x, y, w, h, frame, col);
 }
 
-void CTexture::DrawFrame (const string& name, int x, int y, double w, double h, int frame, const TColor& col) {
-	Index[name]->DrawFrame (x, y, w, h, frame, col);
-}
-
-void CTexture::SetOrientation (Orientation orientation) {
+void CTexture::SetOrientation(Orientation orientation) {
 	forientation = orientation;
 }
 
 // -------------------------- numeric strings -------------------------
 
-void CTexture::DrawNumChr (char c, int x, int y, int w, int h, const TColor& col) {
+void CTexture::DrawNumChr(char c, int x, int y, int w, int h, const TColor& col) {
 	int idx;
 	if (isdigit(c)) {
 		char chrname[2] = {c, '\0'};
@@ -669,13 +637,13 @@ void CTexture::DrawNumChr (char c, int x, int y, int w, int h, const TColor& col
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
-void CTexture::DrawNumStr (const string& s, int x, int y, float size, const TColor& col) {
-	if (!BindTex ("ziff032")) {
-		Message ("DrawNumStr: missing texture");
+void CTexture::DrawNumStr(const string& s, int x, int y, float size, const TColor& col) {
+	if (!BindTex(NUMERIC_FONT)) {
+		Message("DrawNumStr: missing texture");
 		return;
 	}
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable (GL_TEXTURE_2D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
 	int qw = (int)(22 * size);
 	int qh = (int)(32 * size);
 
@@ -683,7 +651,7 @@ void CTexture::DrawNumStr (const string& s, int x, int y, float size, const TCol
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	for (size_t i=0; i < s.size(); i++) {
-		DrawNumChr (s[i], x + (int)i*qw, y, qw, qh, col);
+		DrawNumChr(s[i], x + (int)i*qw, y, qw, qh, col);
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -696,7 +664,7 @@ void CTexture::DrawNumStr (const string& s, int x, int y, float size, const TCol
 // 0 ppm, 1 tga, 2 bmp
 #define SCREENSHOT_PROC 2
 
-void ScreenshotN () {
+void ScreenshotN() {
 	CImage image;
 	string path = param.screenshot_dir;
 	path += SEP;
@@ -708,18 +676,18 @@ void ScreenshotN () {
 	switch (type) {
 		case 0:
 			path += ".ppm";
-			image.ReadFrameBuffer_PPM ();
-			image.WritePPM (path.c_str());
+			image.ReadFrameBuffer_PPM();
+			image.WritePPM(path.c_str());
 			break;
 		case 1:
 			path += ".tga";
-			image.ReadFrameBuffer_TGA ();
-			image.WriteTGA (path.c_str());
+			image.ReadFrameBuffer_TGA();
+			image.WriteTGA(path.c_str());
 			break;
 		case 2:
 			path += ".bmp";
-			image.ReadFrameBuffer_BMP ();
-			image.WriteBMP (path.c_str());
+			image.ReadFrameBuffer_BMP();
+			image.WriteBMP(path.c_str());
 			break;
 	}
 }

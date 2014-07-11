@@ -20,7 +20,6 @@ GNU General Public License for more details.
 
 #include "bh.h"
 #include <vector>
-#include <map>
 
 #define TEXLOGO 0
 #define SNOW_START 1
@@ -72,8 +71,8 @@ GNU General Public License for more details.
 class CImage {
 private:
 public:
-	CImage ();
-	~CImage ();
+	CImage();
+	~CImage();
 
 	unsigned char *data;
 	int nx;
@@ -81,19 +80,19 @@ public:
 	int depth;
 	int pitch;
 
-	void DisposeData ();
+	void DisposeData();
 
 	// load:
-	bool LoadPng (const char *filepath, bool mirroring);
-	bool LoadPng (const char *dir, const char *filepath, bool mirroring);
+	bool LoadPng(const char *filepath, bool mirroring);
+	bool LoadPng(const char *dir, const char *filepath, bool mirroring);
 
 	// write:
-	bool ReadFrameBuffer_PPM ();
-	void ReadFrameBuffer_TGA ();
-	void ReadFrameBuffer_BMP ();
-	void WritePPM (const char *filepath);
-	void WriteTGA (const char *filepath);
-	void WriteBMP (const char *filepath);
+	bool ReadFrameBuffer_PPM();
+	void ReadFrameBuffer_TGA();
+	void ReadFrameBuffer_BMP();
+	void WritePPM(const char *filepath);
+	void WriteTGA(const char *filepath);
+	void WriteBMP(const char *filepath);
 };
 
 // --------------------------------------------------------------------
@@ -124,40 +123,31 @@ public:
 class CTexture {
 private:
 	vector<TTexture*> CommonTex;
-	map<string, TTexture*> Index;
 	Orientation forientation;
 
-	void DrawNumChr (char c, int x, int y, int w, int h, const TColor& col);
+	void DrawNumChr(char c, int x, int y, int w, int h, const TColor& col);
 public:
-	CTexture ();
-	~CTexture ();
-	void LoadTextureList ();
-	void FreeTextureList ();
+	CTexture();
+	~CTexture();
+	void LoadTextureList();
+	void FreeTextureList();
 
-	TTexture* GetTexture (size_t idx) const;
-	TTexture* GetTexture (const string& name) const;
-	bool BindTex (size_t idx);
-	bool BindTex (const string& name);
+	TTexture* GetTexture(size_t idx) const;
+	bool BindTex(size_t idx);
 
-	void Draw (size_t idx);
-	void Draw (const string& name);
+	void Draw(size_t idx);
+	void Draw(size_t idx, int x, int y, float size);
+	void Draw(size_t idx, int x, int y, int width, int height);
 
-	void Draw (size_t idx, int x, int y, float size);
-	void Draw (const string& name, int x, int y, float size);
+	void DrawFrame(size_t idx, int x, int y, double w, double h, int frame, const TColor& col);
 
-	void Draw (size_t idx, int x, int y, int width, int height);
-	void Draw (const string& name, int x, int y, int width, int height);
-
-	void DrawFrame (size_t idx, int x, int y, double w, double h, int frame, const TColor& col);
-	void DrawFrame (const string& name, int x, int y, double w, double h, int frame, const TColor& col);
-
-	void SetOrientation (Orientation orientation);
-	void DrawNumStr (const string& s, int x, int y, float size, const TColor& col);
+	void SetOrientation(Orientation orientation);
+	void DrawNumStr(const string& s, int x, int y, float size, const TColor& col);
 };
 
 extern CTexture Tex;
 
-void ScreenshotN ();
+void ScreenshotN();
 
 
 #endif

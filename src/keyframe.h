@@ -39,38 +39,38 @@ private:
 	double heightcorr;
 	size_t keyidx;
 
-	double interp (double frac, double v1, double v2);
-	void InterpolateKeyframe (size_t idx, double frac, CCharShape *shape);
+	double interp(double frac, double v1, double v2);
+	void InterpolateKeyframe(size_t idx, double frac, CCharShape *shape);
 
 	// test and editing
-	void ResetFrame2 (TKeyframe *frame);
+	void ResetFrame2(TKeyframe *frame);
 public:
-	CKeyframe ();
+	CKeyframe();
 	bool loaded;
 	bool active;
 
-	void Init (const TVector3d& ref_position, double height_correction);
-	void Init (const TVector3d& ref_position, double height_correction, CCharShape *shape);
-	void InitTest (const TVector3d& ref_position, CCharShape *shape);
-	void Reset ();
-	void Update (double timestep);
-	void UpdateTest (double timestep, CCharShape *shape);
-	bool Load (const string& dir, const string& filename);
-	void CalcKeyframe (size_t idx, CCharShape *shape, const TVector3d& refpos);
+	void Init(const TVector3d& ref_position, double height_correction);
+	void Init(const TVector3d& ref_position, double height_correction, CCharShape *shape);
+	void InitTest(const TVector3d& ref_position, CCharShape *shape);
+	void Reset();
+	void Update(double timestep);
+	void UpdateTest(double timestep, CCharShape *shape);
+	bool Load(const string& dir, const string& filename);
+	void CalcKeyframe(size_t idx, CCharShape *shape, const TVector3d& refpos);
 
 	// test and editing
-	TKeyframe *GetFrame (size_t idx);
-	static const string& GetHighlightName (size_t idx);
-	static const string& GetJointName (size_t idx);
-	static int GetNumJoints ();
-	void SaveTest (const string& dir, const string& filename);
-	void CopyFrame (size_t prim_idx, size_t sec_idx);
-	void AddFrame ();
-	size_t  DeleteFrame (size_t idx);
-	void InsertFrame (size_t idx);
-	void CopyToClipboard (size_t idx);
-	void PasteFromClipboard (size_t idx);
-	void ClearFrame (size_t idx);
+	TKeyframe *GetFrame(size_t idx);
+	static const string& GetHighlightName(size_t idx);
+	static const string& GetJointName(size_t idx);
+	static int GetNumJoints();
+	void SaveTest(const string& dir, const string& filename);
+	void CopyFrame(size_t prim_idx, size_t sec_idx);
+	void AddFrame();
+	size_t  DeleteFrame(size_t idx);
+	void InsertFrame(size_t idx);
+	void CopyToClipboard(size_t idx);
+	void PasteFromClipboard(size_t idx);
+	void ClearFrame(size_t idx);
 	size_t numFrames() const { return frames.size(); }
 };
 

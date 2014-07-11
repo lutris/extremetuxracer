@@ -36,8 +36,8 @@ CLoading Loading;
 
 // ====================================================================
 void CLoading::Enter() {
-	Winsys.ShowCursor (false);
-	Music.Play ("loading", -1);
+	Winsys.ShowCursor(false);
+	Music.Play("loading", -1);
 }
 
 void CLoading::Loop(double time_step) {
@@ -46,35 +46,34 @@ void CLoading::Loop(double time_step) {
 	int ww = Winsys.resolution.width;
 	int hh = Winsys.resolution.height;
 	string msg = Trans.Text(29) + " " + g_game.course->name;
-	check_gl_error ();
 	ScopedRenderMode rm(GUI);
-	ClearRenderContext ();
-	SetupGuiDisplay ();
+	ClearRenderContext();
+	SetupGuiDisplay();
 
 	if (param.ui_snow) {
-		update_ui_snow (time_step);
-		draw_ui_snow ();
+		update_ui_snow(time_step);
+		draw_ui_snow();
 	}
 
-	Tex.Draw (TEXLOGO, CENTER, 40, 0.7);
-	Tex.Draw (BOTTOM_LEFT, 0, hh-256, 1);
-	Tex.Draw (BOTTOM_RIGHT, ww-256, hh-256, 1);
-	Tex.Draw (TOP_LEFT, 0, 0, 1);
-	Tex.Draw (TOP_RIGHT, ww-256, 0, 1);
+	Tex.Draw(TEXLOGO, CENTER, 40, 0.6);
+	Tex.Draw(BOTTOM_LEFT, 0, hh-256, 1);
+	Tex.Draw(BOTTOM_RIGHT, ww-256, hh-256, 1);
+	Tex.Draw(TOP_LEFT, 0, 0, 1);
+	Tex.Draw(TOP_RIGHT, ww-256, 0, 1);
 
-	FT.SetColor (colDYell);
-	FT.AutoSizeN (5);
-	FT.DrawString (CENTER, AutoYPosN (60), msg);
-	FT.SetColor (colWhite);
-	FT.DrawString (CENTER, AutoYPosN (70), Trans.Text (30));
-	Winsys.SwapBuffers ();
+	FT.SetColor(colDYell);
+	FT.AutoSizeN(5);
+	FT.DrawString(CENTER, AutoYPosN(60), msg);
+	FT.SetColor(colWhite);
+	FT.DrawString(CENTER, AutoYPosN(70), Trans.Text(30));
+	Winsys.SwapBuffers();
 
-	Course.LoadCourse (g_game.course);
-	g_game.location_id = Course.GetEnv ();
-	Env.LoadEnvironment (g_game.location_id, g_game.light_id);
-	State::manager.RequestEnterState (Intro);
+	Course.LoadCourse(g_game.course);
+	g_game.location_id = Course.GetEnv();
+	Env.LoadEnvironment(g_game.location_id, g_game.light_id);
+	State::manager.RequestEnterState(Intro);
 }
 
 void CLoading::Exit() {
-	Music.Halt ();
+	Music.Halt();
 }

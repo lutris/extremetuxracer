@@ -48,9 +48,9 @@ void check_gl_error();
 void InitOpenglExtensions();
 void PrintGLInfo();
 
-void set_material (const TColor& diffuse_colour,
-                   const TColor& specular_colour,
-                   float specular_exp);
+void set_material(const TColor& diffuse_colour,
+                  const TColor& specular_colour,
+                  float specular_exp);
 
 
 void PushRenderMode(TRenderMode mode);
@@ -65,10 +65,10 @@ struct ScopedRenderMode {
 	}
 };
 
-void ClearRenderContext ();
-void ClearRenderContext (const TColor& col);
-void SetupGuiDisplay ();
-void Reshape (int w, int h);
+void ClearRenderContext();
+void ClearRenderContext(const TColor& col);
+void SetupGuiDisplay();
+void Reshape(int w, int h);
 
 void glColor(const TColor& col);
 void glColor(const TColor& col, double alpha);
@@ -79,6 +79,7 @@ void glNormal3(const TVector3d& vec);
 void glVertex3(const TVector3d& vec);
 void glTexCoord2(const TVector2d& vec);
 
+void glLoadMatrix(const TMatrix<4, 4>& mat);
 void glMultMatrix(const TMatrix<4, 4>& mat);
 
 

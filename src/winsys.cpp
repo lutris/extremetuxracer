@@ -37,7 +37,7 @@ TVector2i cursor_pos(0, 0);
 
 CWinsys Winsys;
 
-CWinsys::CWinsys ()
+CWinsys::CWinsys()
 	: auto_resolution(800, 600) {
 	screen = NULL;
 
@@ -57,26 +57,26 @@ CWinsys::CWinsys ()
 	resolutions[9] = TScreenRes(1680, 1050);
 }
 
-const TScreenRes& CWinsys::GetResolution (size_t idx) const {
+const TScreenRes& CWinsys::GetResolution(size_t idx) const {
 	if (idx >= NUM_RESOLUTIONS || (idx == 0 && !param.fullscreen)) return auto_resolution;
 	return resolutions[idx];
 }
 
-string CWinsys::GetResName (size_t idx) const {
+string CWinsys::GetResName(size_t idx) const {
 	if (idx >= NUM_RESOLUTIONS) return "800 x 600";
 	if (idx == 0) return ("auto");
-	string line = Int_StrN (resolutions[idx].width);
-	line += " x " + Int_StrN (resolutions[idx].height);
+	string line = Int_StrN(resolutions[idx].width);
+	line += " x " + Int_StrN(resolutions[idx].height);
 	return line;
 }
 
-double CWinsys::CalcScreenScale () const {
+double CWinsys::CalcScreenScale() const {
 	if (resolution.height < 768) return 0.78;
 	else if (resolution.height == 768) return 1.0;
 	else return (resolution.height / 768);
 }
 
-void CWinsys::SetupVideoMode (const TScreenRes& resolution_) {
+void CWinsys::SetupVideoMode(const TScreenRes& resolution_) {
 	int bpp = 0;
 	Uint32 video_flags = SDL_OPENGL;
 	if (param.fullscreen) video_flags |= SDL_FULLSCREEN;
@@ -107,11 +107,11 @@ void CWinsys::SetupVideoMode (const TScreenRes& resolution_) {
 
 	if ((screen = SDL_SetVideoMode
 	              (resolution_.width, resolution_.height, bpp, video_flags)) == NULL) {
-		Message ("couldn't initialize video",  SDL_GetError());
-		Message ("set to 800 x 600");
-		screen = SDL_SetVideoMode (800, 600, bpp, video_flags);
+		Message("couldn't initialize video",  SDL_GetError());
+		Message("set to 800 x 600");
+		screen = SDL_SetVideoMode(800, 600, bpp, video_flags);
 		param.res_type = 1;
-		SaveConfigFile ();
+		SaveConfigFile();
 	}
 
 #ifdef _WIN32
@@ -121,107 +121,98 @@ void CWinsys::SetupVideoMode (const TScreenRes& resolution_) {
 	wglDeleteContext(tempRC);
 #endif
 
-	SDL_Surface *surf = SDL_GetVideoSurface ();
+	SDL_Surface *surf = SDL_GetVideoSurface();
 	resolution.width = surf->w;
 	resolution.height = surf->h;
 	if (resolution.width == 0 && resolution.height == 0) {
 		auto_resolution = resolution;
 	}
-	scale = CalcScreenScale ();
-	if (param.use_quad_scale) scale = sqrt (scale);
+	scale = CalcScreenScale();
+	if (param.use_quad_scale) scale = sqrt(scale);
 }
 
-void CWinsys::SetupVideoMode (size_t idx) {
-	SetupVideoMode (GetResolution(idx));
+void CWinsys::SetupVideoMode(size_t idx) {
+	SetupVideoMode(GetResolution(idx));
 }
 
-void CWinsys::SetupVideoMode (int width, int height) {
-	SetupVideoMode (TScreenRes(width, height));
+void CWinsys::SetupVideoMode(int width, int height) {
+	SetupVideoMode(TScreenRes(width, height));
 }
 
-void CWinsys::InitJoystick () {
-	if (SDL_InitSubSystem (SDL_INIT_JOYSTICK) < 0) {
-		Message ("Could not initialize SDL_joystick: %s", SDL_GetError());
+void CWinsys::InitJoystick() {
+	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
+		Message("Could not initialize SDL_joystick: %s", SDL_GetError());
 		return;
 	}
-	numJoysticks = SDL_NumJoysticks ();
+	numJoysticks = SDL_NumJoysticks();
 	if (numJoysticks < 1) {
 		joystick = NULL;
 		return;
 	}
-	SDL_JoystickEventState (SDL_ENABLE);
-	joystick = SDL_JoystickOpen (0);	// first stick with number 0
+	SDL_JoystickEventState(SDL_ENABLE);
+	joystick = SDL_JoystickOpen(0);	// first stick with number 0
 	if (joystick == NULL) {
-		Message ("Cannot open joystick %s", SDL_GetError ());
+		Message("Cannot open joystick %s", SDL_GetError());
 		return;
 	}
 	joystick_active = true;
 }
 
-void CWinsys::Init () {
+void CWinsys::Init() {
 	Uint32 sdl_flags = SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER;
-	if (SDL_Init (sdl_flags) < 0) Message ("Could not initialize SDL");
-	SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
+	if (SDL_Init(sdl_flags) < 0) Message("Could not initialize SDL");
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 #if defined (USE_STENCIL_BUFFER)
-	SDL_GL_SetAttribute (SDL_GL_STENCIL_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 #endif
 
-	SetupVideoMode (GetResolution (param.res_type));
-	Reshape (resolution.width, resolution.height);
+	SetupVideoMode(GetResolution(param.res_type));
+	Reshape(resolution.width, resolution.height);
 
-	SDL_WM_SetCaption (WINDOW_TITLE, WINDOW_TITLE);
-	KeyRepeat (false);
-	if (USE_JOYSTICK) InitJoystick ();
+	SDL_WM_SetCaption(WINDOW_TITLE, WINDOW_TITLE);
+	KeyRepeat(false);
+	if (USE_JOYSTICK) InitJoystick();
 //	SDL_EnableUNICODE (1);
 }
 
-void CWinsys::KeyRepeat (bool repeat) {
+void CWinsys::KeyRepeat(bool repeat) {
 	if (repeat)
-		SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-	else SDL_EnableKeyRepeat (0, 0);
+		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+	else SDL_EnableKeyRepeat(0, 0);
 }
 
-void CWinsys::SetFonttype () {
-	if (param.use_papercut_font > 0) {
-		FT.SetFont ("pc20");
-	} else {
-		FT.SetFont ("bold");
-	}
+void CWinsys::CloseJoystick() {
+	if (joystick_active) SDL_JoystickClose(joystick);
 }
 
-void CWinsys::CloseJoystick () {
-	if (joystick_active) SDL_JoystickClose (joystick);
+void CWinsys::Quit() {
+	CloseJoystick();
+	Score.SaveHighScore();
+	SaveMessages();
+	Audio.Close();		// frees music and sound as well
+	if (g_game.argument < 1) Players.SavePlayers();
+	SDL_Quit();
 }
 
-void CWinsys::Quit () {
-	CloseJoystick ();
-	Score.SaveHighScore ();
-	SaveMessages ();
-	Audio.Close ();		// frees music and sound as well
-	FT.Clear ();
-	if (g_game.argument < 1) Players.SavePlayers ();
-	SDL_Quit ();
-}
-
-void CWinsys::Terminate () {
+void CWinsys::Terminate() {
 	Quit();
 	exit(0);
 }
 
-void CWinsys::PrintJoystickInfo () const {
+void CWinsys::PrintJoystickInfo() const {
 	if (joystick_active == false) {
-		Message ("No joystick found");
+		Message("No joystick found");
 		return;
 	}
-	PrintStr ("");
-	PrintStr (SDL_JoystickName (0));
-	int num_buttons = SDL_JoystickNumButtons (joystick);
+	PrintStr("");
+	PrintStr(SDL_JoystickName(0));
+	int num_buttons = SDL_JoystickNumButtons(joystick);
 	cout << "Joystick has " << num_buttons << " button" << (num_buttons == 1 ? "" : "s") << '\n';
-	int num_axes = SDL_JoystickNumAxes (joystick);
+	int num_axes = SDL_JoystickNumAxes(joystick);
 	cout << "Joystick has " << num_axes << " ax" << (num_axes == 1 ? "i" : "e") << "s\n\n";
 }
 
-unsigned char *CWinsys::GetSurfaceData () const {
+unsigned char *CWinsys::GetSurfaceData() const {
 	return (unsigned char*)screen->pixels;
 }

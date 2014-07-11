@@ -66,7 +66,7 @@ void State::Manager::PollEvent() {
 	unsigned int key;
 	int x, y;
 
-	while (SDL_PollEvent (&event)) {
+	while (SDL_PollEvent(&event)) {
 		if (!next) {
 			switch (event.type) {
 				case SDL_KEYDOWN:
@@ -116,7 +116,7 @@ void State::Manager::PollEvent() {
 					if (Winsys.resolution.width != event.resize.w || Winsys.resolution.height != event.resize.h) {
 						Winsys.resolution.width = event.resize.w;
 						Winsys.resolution.height = event.resize.h;
-						Winsys.SetupVideoMode (param.res_type);
+						Winsys.SetupVideoMode(param.res_type);
 						Reshape(event.resize.w, event.resize.h);
 					}
 					break;
@@ -130,6 +130,8 @@ void State::Manager::PollEvent() {
 }
 
 void State::Manager::CallLoopFunction() {
+	check_gl_error();
+
 	float cur_time = SDL_GetTicks() * 1.e-3;
 	g_game.time_step = cur_time - clock_time;
 	if (g_game.time_step < 0.0001) g_game.time_step = 0.0001;

@@ -77,45 +77,44 @@ extern const TColor colSky;
 // --------------------------------------------------------------------
 // some simple functions to print out values on the
 // terminal. Only used for development.
-void	PrintInt (const int val);
-void	PrintInt (const string& s, const int val);
-void	PrintStr (const char *val);
-void	PrintString (const string& s);
-void	PrintDouble (const double val);
-void	PrintVector (const TVector3d& v);
-void	PrintVector4 (const TVector4d& v);
-void	PrintColor (const TColor& c);
-void	PrintVector2 (const TVector2d& v);
+void	PrintInt(const int val);
+void	PrintInt(const string& s, const int val);
+void	PrintStr(const char *val);
+void	PrintString(const string& s);
+void	PrintDouble(const double val);
+void	PrintVector(const TVector3d& v);
+void	PrintVector4(const TVector4d& v);
+void	PrintColor(const TColor& c);
+void	PrintVector2(const TVector2d& v);
 
 template<int x, int y>
-void	PrintMatrix (const TMatrix<x, y>& mat);
-void	PrintQuaternion (const TQuaternion& q);
+void	PrintMatrix(const TMatrix<x, y>& mat);
+void	PrintQuaternion(const TQuaternion& q);
 
 // --------------------------------------------------------------------
 //				file utils
 // --------------------------------------------------------------------
 
-bool	FileExists (const char *filename);
-bool	FileExists (const string& filename);
-bool	FileExists (const string& dir, const string& filename);
-bool	DirExists (const char *dirname);
+bool	FileExists(const string& filename);
+bool	FileExists(const string& dir, const string& filename);
+bool	DirExists(const char *dirname);
 
 // --------------------------------------------------------------------
 //				message utils
 // --------------------------------------------------------------------
 
-void	Message (const char *msg, const char *desc);
-void	Message (const char *msg);
-void	Message (const string& a, const string& b);
-void	Message (const string& a);
-void	SaveMessages ();
+void	Message(const char *msg, const char *desc);
+void	Message(const char *msg);
+void	Message(const string& a, const string& b);
+void	Message(const string& a);
+void	SaveMessages();
 
 // --------------------------------------------------------------------
 //				date and time
 // --------------------------------------------------------------------
 
-void GetTimeComponents (double time, int *min, int *sec, int *hundr);
-string GetTimeString ();
+void GetTimeComponents(double time, int *min, int *sec, int *hundr);
+string GetTimeString();
 
 
 #endif

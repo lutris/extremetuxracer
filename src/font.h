@@ -50,51 +50,52 @@ private:
 	void GetTextSize(const wchar_t *text, float &x, float &y, size_t font, float size) const;
 
 public:
-	CFont ();
-	~CFont ();
+	CFont();
+	~CFont();
 
-	void Clear ();
+	void Clear();
 	int  LoadFont(const string& name, const string& dir, const string& filename);
 	int  LoadFont(const string& name, const char *path);
-	bool LoadFontlist ();
-	size_t GetFontIdx (const string &name) const;
+	bool LoadFontlist();
+	size_t GetFontIdx(const string &name) const;
 
 	// properties
-	void SetProps   (const string &fontname, float size, const TColor& col);
-	void SetProps   (const string &fontname, float size);
-	void SetColor   (const TColor& col) { curr_col = col; }
-	void SetSize    (float size) { curr_size = size; }
-	void SetFont    (const string& fontname);
+	void SetProps(const string &fontname, float size, const TColor& col);
+	void SetProps(const string &fontname, float size);
+	void SetColor(const TColor& col) { curr_col = col; }
+	void SetSize(float size) { curr_size = size; }
+	void SetFont(const string& fontname);
+	void SetFontFromSettings();
 
 	// auto
-	int AutoSizeN     (int rel_val);	// rel_val = relative size, return: autosize
-	int AutoDistanceN (int rel_val);	// rel_val = relative dist
+	int AutoSizeN(int rel_val);	// rel_val = relative size, return: autosize
+	int AutoDistanceN(int rel_val);	// rel_val = relative dist
 
 	// draw
-	void DrawText   (float x, float y, const char *text) const;		// normal char*
-	void DrawText   (float x, float y, const wchar_t *text) const;	// wide char*
-	void DrawString (float x, float y, const string &s) const;		// string class
-	void DrawString (float x, float y, const wstring &s) const;		// wstring class
+	void DrawText(float x, float y, const char *text) const;		// normal char*
+	void DrawText(float x, float y, const wchar_t *text) const;	// wide char*
+	void DrawString(float x, float y, const string &s) const;		// string class
+	void DrawString(float x, float y, const wstring &s) const;		// wstring class
 
 
-	void DrawText   (float x, float y, const char *text, const string &fontname, float size) const;
-	void DrawText   (float x, float y, const wchar_t *text, const string &fontname, float size) const;
-	void DrawString (float x, float y, const string &s, const string &fontname, float size) const;
-	void DrawString (float x, float y, const wstring &s, const string &fontname, float size) const;
+	void DrawText(float x, float y, const char *text, const string &fontname, float size) const;
+	void DrawText(float x, float y, const wchar_t *text, const string &fontname, float size) const;
+	void DrawString(float x, float y, const string &s, const string &fontname, float size) const;
+	void DrawString(float x, float y, const wstring &s, const string &fontname, float size) const;
 
 	// metrics
-	void  GetTextSize  (const char *text, float &x, float &y) const;
-	void  GetTextSize  (const char *text, float &x, float &y, const string &fontname, float size) const;
-	float GetTextWidth (const char *text) const;
-	float GetTextWidth (const string& text) const;
-	float GetTextWidth (const wchar_t *text) const;
-	float GetTextWidth (const char *text, const string &fontname, float size) const;
-	float GetTextWidth (const wchar_t *text, const string &fontname, float size) const;
+	void  GetTextSize(const char *text, float &x, float &y) const;
+	void  GetTextSize(const char *text, float &x, float &y, const string &fontname, float size) const;
+	float GetTextWidth(const char *text) const;
+	float GetTextWidth(const string& text) const;
+	float GetTextWidth(const wchar_t *text) const;
+	float GetTextWidth(const char *text, const string &fontname, float size) const;
+	float GetTextWidth(const wchar_t *text, const string &fontname, float size) const;
 
-	float CenterX        (const char *text) const;
-	void  SetOrientation (Orientation orientation) { forientation = orientation; }
+	float CenterX(const char *text) const;
+	void  SetOrientation(Orientation orientation) { forientation = orientation; }
 
-	vector<string> MakeLineList (const char *source, float width);
+	vector<string> MakeLineList(const char *source, float width);
 };
 
 extern CFont FT;
