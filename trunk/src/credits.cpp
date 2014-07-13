@@ -31,12 +31,12 @@ GNU General Public License for more details.
 
 #define TOP_Y 160
 #define BOTT_Y 64
-#define OFFS_SCALE_FACTOR 1.2
+#define OFFS_SCALE_FACTOR 1.2f
 
 CCredits Credits;
 
 
-static double y_offset = 0;
+static float y_offset = 0;
 static bool moving = true;
 
 void CCredits::LoadCreditList() {
@@ -48,29 +48,30 @@ void CCredits::LoadCreditList() {
 	}
 
 	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		int old_offs = CreditList.back().offs;
 		CreditList.emplace_back();
 		TCredits& credit = CreditList.back();
 		credit.text = SPStrN(*line, "text");
 
-		double offset = SPFloatN(*line, "offs", 0) * OFFS_SCALE_FACTOR * Winsys.scale;
-		if (line != list.cbegin()) credit.offs = CreditList.back().offs + (int)offset;
+		float offset = SPFloatN(*line, "offs", 0) * OFFS_SCALE_FACTOR * Winsys.scale;
+		if (line != list.cbegin()) credit.offs = old_offs + (int)offset;
 		else credit.offs = offset;
 
 		credit.col = SPIntN(*line, "col", 0);
-		credit.size = SPFloatN(*line, "size", 1.0);
+		credit.size = SPFloatN(*line, "size", 1.f);
 	}
 }
 
 void CCredits::DrawCreditsText(double time_step) {
 	int w = Winsys.resolution.width;
 	int h = Winsys.resolution.height;
-	double offs = 0.0;
+	float offs = 0.f;
 	if (moving) y_offset += time_step * 30;
 
 
 	for (list<TCredits>::const_iterator i = CreditList.begin(); i != CreditList.end(); ++i) {
-		offs = h - 100 - y_offset + i->offs;
-		if (offs > h || offs < 0.0) // Draw only visible lines
+		offs = h - TOP_Y - y_offset + i->offs;
+		if (offs > h || offs < -100.f) // Draw only visible lines
 			continue;
 
 		if (i->col == 0)

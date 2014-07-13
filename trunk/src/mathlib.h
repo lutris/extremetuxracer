@@ -106,7 +106,7 @@ struct TOdeSolver {
 int Gauss(double *matrix, int n, double *soln);
 double LinearInterp(const double x[], const double y[], double val, int n);
 
-double	XRandom(float min, float max);
+double	XRandom(double min, double max);
 double	FRandom();
 int		IRandom(int min, int max);
 int		ITrunc(int val, int base);

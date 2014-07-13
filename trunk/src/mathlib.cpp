@@ -365,7 +365,7 @@ bool IntersectPolygon(const TPolygon& p, vector<TVector3d>& v) {
 	double distsq;
 
 	TVector3d nml = MakeNormal(p, &v[0]);
-	ray.pt = TVector3d(0., 0., 0.);
+	ray.pt = TVector3d();
 	ray.vec = nml;
 
 	nuDotProd = DotProduct(nml, ray.vec);
@@ -519,7 +519,7 @@ double LinearInterp(const double x[], const double y[], double val, int n) {
 	return m * val + b;
 }
 
-double XRandom(float min, float max) {
+double XRandom(double min, double max) {
 	return (double)rand() / RAND_MAX * (max - min) + min;
 }
 

@@ -323,7 +323,6 @@ void SetupViewFrustum(const CControl *ctrl) {
 
 	double near_dist = NEAR_CLIP_DIST;
 	double far_dist = param.forward_clip_distance;
-	TVector3d origin(0., 0., 0.);
 	double half_fov = ANGLES_TO_RADIANS(param.fov * 0.5);
 	double half_fov_horiz = atan(tan(half_fov) * aspect);
 
@@ -340,14 +339,14 @@ void SetupViewFrustum(const CControl *ctrl) {
 
 	for (int i=0; i<6; i++) {
 		TVector3d pt = TransformPoint(ctrl->view_mat,
-		                              origin + -frustum_planes[i].d * frustum_planes[i].nml);
+		                              -frustum_planes[i].d * frustum_planes[i].nml);
 
 		frustum_planes[i].nml = TransformVector(
 		                            ctrl->view_mat, frustum_planes[i].nml);
 
 		frustum_planes[i].d = -DotProduct(
 		                          frustum_planes[i].nml,
-		                          pt - origin);
+		                          pt);
 	}
 
 	for (int i=0; i<6; i++) {

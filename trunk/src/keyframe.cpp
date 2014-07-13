@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "tux.h"
 #include "game_ctrl.h"
 #include "physics.h"
+#include <algorithm>
 #include <iterator>
 
 static const int numJoints = 19;
@@ -328,7 +329,7 @@ void CKeyframe::UpdateTest(double timestep, CCharShape *shape) {
 }
 
 void CKeyframe::ResetFrame2(TKeyframe *frame) {
-	for (int i = 1; i<32; i++) frame->val[i] = 0.0;
+	std::fill_n(frame->val + 1, MAX_FRAME_VALUES - 1, 0.0);
 	frame->val[0] = 0.5; // time
 }
 
@@ -399,7 +400,7 @@ void CKeyframe::SaveTest(const string& dir, const string& filename) {
 void CKeyframe::CopyFrame(size_t prim_idx, size_t sec_idx) {
 	TKeyframe *ppp = &frames[prim_idx];
 	TKeyframe *sss = &frames[sec_idx];
-	memcpy(sss->val, ppp->val, MAX_FRAME_VALUES*sizeof(*sss->val));
+	std::copy_n(ppp->val, MAX_FRAME_VALUES, sss->val);
 }
 
 void CKeyframe::AddFrame() {
@@ -426,12 +427,12 @@ void CKeyframe::InsertFrame(size_t idx) {
 
 void CKeyframe::CopyToClipboard(size_t idx) {
 	if (idx >= frames.size()) return;
-	memcpy(clipboard.val, frames[idx].val, MAX_FRAME_VALUES*sizeof(*frames[idx].val));
+	std::copy_n(frames[idx].val, MAX_FRAME_VALUES, clipboard.val);
 }
 
 void CKeyframe::PasteFromClipboard(size_t idx) {
 	if (idx >= frames.size()) return;
-	memcpy(frames[idx].val, clipboard.val, MAX_FRAME_VALUES*sizeof(*frames[idx].val));
+	std::copy_n(clipboard.val, MAX_FRAME_VALUES, frames[idx].val);
 }
 
 void CKeyframe::ClearFrame(size_t idx) {

@@ -169,7 +169,6 @@ public:
 
 	const TVector2d& GetDimensions() const { return curr_course->size; }
 	const TVector2d& GetPlayDimensions() const { return curr_course->play_size; }
-	void GetDivisions(int *nx, int *ny) const;
 	double GetCourseAngle() const { return curr_course->angle; }
 	double GetBaseHeight(double distance) const;
 	double GetMaxHeight(double distance) const;

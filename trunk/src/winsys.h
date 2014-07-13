@@ -41,10 +41,10 @@ private:
 	TScreenRes resolutions[NUM_RESOLUTIONS];
 	TScreenRes auto_resolution;
 	SDL_Surface *screen;
-	double CalcScreenScale() const;
+	float CalcScreenScale() const;
 public:
 	TScreenRes resolution;
-	double scale;			// scale factor for screen, see 'use_quad_scale'
+	float scale;			// scale factor for screen, see 'use_quad_scale'
 
 	CWinsys();
 

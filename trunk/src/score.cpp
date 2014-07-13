@@ -34,7 +34,7 @@ GNU General Public License for more details.
 
 CScore Score;
 
-int CScore::AddScore(const TCourse* course, const TScore& score) {
+int CScore::AddScore(const TCourse* course, TScore&& score) {
 	size_t list_idx = Course.GetCourseIdx(course);
 	if (list_idx >= Scorelist.size()) return 999;
 	if (score.points < 1) return 999;
@@ -129,13 +129,11 @@ bool CScore::LoadHighScore() {
 		string course = SPStrN(*line, "course", "unknown");
 		TCourse* cidx = Course.GetCourse(course);
 
-		TScore score;
-		score.player = SPStrN(*line, "plyr", "unknown");
-		score.points = SPIntN(*line, "pts", 0);
-		score.herrings = SPIntN(*line, "herr", 0);
-		score.time = SPFloatN(*line, "time", 0);
-
-		AddScore(cidx, score);
+		AddScore(cidx, TScore(
+		             SPStrN(*line, "plyr", "unknown"),
+		             SPIntN(*line, "pts", 0),
+		             SPIntN(*line, "herr", 0),
+		             SPFloatN(*line, "time", 0)));
 	}
 	return true;
 }
@@ -156,13 +154,7 @@ int CScore::CalcRaceResult() {
 	g_game.score = (int)(herringpt + timept);
 	if (g_game.score < 0) g_game.score = 0;
 
-	TScore TempScore;
-	TempScore.points = g_game.score;
-	TempScore.herrings = g_game.herring;
-	TempScore.time = g_game.time;
-	TempScore.player = g_game.player->name;
-
-	return AddScore(g_game.course, TempScore);
+	return AddScore(g_game.course, TScore(g_game.player->name, g_game.score, g_game.herring, g_game.time));
 }
 
 // --------------------------------------------------------------------

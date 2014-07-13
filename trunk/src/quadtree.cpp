@@ -14,7 +14,7 @@
 
 #include <climits>
 
-#define TERRAIN_ERROR_SCALE 0.1
+#define TERRAIN_ERROR_SCALE 0.1f
 #define VERTEX_FORCE_THRESHOLD 100
 #define ERROR_MAGNIFICATION_THRESHOLD 20
 #define ERROR_MAGNIFICATION_AMOUNT 3
@@ -80,17 +80,17 @@ quadsquare::quadsquare(quadcornerdata* pcd) {
 
 	for (int i = 0; i < 2; i++) SubEnabledCount[i] = 0;
 
-	Vertex[0].Y = 0.25 * (pcd->Verts[0].Y
-	                      + pcd->Verts[1].Y + pcd->Verts[2].Y + pcd->Verts[3].Y);
-	Vertex[1].Y = 0.5 * (pcd->Verts[3].Y + pcd->Verts[0].Y);
-	Vertex[2].Y = 0.5 * (pcd->Verts[0].Y + pcd->Verts[1].Y);
-	Vertex[3].Y = 0.5 * (pcd->Verts[1].Y + pcd->Verts[2].Y);
-	Vertex[4].Y = 0.5 * (pcd->Verts[2].Y + pcd->Verts[3].Y);
+	Vertex[0].Y = 0.25f * (pcd->Verts[0].Y
+	                       + pcd->Verts[1].Y + pcd->Verts[2].Y + pcd->Verts[3].Y);
+	Vertex[1].Y = 0.5f * (pcd->Verts[3].Y + pcd->Verts[0].Y);
+	Vertex[2].Y = 0.5f * (pcd->Verts[0].Y + pcd->Verts[1].Y);
+	Vertex[3].Y = 0.5f * (pcd->Verts[1].Y + pcd->Verts[2].Y);
+	Vertex[4].Y = 0.5f * (pcd->Verts[2].Y + pcd->Verts[3].Y);
 
 	for (int i = 0; i < 2; i++) Error[i] = 0;
 	for (int i = 0; i < 4; i++) {
 		Error[i+2] = fabs((Vertex[0].Y + pcd->Verts[i].Y)
-		                  - (Vertex[i+1].Y + Vertex[((i+1)&3) + 1].Y)) * 0.25;
+		                  - (Vertex[i+1].Y + Vertex[((i+1)&3) + 1].Y)) * 0.25f;
 	}
 
 	MinY = MaxY = pcd->Verts[0].Y;
@@ -153,7 +153,7 @@ float quadsquare::GetHeight(const quadcornerdata &cd, float x, float z) {
 	if (lx < 0) lz = 0;
 	if (lz > 1) lz = 1;
 
-	float	s00, s01, s10, s11;
+	float s00, s01, s10, s11;
 	switch (index) {
 		default:
 		case 0:
@@ -316,8 +316,8 @@ float quadsquare::RecomputeError(const quadcornerdata& cd) {
 	}
 
 	for (int i = 0; i < 4; i++) {
-		quadcornerdata	q;
 		if (Child[i]) {
+			quadcornerdata q;
 			SetupCornerData(&q, cd, i);
 			Error[i+2] = Child[i]->RecomputeError(q);
 
@@ -330,7 +330,7 @@ float quadsquare::RecomputeError(const quadcornerdata& cd) {
 		if (Error[i+2] > maxerror) maxerror = Error[i+2];
 	}
 
-	int *terrain_count = new int[numTerr];
+	size_t *terrain_count = new size_t[numTerr];
 	memset(terrain_count, 0, sizeof(*terrain_count)*numTerr);
 
 	for (int i=cd.xorg; i<=cd.xorg+whole; i++) {
@@ -346,8 +346,8 @@ float quadsquare::RecomputeError(const quadcornerdata& cd) {
 		}
 	}
 
-	int max_count = 0;
-	int total = 0;
+	size_t max_count = 0;
+	size_t total = 0;
 	for (size_t t=0; t<numTerr; t++) {
 		if (terrain_count[t] > max_count) {
 			max_count = terrain_count[t];
@@ -358,13 +358,13 @@ float quadsquare::RecomputeError(const quadcornerdata& cd) {
 	delete [] terrain_count;
 
 	if (total > 0) {
-		terrain_error = (1.0 - max_count / total);
+		terrain_error = (1.f - ((float)max_count / (float)total));
 		if (numTerr > 1) {
-			terrain_error *= numTerr / (numTerr - 1.0);
+			terrain_error *= numTerr / (numTerr - 1.f);
 		}
+		terrain_error *= whole * whole;
+		terrain_error *= TERRAIN_ERROR_SCALE;
 	} else terrain_error = 0;
-	terrain_error *= whole * whole;
-	terrain_error *= TERRAIN_ERROR_SCALE;
 
 	if (terrain_error > maxerror) maxerror = terrain_error;
 	if (terrain_error > Error[0]) Error[0] = terrain_error;
@@ -422,7 +422,7 @@ void quadsquare::StaticCullAux(const quadcornerdata& cd, float ThresholdDetail, 
 		quadsquare*	s = GetNeighbor(0, cd);
 		if (s == NULL || (s->Child[1] == NULL && s->Child[2] == NULL)) {
 
-			float	y = (cd.Verts[0].Y + cd.Verts[3].Y) * 0.5;
+			float y = (cd.Verts[0].Y + cd.Verts[3].Y) * 0.5f;
 			Vertex[1].Y = y;
 			Error[0] = 0;
 			if (s) s->Vertex[3].Y = y;
@@ -434,7 +434,7 @@ void quadsquare::StaticCullAux(const quadcornerdata& cd, float ThresholdDetail, 
 	if (Child[2] == NULL && Child[3] == NULL && Error[1] * ThresholdDetail < size) {
 		quadsquare*	s = GetNeighbor(3, cd);
 		if (s == NULL || (s->Child[0] == NULL && s->Child[1] == NULL)) {
-			float	y = (cd.Verts[2].Y + cd.Verts[3].Y) * 0.5;
+			float y = (cd.Verts[2].Y + cd.Verts[3].Y) * 0.5f;
 			Vertex[4].Y = y;
 			Error[1] = 0;
 
@@ -455,14 +455,14 @@ void quadsquare::StaticCullAux(const quadcornerdata& cd, float ThresholdDetail, 
 		bool NecessaryEdges = false;
 		for (int i = 0; i < 4; i++) {
 			float diff = fabs(Vertex[i+1].Y - (cd.Verts[i].Y
-			                                   + cd.Verts[(i+3)&3].Y) * 0.5);
-			if (diff > 0.00001) {
+			                                   + cd.Verts[(i+3)&3].Y) * 0.5f);
+			if (diff > 0.00001f) {
 				NecessaryEdges = true;
 			}
 		}
 
 		if (!NecessaryEdges) {
-			size *= 1.414213562;
+			size *= 1.414213562f;
 			if (cd.Parent->Square->Error[2 + cd.ChildIndex] * ThresholdDetail < size) {
 				delete cd.Parent->Square->Child[cd.ChildIndex];
 				cd.Parent->Square->Child[cd.ChildIndex] = 0;
@@ -748,16 +748,12 @@ void quadsquare::InitArrayCounters() {
 
 void quadsquare::Render(const quadcornerdata& cd, GLubyte *vnc_array) {
 	VNCArray = vnc_array;
-	bool fog_on;
-	int nx, ny;
-	Course.GetDivisions(&nx, &ny);
-	const TTerrType *TerrList = &Course.TerrList[0];
 
 	size_t numTerrains = Course.TerrList.size();
 	//	fog_on = is_fog_on ();
-	fog_on = true;
+	bool fog_on = true;
 	for (size_t j=0; j<numTerrains; j++) {
-		if (TerrList[j].texture != NULL) {
+		if (Course.TerrList[j].texture != NULL) {
 			InitArrayCounters();
 			RenderAux(cd, SomeClip, (int)j);
 			if (VertexArrayCounter == 0) continue;
@@ -790,7 +786,7 @@ void quadsquare::Render(const quadcornerdata& cd, GLubyte *vnc_array) {
 			}
 
 			for (size_t j=0; j<numTerrains; j++) {
-				if (TerrList[j].texture > 0) {
+				if (Course.TerrList[j].texture > 0) {
 					Course.TerrList[j].texture->Bind();
 
 					for (GLuint i=0; i<VertexArrayCounter; i++) {
@@ -815,26 +811,22 @@ clip_result_t quadsquare::ClipSquare(const quadcornerdata& cd) {
 	}
 
 	int whole = 2 << cd.Level;
-	TVector3d min, max;
-	min.x = cd.xorg * ScaleX;
-	min.y = MinY;
-	min.z =  cd.zorg * ScaleZ;
-	max.x = (cd.xorg + whole) * ScaleX;
-	max.y = MaxY;
-	max.z = (cd.zorg + whole) * ScaleZ;
-	if (min.x > max.x) {
-		double tmp = min.x;
-		min.x = max.x;
-		max.x = tmp;
-	}
+	TVector3d minimum(
+	    cd.xorg * ScaleX,
+	    MinY,
+	    cd.zorg * ScaleZ);
+	TVector3d maximum(
+	    (cd.xorg + whole) * ScaleX,
+	    MaxY,
+	    (cd.zorg + whole) * ScaleZ);
 
-	if (min.z > max.z) {
-		double tmp = min.z;
-		min.z = max.z;
-		max.z = tmp;
-	}
+	if (minimum.x > maximum.x)
+		std::swap(minimum.x, maximum.x);
 
-	clip_result_t clip_result = clip_aabb_to_view_frustum(min, max);
+	if (minimum.z > maximum.z)
+		std::swap(minimum.z, maximum.z);
+
+	clip_result_t clip_result = clip_aabb_to_view_frustum(minimum, maximum);
 
 	if (clip_result == NotVisible || clip_result == SomeClip) {
 		return clip_result;
@@ -1112,7 +1104,7 @@ void InitQuadtree(double *elevation, int nx, int nz,
 	hm.RowWidth = hm.XSize;
 	hm.Scale = 0;
 
-	root_corner_data.Square = (quadsquare*)NULL;
+	root_corner_data.Square = nullptr;
 	root_corner_data.ChildIndex = 0;
 	root_corner_data.Level = get_root_level(nx, nz);
 	root_corner_data.xorg = 0;

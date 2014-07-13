@@ -70,10 +70,9 @@ string CWinsys::GetResName(size_t idx) const {
 	return line;
 }
 
-double CWinsys::CalcScreenScale() const {
-	if (resolution.height < 768) return 0.78;
-	else if (resolution.height == 768) return 1.0;
-	else return (resolution.height / 768);
+float CWinsys::CalcScreenScale() const {
+	if (resolution.height < 768) return 0.78f;
+	else return (resolution.height / 768.f);
 }
 
 void CWinsys::SetupVideoMode(const TScreenRes& resolution_) {

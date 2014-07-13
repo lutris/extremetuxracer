@@ -71,7 +71,7 @@ void InitGame(int argc, char **argv) {
 int main(int argc, char **argv) {
 	// ****************************************************************
 	cout << "\n----------- Extreme Tux Racer " ETR_VERSION_STRING " ----------------";
-	cout << "\n----------- (C) 2010-2013 Extreme Tuxracer Team  --------\n\n";
+	cout << "\n----------- (C) 2010-2014 Extreme Tuxracer Team  --------\n\n";
 
 	srand(time(NULL));
 	InitConfig();
@@ -84,7 +84,10 @@ int main(int argc, char **argv) {
 	//	PrintGLInfo ();
 
 	// theses resources must or should be loaded before splashscreen starts
-	Tex.LoadTextureList();
+	if (!Tex.LoadTextureList()) {
+		Winsys.Quit();
+		return -1;
+	}
 	FT.LoadFontlist();
 	FT.SetFontFromSettings();
 	Audio.Open();

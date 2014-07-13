@@ -57,7 +57,6 @@ void RenderCourse() {
 // --------------------------------------------------------------------
 void DrawTrees() {
 	size_t			tree_type = -1;
-	TObjectType*	object_types = &Course.ObjTypes[0];
 	const CControl*	ctrl = g_game.player->ctrl;
 
 	ScopedRenderMode rm(TREES);
@@ -77,7 +76,7 @@ void DrawTrees() {
 
 		if (Course.CollArr[i].tree_type != tree_type) {
 			tree_type = Course.CollArr[i].tree_type;
-			object_types[tree_type].texture->Bind();
+			Course.ObjTypes[tree_type].texture->Bind();
 		}
 
 		glPushMatrix();

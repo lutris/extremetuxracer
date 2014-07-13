@@ -441,7 +441,7 @@ bool CCharShape::Load(const string& dir, const string& filename, bool with_actio
 		if (SPIntN(*line, "material", 0) > 0) {
 			CreateMaterial(*line);
 		} else {
-			float visible = SPFloatN(*line, "vis", -1.0);
+			float visible = SPFloatN(*line, "vis", -1.f);
 			bool shadow = SPBoolN(*line, "shad", false);
 			string order = SPStrN(*line, "order");
 			CreateCharNode(parent_name, node_name, name, fullname, order, shadow);
