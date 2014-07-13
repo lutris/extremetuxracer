@@ -54,20 +54,13 @@ CCourse::~CCourse() {
 
 double CCourse::GetBaseHeight(double distance) const {
 	double slope = tan(ANGLES_TO_RADIANS(curr_course->angle));
-	double base_height;
 
-	base_height = -slope * distance -
-	              base_height_value / 255.0 * curr_course->scale;
-	return base_height;
+	return -slope * distance -
+	       base_height_value / 255.0 * curr_course->scale;
 }
 
 double CCourse::GetMaxHeight(double distance) const {
 	return GetBaseHeight(distance) + curr_course->scale;
-}
-
-void CCourse::GetDivisions(int *x, int *y) const {
-	*x = nx;
-	*y = ny;
 }
 
 const TPolyhedron& CCourse::GetPoly(size_t type) const {
@@ -338,6 +331,7 @@ bool CCourse::LoadElevMap() {
 		return false;
 	}
 
+	// Get size of course from elevation map
 	nx = img.nx;
 	ny = img.ny;
 	try {
@@ -366,6 +360,11 @@ bool CCourse::LoadElevMap() {
 // ====================================================================
 
 void CCourse::LoadItemList() {
+	if (ObjTypes.empty()) {
+		Message("No object types loaded.");
+		return;
+	}
+
 	CSPList list(16000);
 
 	if (!list.Load(CourseDir, "items.lst")) {
@@ -588,8 +587,8 @@ bool CCourse::LoadTerrainTypes() {
 		TerrList[i].tracktex = SPIntN(*line, "tracktex", -1);
 		TerrList[i].stoptex = SPIntN(*line, "stoptex", -1);
 		TerrList[i].col = SPColor3N(*line, "col", TColor3(1, 1, 1));
-		TerrList[i].friction = SPFloatN(*line, "friction", 0.5);
-		TerrList[i].depth = SPFloatN(*line, "depth", 0.01);
+		TerrList[i].friction = SPFloatN(*line, "friction", 0.5f);
+		TerrList[i].depth = SPFloatN(*line, "depth", 0.01f);
 		TerrList[i].particles = SPBoolN(*line, "part", false);
 		TerrList[i].trackmarks = SPBoolN(*line, "trackmarks", false);
 		TerrList[i].texture = NULL;
@@ -913,8 +912,6 @@ void CCourse::FindBarycentricCoords(double x, double z, TVector2i *idx0,
                        ELEV((_x),(_y)), -(double)(_y)/(ny-1.)*curr_course->size.y )
 
 TVector3d CCourse::FindCourseNormal(double x, double z) const {
-
-	double *elevation = Course.elevation;
 	int x0, x1, y0, y1;
 	GetIndicesForPoint(x, z, &x0, &y0, &x1, &y1);
 
@@ -951,7 +948,6 @@ double CCourse::FindYCoord(double x, double z) const {
 	static bool cache_full = false;
 
 	if (cache_full && last_x == x && last_z == z) return last_y;
-	double *elevation = Course.elevation;
 
 	TVector2i idx0, idx1, idx2;
 	double u, v;

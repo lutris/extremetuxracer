@@ -27,7 +27,7 @@ struct TCredits {
 	string text;
 	int offs;
 	int font;
-	double size;
+	float size;
 	int col;
 };
 

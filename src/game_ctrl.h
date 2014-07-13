@@ -135,7 +135,7 @@ public:
 	void SavePlayers() const;
 	void ResetControls();
 	void AllocControl(size_t player);
-	void LoadAvatars();
+	bool LoadAvatars();
 	size_t numAvatars() const { return avatars.size(); }
 	size_t numPlayers() const { return plyr.size(); }
 
@@ -166,7 +166,7 @@ public:
 
 	~CCharacter();
 
-	void LoadCharacterList();
+	bool LoadCharacterList();
 	void FreeCharacterPreviews();
 };
 

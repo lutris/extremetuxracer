@@ -59,6 +59,7 @@ void     Str_ArrN(const string &s, float *arr, size_t count, float def);
 size_t   SPPosN(const string &s, const string &tag);
 
 string   SPStrN(const string &s, const string &tag, const string& def = emptyString);
+string   SPStrN(const string &s, const char* tag, const char* def);
 int      SPIntN(const string &s, const string &tag, const int def);
 bool     SPBoolN(const string &s, const string &tag, const bool def);
 float    SPFloatN(const string &s, const string &tag, const float def);

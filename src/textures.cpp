@@ -534,7 +534,7 @@ CTexture::~CTexture() {
 	FreeTextureList();
 }
 
-void CTexture::LoadTextureList() {
+bool CTexture::LoadTextureList() {
 	FreeTextureList();
 	CSPList list(200);
 	if (list.Load(param.tex_dir, "textures.lst")) {
@@ -551,7 +551,11 @@ void CTexture::LoadTextureList() {
 					CommonTex[id]->Load(param.tex_dir, texfile);
 			} else Message("wrong texture id in textures.lst");
 		}
-	} else Message("failed to load common textures");
+	} else {
+		Message("failed to load common textures");
+		return false;
+	}
+	return true;
 }
 
 void CTexture::FreeTextureList() {

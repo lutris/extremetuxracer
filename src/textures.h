@@ -129,7 +129,7 @@ private:
 public:
 	CTexture();
 	~CTexture();
-	void LoadTextureList();
+	bool LoadTextureList();
 	void FreeTextureList();
 
 	TTexture* GetTexture(size_t idx) const;

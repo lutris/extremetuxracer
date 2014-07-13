@@ -238,12 +238,12 @@ void CPlayers::AllocControl(size_t player) {
 
 // ----------------------- avatars ------------------------------------
 
-void CPlayers::LoadAvatars() {
+bool CPlayers::LoadAvatars() {
 	CSPList list(MAX_AVATARS);
 
 	if (!list.Load(param.player_dir, "avatars.lst")) {
 		Message("could not load avators.lst");
-		return;
+		return false;
 	}
 
 	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
@@ -254,6 +254,7 @@ void CPlayers::LoadAvatars() {
 		} else
 			delete texture;
 	}
+	return true;
 }
 
 TTexture* CPlayers::GetAvatarTexture(size_t avatar) const {
@@ -287,12 +288,12 @@ CCharacter::~CCharacter() {
 	}
 }
 
-void CCharacter::LoadCharacterList() {
+bool CCharacter::LoadCharacterList() {
 	CSPList list(MAX_CHARACTERS);
 
 	if (!list.Load(param.char_dir, "characters.lst")) {
 		Message("could not load characters.lst");
-		return;
+		return false;
 	}
 
 	CharList.resize(list.size());
@@ -314,7 +315,6 @@ void CCharacter::LoadCharacterList() {
 //				texid = Tex.TexID (NO_PREVIEW);
 			}
 
-
 			ch->shape = new CCharShape;
 			if (ch->shape->Load(charpath, "shape.lst", false) == false) {
 				delete ch->shape;
@@ -332,6 +332,7 @@ void CCharacter::LoadCharacterList() {
 			if (ch->frames[3].loaded == false) ch->finishframesok = false;
 		}
 	}
+	return !CharList.empty();
 }
 
 void CCharacter::FreeCharacterPreviews() {

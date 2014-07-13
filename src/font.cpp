@@ -362,7 +362,7 @@ float CFont::GetTextWidth(const wchar_t *text, const string &fontname, float siz
 }
 
 float CFont::CenterX(const char *text) const {
-	return (Winsys.resolution.width - GetTextWidth(text)) / 2.0;
+	return (Winsys.resolution.width - GetTextWidth(text)) / 2.f;
 }
 
 vector<string> CFont::MakeLineList(const char *source, float width) {

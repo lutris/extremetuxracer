@@ -161,8 +161,8 @@ void SaveConfigFile() {
 	AddIntItem(liste, "framerate", (int)param.framerate);
 	liste.Add();
 
-	AddComment(liste, "Level of details [1...3]");
-	AddComment(liste, "1 = best performance, 3 = best appearance");
+	AddComment(liste, "Level of details [1...4]");
+	AddComment(liste, "1 = best performance, 4 = best appearance");
 	AddIntItem(liste, "detail_level", param.perf_level);
 	liste.Add();
 
@@ -336,12 +336,11 @@ void InitConfig() {
 	param.display_fps = false;
 	param.show_hud = true;
 
-	Trans.LoadLanguages();
-
 	if (FileExists(param.configfile)) {
+		Trans.LoadLanguages();
 		LoadConfigFile();
 	} else {
 		SetConfigDefaults();
-		SaveConfigFile();
+		Trans.LoadLanguages();
 	}
 }

@@ -171,7 +171,7 @@ void CGameConfig::Enter() {
 
 	int siz = FT.AutoSizeN(5);
 	textbuttons[0] = AddTextButton(Trans.Text(28), area.left+50, AutoYPosN(80), siz);
-	double len = FT.GetTextWidth(Trans.Text(8));
+	float len = FT.GetTextWidth(Trans.Text(8));
 	textbuttons[1] = AddTextButton(Trans.Text(15), area.right-len-50, AutoYPosN(80), siz);
 
 	Music.Play(param.config_music, -1);

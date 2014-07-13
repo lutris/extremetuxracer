@@ -212,6 +212,13 @@ string SPStrN(const string &s, const string &tag, const string& def) {
 	return item;
 }
 
+string SPStrN(const string &s, const char* tag, const char* def) {
+	string item = SPItemN(s, tag);
+	if (item.empty()) return def;
+	STrimN(item);
+	return item;
+}
+
 int SPIntN(const string &s, const string &tag, const int def) {
 	return (Str_IntN(SPItemN(s, tag), def));
 }

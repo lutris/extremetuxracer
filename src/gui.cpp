@@ -617,71 +617,72 @@ void SetFocus(TWidget* widget) {
 				break;
 			}
 		}
+}
 
-	void IncreaseFocus() {
-		if (focussed >= 0)
-			Widgets[focussed]->focus = false;
+void IncreaseFocus() {
+	if (focussed >= 0)
+		Widgets[focussed]->focus = false;
+
+	focussed++;
+	if (focussed >= (int)Widgets.size())
+		focussed = 0;
+	int end = focussed;
+	// Select only active widgets
+	do {
+		if (Widgets[focussed]->GetActive())
+			break;
 
 		focussed++;
 		if (focussed >= (int)Widgets.size())
 			focussed = 0;
-		int end = focussed;
-		// Select only active widgets
-		do {
-			if (Widgets[focussed]->GetActive())
-				break;
+	} while (end != focussed);
 
-			focussed++;
-			if (focussed >= (int)Widgets.size())
-				focussed = 0;
-		} while (end != focussed);
+	if (focussed >= 0)
+		Widgets[focussed]->focus = true;
+}
+void DecreaseFocus() {
+	if (focussed >= 0)
+		Widgets[focussed]->focus = false;
 
-		if (focussed >= 0)
-			Widgets[focussed]->focus = true;
-	}
-	void DecreaseFocus() {
-		if (focussed >= 0)
-			Widgets[focussed]->focus = false;
+	if (focussed > 0)
+		focussed--;
+	else
+		focussed = (int)Widgets.size()-1;
+	int end = focussed;
+	// Select only active widgets
+	do {
+		if (Widgets[focussed]->GetActive())
+			break;
 
 		if (focussed > 0)
 			focussed--;
 		else
 			focussed = (int)Widgets.size()-1;
-		int end = focussed;
-		// Select only active widgets
-		do {
-			if (Widgets[focussed]->GetActive())
-				break;
+	} while (end != focussed);
 
-			if (focussed > 0)
-				focussed--;
-			else
-				focussed = (int)Widgets.size()-1;
-		} while (end != focussed);
+	if (focussed >= 0)
+		Widgets[focussed]->focus = true;
+}
 
-		if (focussed >= 0)
-			Widgets[focussed]->focus = true;
-	}
-
-	void ResetGUI() {
-		for (size_t i = 0; i < Widgets.size(); i++)
-			delete Widgets[i];
-		Widgets.clear();
-		focussed = 0;
-	}
+void ResetGUI() {
+	for (size_t i = 0; i < Widgets.size(); i++)
+		delete Widgets[i];
+	Widgets.clear();
+	focussed = 0;
+}
 
 // ------------------ new ---------------------------------------------
 
-	int AutoYPosN(double percent) {
-		return Winsys.resolution.height * percent / 100.0;
-	}
+int AutoYPosN(double percent) {
+	return Winsys.resolution.height * percent / 100.0;
+}
 
-	TArea AutoAreaN(double top_perc, double bott_perc, int w) {
-		TArea res;
-		res.top = AutoYPosN(top_perc);
-		res.bottom = AutoYPosN(bott_perc);
-		if (w > Winsys.resolution.width) w = Winsys.resolution.width;
-		res.left = (Winsys.resolution.width - w) / 2;
-		res.right = Winsys.resolution.width - res.left;
-		return res;
-	}
+TArea AutoAreaN(double top_perc, double bott_perc, int w) {
+	TArea res;
+	res.top = AutoYPosN(top_perc);
+	res.bottom = AutoYPosN(bott_perc);
+	if (w > Winsys.resolution.width) w = Winsys.resolution.width;
+	res.left = (Winsys.resolution.width - w) / 2;
+	res.right = Winsys.resolution.width - res.left;
+	return res;
+}

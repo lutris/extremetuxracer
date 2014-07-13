@@ -75,7 +75,7 @@ struct TFlakeArea {
 	vector<TFlake> flakes;
 
 	TFlakeArea(
-	    int num_flakes,
+	    size_t num_flakes,
 	    float xrange,
 	    float ytop,
 	    float yrange,

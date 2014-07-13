@@ -177,20 +177,19 @@ void CControl::AdjustTreeCollision(const TVector3d& pos, TVector3d *vel) {
 }
 
 void CControl::CheckItemCollection(const TVector3d& pos) {
-	TItem *items = &Course.NocollArr[0];
 	size_t num_items = Course.NocollArr.size();
 
 	for (size_t i=0; i<num_items; i++) {
-		if (items[i].collectable != 1) continue;
+		if (Course.NocollArr[i].collectable != 1) continue;
 
-		double diam = items[i].diam;
-		const TVector3d& loc = items[i].pt;
+		double diam = Course.NocollArr[i].diam;
+		const TVector3d& loc = Course.NocollArr[i].pt;
 
 		TVector3d distvec(loc.x - pos.x, loc.y - pos.y, loc.z - pos.z);
 		double squared_dist = (diam / 2. + 0.7);
 		squared_dist *= squared_dist;
 		if (MAG_SQD(distvec) <= squared_dist) {  // Check collision using a bounding sphere
-			items[i].collectable = 0;
+			Course.NocollArr[i].collectable = 0;
 			g_game.herring += 1;
 			Sound.Play("pickup1", 0);
 			Sound.Play("pickup2", 0);
@@ -403,11 +402,10 @@ TVector3d CControl::CalcNetForce(const TVector3d& pos, const TVector3d& vel) {
 	if (surfweights.size() != Course.TerrList.size())
 		surfweights.resize(Course.TerrList.size());
 	Course.GetSurfaceType(ff.pos.x, ff.pos.z, &surfweights[0]);
-	TTerrType *TerrList = &Course.TerrList[0];
 	ff.frict_coeff = ff.comp_depth = 0;
 	for (size_t i=0; i<Course.TerrList.size(); i++) {
-		ff.frict_coeff += surfweights[i] * TerrList[i].friction;
-		ff.comp_depth += surfweights[i] * TerrList[i].depth;
+		ff.frict_coeff += surfweights[i] * Course.TerrList[i].friction;
+		ff.comp_depth += surfweights[i] * Course.TerrList[i].depth;
 	}
 
 	TPlane surfplane = Course.GetLocalCoursePlane(ff.pos);
