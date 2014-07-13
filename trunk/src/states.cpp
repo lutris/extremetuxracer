@@ -42,7 +42,7 @@ void State::Manager::Run(State& entranceState) {
 		CallLoopFunction();
 		if (param.framerate != 0) {
 			clock_t nticks = clock();
-			int32_t sleeptime = (CLOCKS_PER_SEC/param.framerate - (nticks-ticks)) / 1000;
+			int32_t sleeptime = (int32_t)(CLOCKS_PER_SEC / param.framerate - (nticks - ticks)) * (1000 / CLOCKS_PER_SEC);
 			if (sleeptime > 0)
 				SDL_Delay(sleeptime);
 			ticks = nticks;

@@ -149,7 +149,6 @@ static int dd;
 
 void CGameConfig::Enter() {
 	Winsys.ShowCursor(!param.ice_cursor);
-	Winsys.KeyRepeat(true);
 
 	for (int i=0; i<NUM_RESOLUTIONS; i++) res_names[i] = Winsys.GetResName(i);
 
@@ -199,9 +198,6 @@ void CGameConfig::Loop(double time_step) {
 	Tex.Draw(TOP_LEFT, 0, 0, 1);
 	Tex.Draw(TOP_RIGHT, ww-256, 0, 1);
 
-//	DrawFrameX (area.left, area.top, area.right-area.left, area.bottom - area.top,
-//			0, colMBackgr, colBlack, 0.2);
-
 	FT.AutoSizeN(4);
 
 	if (resolution->focussed()) FT.SetColor(colDYell);
@@ -250,8 +246,4 @@ void CGameConfig::Loop(double time_step) {
 
 	Reshape(ww, hh);
 	Winsys.SwapBuffers();
-}
-
-void CGameConfig::Exit() {
-	Winsys.KeyRepeat(false);
 }

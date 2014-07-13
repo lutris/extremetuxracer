@@ -22,7 +22,6 @@ GNU General Public License for more details.
 #include "states.h"
 
 class COglTest : public State {
-	void Enter();
 	void Loop(double time_step);
 	void Keyb(unsigned int key, bool special, bool release, int x, int y);
 public:

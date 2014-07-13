@@ -84,6 +84,7 @@
     <UIRef Id="WixUI_FeatureTree"/>
 
     <Icon Id='ExtremeTuxRacer.exe' SourceFile='$(var.BinDir)\ExtremeTuxRacer.exe' />
+    <Property Id="ARPPRODUCTICON" Value="ExtremeTuxRacer.exe" />
 
     <WixVariable Id="WixUILicenseRtf" Value="GPLv3.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="..\..\resources\banner.bmp" />
