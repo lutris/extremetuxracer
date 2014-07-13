@@ -219,7 +219,7 @@ void CRaceSelect::Loop(double timestep) {
 		FT.DrawString(boxleft+8, prevtop+i*dist, CourseList[course->GetValue()].desc[i]);
 	}
 
-	FT.DrawString(CENTER, prevtop + prevheight + 10, "Author:  " + CourseList[course->GetValue()].author);
+	FT.DrawString(CENTER, prevtop + prevheight + 10, Trans.Text(93) + ":  " + CourseList[course->GetValue()].author);
 
 	FT.DrawString(CENTER, AutoYPosN(45), info);
 

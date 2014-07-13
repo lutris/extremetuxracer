@@ -99,10 +99,15 @@
 
 *[idx] 83 [engl] Randomize settings [trans]
 
-*[idx] 84 [engl] Score [trans]
-*[idx] 85 [engl] Herring [trans]
-*[idx] 86 [engl] Time [trans]
-*[idx] 87 [engl] Path length [trans]
-*[idx] 88 [engl] Average speed [trans]
-*[idx] 89 [engl] Position [trans]
-*[idx] 90 [engl] in highscore list [trans]
+*[idx] 84 [engl] Fullscreen setting has changed, [trans]
+*[idx] 85 [engl] You need to restart the game [trans]
+
+*[idx] 86 [engl] Score [trans]
+*[idx] 87 [engl] Herring [trans]
+*[idx] 88 [engl] Time [trans]
+*[idx] 89 [engl] Path length [trans]
+*[idx] 90 [engl] Average speed [trans]
+*[idx] 91 [engl] Position [trans]
+*[idx] 92 [engl] in highscore list [trans]
+
+*[idx] 93 [engl] Author [trans]

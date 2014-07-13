@@ -235,8 +235,6 @@ void CTools::Enter() {
 
 	InitCharTools();
 	InitFrameTools();
-
-	Winsys.KeyRepeat(true);
 }
 
 void CTools::Keyb(unsigned int key, bool special, bool release, int x, int y) {

@@ -171,7 +171,6 @@ void CWinsys::Init() {
 	Reshape(resolution.width, resolution.height);
 
 	SDL_WM_SetCaption(WINDOW_TITLE, WINDOW_TITLE);
-	KeyRepeat(false);
 	if (USE_JOYSTICK) InitJoystick();
 //	SDL_EnableUNICODE (1);
 }

@@ -611,79 +611,77 @@ void SetFocus(TWidget* widget) {
 	if (!widget)
 		focussed = -1;
 	else
-		for (int i = 0; i < (int)Widgets.size(); i++)
+		for (size_t i = 0; i < Widgets.size(); i++) {
 			if (Widgets[i] == widget) {
-				focussed = i;
+				focussed = (int)i;
 				break;
 			}
-}
+		}
 
-void IncreaseFocus() {
-	if (focussed >= 0)
-		Widgets[focussed]->focus = false;
-
-	focussed++;
-	if (focussed >= (int)Widgets.size())
-		focussed = 0;
-	int end = focussed;
-	// Select only active widgets
-	do {
-		if (Widgets[focussed]->GetActive())
-			break;
+	void IncreaseFocus() {
+		if (focussed >= 0)
+			Widgets[focussed]->focus = false;
 
 		focussed++;
 		if (focussed >= (int)Widgets.size())
 			focussed = 0;
-	} while (end != focussed);
+		int end = focussed;
+		// Select only active widgets
+		do {
+			if (Widgets[focussed]->GetActive())
+				break;
 
-	if (focussed >= 0)
-		Widgets[focussed]->focus = true;
-}
-void DecreaseFocus() {
-	if (focussed >= 0)
-		Widgets[focussed]->focus = false;
+			focussed++;
+			if (focussed >= (int)Widgets.size())
+				focussed = 0;
+		} while (end != focussed);
 
-	if (focussed > 0)
-		focussed--;
-	else
-		focussed = (int)Widgets.size()-1;
-	int end = focussed;
-	// Select only active widgets
-	do {
-		if (Widgets[focussed]->GetActive())
-			break;
+		if (focussed >= 0)
+			Widgets[focussed]->focus = true;
+	}
+	void DecreaseFocus() {
+		if (focussed >= 0)
+			Widgets[focussed]->focus = false;
 
 		if (focussed > 0)
 			focussed--;
 		else
 			focussed = (int)Widgets.size()-1;
-	} while (end != focussed);
+		int end = focussed;
+		// Select only active widgets
+		do {
+			if (Widgets[focussed]->GetActive())
+				break;
 
-	if (focussed >= 0)
-		Widgets[focussed]->focus = true;
-}
+			if (focussed > 0)
+				focussed--;
+			else
+				focussed = (int)Widgets.size()-1;
+		} while (end != focussed);
 
-void ResetGUI() {
-	for (size_t i = 0; i < Widgets.size(); i++)
-		delete Widgets[i];
-	Widgets.clear();
-	focussed = 0;
-}
+		if (focussed >= 0)
+			Widgets[focussed]->focus = true;
+	}
+
+	void ResetGUI() {
+		for (size_t i = 0; i < Widgets.size(); i++)
+			delete Widgets[i];
+		Widgets.clear();
+		focussed = 0;
+	}
 
 // ------------------ new ---------------------------------------------
 
-int AutoYPosN(double percent) {
-	double hh = (double)Winsys.resolution.height;
-	double po = hh * percent / 100;
-	return (int)(po);
-}
+	int AutoYPosN(double percent) {
+		return Winsys.resolution.height * percent / 100.0;
+	}
 
-TArea AutoAreaN(double top_perc, double bott_perc, int w) {
-	TArea res;
-	res.top = AutoYPosN(top_perc);
-	res.bottom = AutoYPosN(bott_perc);
-	if (w > Winsys.resolution.width) w = Winsys.resolution.width;
-	res.left = (Winsys.resolution.width - w) / 2;
-	res.right = Winsys.resolution.width - res.left;
-	return res;
-}
+	TArea AutoAreaN(double top_perc, double bott_perc, int w) {
+		TArea res;
+		res.top = AutoYPosN(top_perc);
+		res.bottom = AutoYPosN(bott_perc);
+		if (w > Winsys.resolution.width) w = Winsys.resolution.width;
+		res.left = (Winsys.resolution.width - w) / 2;
+		res.right = Winsys.resolution.width - res.left;
+		return res;
+	}

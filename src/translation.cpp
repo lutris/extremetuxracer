@@ -125,13 +125,18 @@ void CTranslation::SetDefaultTranslations() {
 
 	texts[83] = "Randomize settings";
 
-	texts[84] = "Score";
-	texts[85] = "Herring";
-	texts[86] = "Time";
-	texts[87] = "Path length";
-	texts[88] = "Average speed";
-	texts[89] = "Position";
-	texts[90] = "in highscore list";
+	texts[84] = "Fullscreen setting has changed,";
+	texts[85] = "You need to restart the game";
+
+	texts[86] = "Score";
+	texts[87] = "Herring";
+	texts[88] = "Time";
+	texts[89] = "Path length";
+	texts[90] = "Average speed";
+	texts[91] = "Position";
+	texts[92] = "in highscore list";
+
+	texts[93] = "Author";
 }
 
 const string& CTranslation::Text(size_t idx) const {

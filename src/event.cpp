@@ -194,9 +194,6 @@ void CEvent::Loop(double timestep) {
 	Tex.Draw(TOP_LEFT, 0, 0, 1);
 	Tex.Draw(TOP_RIGHT, ww-256, 0, 1);
 
-//	DrawFrameX (area.left, area.top, area.right-area.left, area.bottom - area.top,
-//			0, colMBackgr, colBlack, 0.2);
-
 	if (ready == 0) {			// cup not finished
 		FT.AutoSizeN(6);
 		FT.SetColor(colWhite);

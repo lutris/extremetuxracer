@@ -221,6 +221,8 @@ void CRacing::Enter() {
 	Music.PlayTheme(g_game.theme_id, MUS_RACING);
 
 	g_game.finish = false;
+
+	Winsys.KeyRepeat(false);
 }
 
 // -------------------- sound -----------------------------------------
@@ -383,6 +385,7 @@ void CRacing::Loop(double time_step) {
 }
 // ---------------------------------- term ------------------
 void CRacing::Exit() {
+	Winsys.KeyRepeat(true);
 	Sound.HaltAll();
 	break_track_marks();
 }
