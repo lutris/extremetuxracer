@@ -45,11 +45,11 @@ void InitGame(int argc, char **argv) {
 		if (group_arg == "9") g_game.argument = 9;
 	}
 
-	g_game.player = NULL;
+	g_game.player = nullptr;
 	g_game.start_player = 0;
-	g_game.course = NULL;
+	g_game.course = nullptr;
 	g_game.mirrorred = false;
-	g_game.character = NULL;
+	g_game.character = nullptr;
 	g_game.location_id = 0;
 	g_game.light_id = 0;
 	g_game.snow_id = 0;
@@ -64,16 +64,12 @@ void InitGame(int argc, char **argv) {
 // 					main
 // ====================================================================
 
-#if defined ( OS_WIN32_MINGW )
-#undef main
-#endif
-
 int main(int argc, char **argv) {
 	// ****************************************************************
 	cout << "\n----------- Extreme Tux Racer " ETR_VERSION_STRING " ----------------";
 	cout << "\n----------- (C) 2010-2014 Extreme Tuxracer Team  --------\n\n";
 
-	srand(time(NULL));
+	srand(time(nullptr));
 	InitConfig();
 	InitGame(argc, argv);
 	Winsys.Init();
@@ -90,7 +86,6 @@ int main(int argc, char **argv) {
 	}
 	FT.LoadFontlist();
 	FT.SetFontFromSettings();
-	Audio.Open();
 	Music.LoadMusicList();
 	Music.SetVolume(param.music_volume);
 

@@ -102,7 +102,7 @@ CGluCamera::CGluCamera() {
 	farther = false;
 }
 
-void CGluCamera::Update(double timestep) {
+void CGluCamera::Update(float timestep) {
 	if (turnright) angle += timestep * 2000;
 	if (turnleft) angle -= timestep * 2000;
 	if (nearer) distance -= timestep * 100;
@@ -135,7 +135,7 @@ static const TLight toollight = {
 };
 static int tool_mode = 0;
 
-void DrawQuad(float x, float y, float w, float h, float scrheight, const TColor& col, int frame) {
+void DrawQuad(float x, float y, float w, float h, float scrheight, const sf::Color& col, int frame) {
 	glDisable(GL_TEXTURE_2D);
 	glColor(col);
 	const GLfloat vtx[] = {
@@ -237,16 +237,16 @@ void CTools::Enter() {
 	InitFrameTools();
 }
 
-void CTools::Keyb(unsigned int key, bool special, bool release, int x, int y) {
+void CTools::Keyb(sf::Keyboard::Key key, bool release, int x, int y) {
 	switch (tool_mode) {
 		case 0:
-			CharKeys(key, special, release, x, y);
+			CharKeys(key, release, x, y);
 			break;
 		case 1:
-			SingleFrameKeys(key, special, release, x, y);
+			SingleFrameKeys(key, release, x, y);
 			break;
 		case 2:
-			SequenceKeys(key, special, release, x, y);
+			SequenceKeys(key, release, x, y);
 			break;
 	}
 }
@@ -279,7 +279,7 @@ void CTools::Motion(int x, int y) {
 	}
 }
 
-void CTools::Loop(double timestep) {
+void CTools::Loop(float timestep) {
 	switch (tool_mode) {
 		case 0:
 			RenderChar(timestep);

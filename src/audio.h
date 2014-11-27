@@ -20,52 +20,31 @@ GNU General Public License for more details.
 #include "bh.h"
 #include <vector>
 #include <map>
-#include <SDL/SDL_mixer.h>
-
-// --------------------------------------------------------------------
-//				class CAudio
-// --------------------------------------------------------------------
-
-class CAudio {
-private:
-public:
-	CAudio();
-
-	void Open();
-	void Close();
-	static bool CheckOpen();
-	bool IsOpen;
-};
 
 // --------------------------------------------------------------------
 //				class CSound
 // --------------------------------------------------------------------
 
-struct TSound {
-	Mix_Chunk *chunk;
-	int channel;
-	int loop_count;
-	bool active;
 
-	void Play(int loop);
-};
+struct TSound;
 
 class CSound {
 private:
-	vector<TSound> sounds;
+	vector<TSound*> sounds;
 	map<string, size_t> SoundIndex;
 public:
-	bool LoadChunk(const std::string& name, const char *filename);
+	~CSound();
+	bool LoadChunk(const std::string& name, const std::string& filename);
 	void LoadSoundList();
 	size_t GetSoundIdx(const string& name) const;
 
 	void SetVolume(size_t soundid, int volume);
 	void SetVolume(const string& name, int volume);
 
-	void Play(size_t soundid, int loop);
-	void Play(const string& name, int loop);  // -1 infinite, 0 once, 1 twice ...
-	void Play(size_t soundid, int loop, int volume);
-	void Play(const string& name, int loop, int volume);
+	void Play(size_t soundid, bool loop);
+	void Play(const string& name, bool loop);
+	void Play(size_t soundid, bool loop, int volume);
+	void Play(const string& name, bool loop, int volume);
 
 	void Halt(size_t soundid);
 	void Halt(const string& name);
@@ -85,34 +64,37 @@ enum ESituation {
 	SITUATION_COUNT
 };
 
+namespace sf {
+class Music;
+};
+
 class CMusic {
 private:
-	vector<Mix_Music*> musics;
+	vector<sf::Music*> musics;
 	map<string, size_t> MusicIndex;
 
-	struct Situation {Mix_Music* situation[SITUATION_COUNT];};
+	struct Situation { sf::Music* situation[SITUATION_COUNT]; };
 	vector<Situation> themes;
 	map<string, size_t> ThemesIndex;
 
-	int loop_count;			// we need only 1 variable for all pieces
-	Mix_Music* curr_music;	// current music piece
+	sf::Music* curr_music;	// current music piece
 	int curr_volume;
 
-	bool Play(Mix_Music* music, int loop, int volume);
+	bool Play(sf::Music* music, bool loop, int volume);
 public:
 	CMusic();
+	~CMusic();
 
-	bool LoadPiece(const string& name, const char *filename);
+	bool LoadPiece(const string& name, const string& filename);
 	void LoadMusicList();
 	size_t GetMusicIdx(const string& name) const;
 	size_t GetThemeIdx(const string& theme) const;
 
 	void SetVolume(int volume);
-	void Update();
-	bool Play(size_t musid, int loop);
-	bool Play(const string& name, int loop);
-	bool Play(size_t musid, int loop, int volume);
-	bool Play(const string& name, int loop, int volume);
+	bool Play(size_t musid, bool loop);
+	bool Play(const string& name, bool loop);
+	bool Play(size_t musid, bool loop, int volume);
+	bool Play(const string& name, bool loop, int volume);
 	bool PlayTheme(size_t theme, ESituation situation);
 	void Halt();
 	void FreeMusics();
@@ -120,7 +102,6 @@ public:
 
 // --------------------------------------------------------------------
 
-extern CAudio Audio;
 extern CMusic Music;
 extern CSound Sound;
 

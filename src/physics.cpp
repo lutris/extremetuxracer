@@ -109,7 +109,7 @@ bool CControl::CheckTreeCollisions(const TVector3d& pos, TVector3d *tree_loc) {
 	TVector3d dist_vec = pos - last_collision_pos;
 	if (MAG_SQD(dist_vec) < COLL_TOLERANCE) {
 		if (last_collision && !cairborne) {
-			if (tree_loc != NULL) *tree_loc = last_collision_tree_loc;
+			if (tree_loc != nullptr) *tree_loc = last_collision_tree_loc;
 			return true;
 		} else return false;
 	}
@@ -137,7 +137,7 @@ bool CControl::CheckTreeCollisions(const TVector3d& pos, TVector3d *tree_loc) {
 
 		hit = g_game.character->shape->Collision(pos, ph2);
 		if (hit == true) {
-			if (tree_loc != NULL) *tree_loc = loc;
+			if (tree_loc != nullptr) *tree_loc = loc;
 			Sound.Play("tree_hit", 0);
 			break;
 		}
@@ -201,7 +201,7 @@ void CControl::CheckItemCollection(const TVector3d& pos) {
 //				position and velocity  ***
 // --------------------------------------------------------------------
 
-void CControl::AdjustVelocity(const TPlane& surf_plane) {
+void CControl::AdjustVelocity() {
 	double speed = cvel.Norm();
 	speed = max(minSpeed, speed);
 	cvel *= speed;
@@ -268,7 +268,7 @@ const double airlog[]  = {-1, 0, 1, 2, 3, 4, 5, 6};
 const double airdrag[] = {2.25, 1.35, 0.6, 0, -0.35, -0.45, -0.33, -0.9};
 
 TVector3d CControl::CalcAirForce() {
-	TVector3d windvec = -1.0 * ff.vel;
+	TVector3d windvec = -ff.vel;
 	if (g_game.wind_id > 0)
 		windvec += WIND_FACTOR * Wind.WindDrift();
 
@@ -368,9 +368,9 @@ TVector3d CControl::CalcPaddleForce(double speed) {
 			paddleforce.z = -TUX_MASS * EARTH_GRAV / 4.0;
 			paddleforce = RotateVector(corientation, paddleforce);
 		} else {
-			double factor = -1 * min(MAX_PADD_FORCE, MAX_PADD_FORCE
-			                         * (MAX_PADDLING_SPEED - speed) / MAX_PADDLING_SPEED
-			                         * min(1.0, ff.frict_coeff / IDEAL_PADD_FRIC));
+			double factor = -min(MAX_PADD_FORCE, MAX_PADD_FORCE
+			                     * (MAX_PADDLING_SPEED - speed) / MAX_PADDLING_SPEED
+			                     * min(1.0, ff.frict_coeff / IDEAL_PADD_FRIC));
 			paddleforce = factor * ff.frictdir;
 		}
 	} else return paddleforce;
@@ -443,7 +443,7 @@ void CControl::SolveOdeSystem(double timestep) {
 
 	static const TOdeSolver solver;
 	double h = ode_time_step;
-	if (h < 0 || solver.EstimateError == NULL)
+	if (h < 0 || solver.EstimateError == nullptr)
 		h = AdjustTimeStep(timestep, cvel);
 	double t = 0;
 	double tfinal = timestep;
@@ -516,7 +516,7 @@ void CControl::SolveOdeSystem(double timestep) {
 			new_vel.y = solver.FinalEstimate(&vy);
 			new_vel.z = solver.FinalEstimate(&vz);
 
-			if (solver.EstimateError != NULL) {
+			if (solver.EstimateError != nullptr) {
 				pos_err[0] = solver.EstimateError(&x);
 				pos_err[1] = solver.EstimateError(&y);
 				pos_err[2] = solver.EstimateError(&z);
@@ -565,7 +565,7 @@ void CControl::SolveOdeSystem(double timestep) {
 
 		new_f = CalcNetForce(new_pos, new_vel);
 
-		if (!failed && solver.EstimateError != NULL) {
+		if (!failed && solver.EstimateError != nullptr) {
 			double temp = 1.25 * pow(err / tol, solver.TimestepExponent());
 			if (temp > 0.2) h = h / temp;
 			else h = 5.0 * h;
@@ -590,7 +590,7 @@ void CControl::SolveOdeSystem(double timestep) {
 //				update tux position
 // --------------------------------------------------------------------
 
-void CControl::UpdatePlayerPos(double timestep) {
+void CControl::UpdatePlayerPos(float timestep) {
 	CCharShape *shape = g_game.character->shape;
 	double paddling_factor;
 	double flap_factor;
@@ -613,7 +613,7 @@ void CControl::UpdatePlayerPos(double timestep) {
 	dist_from_surface = DistanceToPlane(surf_plane, cpos);
 
 	double speed = cvel.Length();
-	AdjustVelocity(surf_plane);
+	AdjustVelocity();
 	AdjustPosition(surf_plane, dist_from_surface);
 	SetTuxPosition(speed);	// speed only to set finish_speed
 	shape->AdjustOrientation(this, timestep, dist_from_surface, surf_nml);

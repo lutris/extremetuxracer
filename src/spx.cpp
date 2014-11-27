@@ -75,9 +75,7 @@ void STrimN(string &s) {
 // --------------------------------------------------------------------
 
 string Int_StrN(const int val) {
-	ostringstream os;
-	os << val;
-	return os.str();
+	return std::to_string(val);
 }
 
 string Int_StrN(const int val, const streamsize count) {
@@ -162,16 +160,16 @@ template TVector4<double> Str_Vector4(const string &s, const TVector4<double> &d
 template TVector4<int> Str_Vector4(const string &s, const TVector4<int> &def);
 
 
-TColor Str_ColorN(const string &s, const TColor &def) {
+sf::Color Str_ColorN(const string &s, const sf::Color &def) {
 	float r, g, b, a;
 	istringstream is(s);
 	is >> r >> g >> b >> a;
 	if (is.fail()) return def;
-	else return TColor(r, g, b, a);
+	else return sf::Color(r * 255, g * 255, b * 255, a * 255);
 }
 
 TColor3 Str_Color3N(const string &s, const TColor3 &def) {
-	float r, g, b;
+	int r, g, b;
 	istringstream is(s);
 	is >> r >> g >> b;
 	if (is.fail()) return def;
@@ -254,7 +252,7 @@ TVector4<T> SPVector4(const string &s, const string &tag, const TVector4<T>& def
 template TVector4<int> SPVector4(const string &s, const string &tag, const TVector4<int>& def);
 template TVector4<double> SPVector4(const string &s, const string &tag, const TVector4<double>& def);
 
-TColor SPColorN(const string &s, const string &tag, const TColor& def) {
+sf::Color SPColorN(const string &s, const string &tag, const sf::Color& def) {
 	return (Str_ColorN(SPItemN(s, tag), def));
 }
 
@@ -385,15 +383,15 @@ void CSPList::Print() const {
 
 bool CSPList::Load(const string &filepath) {
 	std::ifstream tempfile(filepath.c_str());
-	string line;
 
 	if (!tempfile) {
 		Message("CSPList::Load - unable to open " + filepath);
 		return false;
 	} else {
 		bool backflag = false;
-		while (getline(tempfile, line)) {
+		string line;
 
+		while (getline(tempfile, line)) {
 			// delete new line char if in string
 			size_t npos = line.rfind('\n');
 			if (npos != string::npos) SDeleteN(line, npos, 1);
@@ -408,12 +406,10 @@ bool CSPList::Load(const string &filepath) {
 						if (line[0] == '*' || empty()) Add(line);
 						else back() += line;
 					} else {
-						bool fwdflag;
-						if (line[line.length()-1] == '\\') {
+						bool fwdflag = false;
+						if (line.back() == '\\') {
 							SDeleteN(line, line.length()-1, 1);
 							fwdflag = true;
-						} else {
-							fwdflag = false;
 						}
 
 						if (backflag == false) Add(line);

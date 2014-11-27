@@ -25,7 +25,7 @@ void set_view_mode(CControl *ctrl, TViewMode mode);
 void update_view(CControl *ctrl, double dt);
 
 void SetStationaryCamera(bool stat);  // 0 follow, 1 stationary
-void IncCameraDistance(double timestep);
+void IncCameraDistance(float timestep);
 void SetCameraDistance(double val);
 
 // ------------- viewfrustum ------------------------------------------

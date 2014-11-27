@@ -34,11 +34,11 @@ struct TCredits {
 class CCredits : public State {
 	list<TCredits> CreditList;
 
-	void DrawCreditsText(double time_step);
+	void DrawCreditsText(float time_step);
 	void Enter();
 	void Exit();
-	void Loop(double time_step);
-	void Keyb(unsigned int key, bool special, bool release, int x, int y);
+	void Loop(float time_step);
+	void Keyb(sf::Keyboard::Key key, bool release, int x, int y);
 	void Mouse(int button, int state, int x, int y);
 	void Motion(int x, int y);
 public:

@@ -35,55 +35,73 @@ GNU General Public License for more details.
 #include "winsys.h"
 
 CSplashScreen SplashScreen;
-
-void CSplashScreen::Keyb(unsigned int key, bool special, bool release, int x, int y) {
-	if (release) return;
-	switch (key) {
-		case SDLK_ESCAPE:
-			State::manager.RequestQuit();
-			break;
-		case SDLK_RETURN:
-			State::manager.RequestEnterState(Regist);
-			break;
-	}
-}
+sf::Text* Failure = nullptr;
+std::string reason;
 
 
 void CSplashScreen::Enter() {
 	Winsys.ShowCursor(!param.ice_cursor);
-	Music.Play(param.menu_music, -1);
+	Music.Play(param.menu_music, true);
 }
 
-void CSplashScreen::Loop(double timestep) {
-	Music.Update();
-	ClearRenderContext();
+void CSplashScreen::Loop(float timestep) {
 	ScopedRenderMode rm(GUI);
-	SetupGuiDisplay();
+	Winsys.clear();
 	Trans.LoadTranslations(param.language);  // Before first texts are being displayed
 
+	sf::Sprite logo(Tex.GetSFTexture(TEXLOGO));
+	logo.setScale(Winsys.scale/2.f, Winsys.scale/2.f);
+	logo.setPosition((Winsys.resolution.width - logo.getTextureRect().width*(Winsys.scale / 2)) / 2, 60);
 
-	Tex.Draw(TEXLOGO, CENTER, 60, Winsys.scale/2.0);
-	FT.SetColor(colDYell);
-	FT.AutoSizeN(6);
-	int top = AutoYPosN(60);
-	int dist = FT.AutoDistanceN(3);
-	FT.DrawString(CENTER, top, Trans.Text(67));
-	FT.DrawString(CENTER, top+dist, Trans.Text(68));
+	if (!Failure) {
+		FT.AutoSizeN(6);
+		sf::Text t1(Trans.Text(67), FT.getCurrentFont(), FT.GetSize());
+		int top = AutoYPosN(60);
+		t1.setPosition((Winsys.resolution.width - t1.getLocalBounds().width) / 2, top);
+		sf::Text t2(Trans.Text(68), FT.getCurrentFont(), FT.GetSize());
+		int dist = FT.AutoDistanceN(3);
+		t2.setPosition((Winsys.resolution.width - t2.getLocalBounds().width) / 2, top + dist);
 
+		Winsys.draw(t1);
+		Winsys.draw(t2);
+	} else {
+		Winsys.draw(*Failure);
+	}
+	Winsys.draw(logo);
 	Winsys.SwapBuffers();
-	init_ui_snow();
 
-	Course.MakeStandardPolyhedrons();
-	Sound.LoadSoundList();
-	Char.LoadCharacterList();
-	Course.LoadObjectTypes();
-	Course.LoadTerrainTypes();
-	Env.LoadEnvironmentList();
-	Course.LoadCourseList();
-	Score.LoadHighScore();  // after LoadCourseList !!!
-	Events.LoadEventList();
-	Players.LoadAvatars();  // before LoadPlayers !!!
-	Players.LoadPlayers();
+	if (!Failure) {
+		init_ui_snow();
 
-	State::manager.RequestEnterState(Regist);
+		Course.MakeStandardPolyhedrons();
+		Sound.LoadSoundList();
+		if (!Char.LoadCharacterList())
+			reason += Trans.Text(93) + "\n";
+		Course.LoadObjectTypes();
+		if (!Course.LoadTerrainTypes())
+			reason += Trans.Text(95) + "\n";
+		if (Env.LoadEnvironmentList()) {
+			if (Course.LoadCourseList()) {
+				Score.LoadHighScore();  // after LoadCourseList !!!
+				Events.LoadEventList();
+
+				if (Players.LoadAvatars()) {  // before LoadPlayers !!!
+					Players.LoadPlayers();
+				} else
+					reason += Trans.Text(96) + "\n";
+			} else
+				reason += Trans.Text(92) + "\n";
+		} else
+			reason += Trans.Text(94) + "\n";
+
+		if (reason.empty())
+			State::manager.RequestEnterState(Regist);
+		else { // Failure
+			FT.AutoSizeN(6);
+			int top = AutoYPosN(60);
+			Failure = new sf::Text(reason, FT.getCurrentFont(), FT.GetSize());
+			Failure->setColor(colDRed);
+			Failure->setPosition((Winsys.resolution.width - Failure->getLocalBounds().width) / 2, top);
+		}
+	}
 }

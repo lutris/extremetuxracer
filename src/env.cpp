@@ -35,7 +35,7 @@ static const float def_diff[]    = {1.0, 0.9, 1.0, 1.0};
 static const float def_spec[]    = {0.6, 0.6, 0.6, 1.0};
 static const float def_pos[]     = {1, 2, 2, 0.0};
 static const float def_fogcol[]  = {0.9, 0.9, 1.0, 0.0};
-static const TColor def_partcol(0.8, 0.8, 0.9, 0.0);
+static const sf::Color def_partcol(0.8*255, 0.8*255, 0.9*255, 0);
 
 void TLight::Enable(GLenum num) const {
 	glLightfv(num, GL_POSITION, position);
@@ -55,7 +55,7 @@ CEnvironment::CEnvironment() {
 	lightcond[3] = "night";
 	for (size_t i = 0; i < 4; i++)
 		LightIndex[lightcond[i]] = i;
-	Skybox = NULL;
+	Skybox = nullptr;
 
 	default_light.is_on = true;
 	for (int i=0; i<4; i++) {
@@ -77,7 +77,7 @@ CEnvironment::CEnvironment() {
 
 void CEnvironment::ResetSkybox() {
 	delete[] Skybox;
-	Skybox = NULL;
+	Skybox = nullptr;
 }
 
 void CEnvironment::SetupLight() {
@@ -218,11 +218,12 @@ void CEnvironment::DrawSkybox(const TVector3d& pos) {
 	glTranslate(pos);
 
 	static const GLfloat tex[] = {
-		aa, aa,
-		bb, aa,
+		aa, bb,
 		bb, bb,
-		aa, bb
+		bb, aa,
+		aa, aa
 	};
+	glTexCoordPointer(2, GL_FLOAT, 0, tex);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -236,7 +237,6 @@ void CEnvironment::DrawSkybox(const TVector3d& pos) {
 
 	Skybox[0].Bind();
 	glVertexPointer(3, GL_SHORT, 0, front);
-	glTexCoordPointer(2, GL_FLOAT, 0, tex);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
 	// left
@@ -248,7 +248,6 @@ void CEnvironment::DrawSkybox(const TVector3d& pos) {
 	};
 	Skybox[1].Bind();
 	glVertexPointer(3, GL_SHORT, 0, left);
-	glTexCoordPointer(2, GL_FLOAT, 0, tex);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
 	// right
@@ -260,7 +259,6 @@ void CEnvironment::DrawSkybox(const TVector3d& pos) {
 	};
 	Skybox[2].Bind();
 	glVertexPointer(3, GL_SHORT, 0, right);
-	glTexCoordPointer(2, GL_FLOAT, 0, tex);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
 	// normally, the following textures are unvisible
@@ -275,7 +273,6 @@ void CEnvironment::DrawSkybox(const TVector3d& pos) {
 		};
 		Skybox[3].Bind();
 		glVertexPointer(3, GL_SHORT, 0, top);
-		glTexCoordPointer(2, GL_FLOAT, 0, tex);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
 		// bottom
@@ -287,7 +284,6 @@ void CEnvironment::DrawSkybox(const TVector3d& pos) {
 		};
 		Skybox[4].Bind();
 		glVertexPointer(3, GL_SHORT, 0, bottom);
-		glTexCoordPointer(2, GL_FLOAT, 0, tex);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
 		// back
@@ -299,7 +295,6 @@ void CEnvironment::DrawSkybox(const TVector3d& pos) {
 		};
 		Skybox[5].Bind();
 		glVertexPointer(3, GL_SHORT, 0, back);
-		glTexCoordPointer(2, GL_FLOAT, 0, tex);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -353,7 +348,7 @@ void CEnvironment::DrawFog() {
 	glEnable(GL_FOG);
 
 	// only the alpha channel is used
-	static const GLfloat bottom_dens[4]     = {0, 0, 0, 1.0};
+	static const GLfloat bottom_dens[4]     = { 0, 0, 0, 1.0 };
 	static const GLfloat top_dens[4]        = { 0, 0, 0, 0.9 };
 	static const GLfloat leftright_dens[4]  = { 0, 0, 0, 0.3 };
 	static const GLfloat top_bottom_dens[4] = { 0, 0, 0, 0.0 };

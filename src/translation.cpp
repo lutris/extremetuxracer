@@ -21,6 +21,7 @@ GNU General Public License for more details.
 
 #include "translation.h"
 #include "spx.h"
+#include "course.h"
 
 CTranslation Trans;
 
@@ -125,23 +126,52 @@ void CTranslation::SetDefaultTranslations() {
 
 	texts[83] = "Randomize settings";
 
-	texts[84] = "Fullscreen setting has changed,";
-	texts[85] = "You need to restart the game";
+	texts[84] = "Score";
+	texts[85] = "Herring";
+	texts[86] = "Time";
+	texts[87] = "Path length";
+	texts[88] = "Average speed";
+	texts[89] = "Position";
+	texts[90] = "in highscore list";
 
-	texts[86] = "Score";
-	texts[87] = "Herring";
-	texts[88] = "Time";
-	texts[89] = "Path length";
-	texts[90] = "Average speed";
-	texts[91] = "Position";
-	texts[92] = "in highscore list";
+	texts[91] = "Author";
 
-	texts[93] = "Author";
+	texts[92] = "Loading courses failed.";
+	texts[93] = "Loading characters failed.";
+	texts[94] = "Loading environments failed.";
+	texts[95] = "Loading terrains failed.";
+	texts[96] = "Loading avatars failed.";
 }
 
-const string& CTranslation::Text(size_t idx) const {
-	if (idx >= NUM_COMMON_TEXTS) return emptyString;
+const sf::String& CTranslation::Text(size_t idx) const {
+	static const sf::String empty;
+	if (idx >= NUM_COMMON_TEXTS) return empty;
 	return texts[idx];
+}
+
+static wstring UnicodeStr(const std::string& s) {
+	size_t len = s.length();
+	wstring res;
+	res.resize(len);
+
+	for (size_t i = 0, j = 0; i < len; ++i, ++j) {
+		wchar_t ch = (unsigned char)s[i];
+		if (ch >= 0xF0) {
+			ch = (wchar_t)(s[i] & 0x07) << 18;
+			ch |= (wchar_t)(s[++i] & 0x3F) << 12;
+			ch |= (wchar_t)(s[++i] & 0x3F) << 6;
+			ch |= (wchar_t)(s[++i] & 0x3F);
+		} else if (ch >= 0xE0) {
+			ch = (wchar_t)(s[i] & 0x0F) << 12;
+			ch |= (wchar_t)(s[++i] & 0x3F) << 6;
+			ch |= (wchar_t)(s[++i] & 0x3F);
+		} else if (ch >= 0xC0) {
+			ch = (wchar_t)(s[i] & 0x1F) << 6;
+			ch |= (wchar_t)(s[++i] & 0x3F);
+		}
+		res[j] = ch;
+	}
+	return res;
 }
 
 void CTranslation::LoadLanguages() {
@@ -158,15 +188,16 @@ void CTranslation::LoadLanguages() {
 	size_t i = 1;
 	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line, i++) {
 		languages[i].lang = SPStrN(*line, "lang", "en_GB");
-		languages[i].language = SPStrN(*line, "language", "English");
+		languages[i].language = UnicodeStr(SPStrN(*line, "language", "English"));
 	}
 
 	if (param.language == string::npos)
 		param.language = GetSystemDefaultLangIdx();
 }
 
-const string& CTranslation::GetLanguage(size_t idx) const {
-	if (idx >= languages.size()) return errorString;
+const sf::String& CTranslation::GetLanguage(size_t idx) const {
+	static const sf::String error = "error";
+	if (idx >= languages.size()) return error;
 	return languages[idx].language;
 }
 
@@ -184,9 +215,17 @@ void CTranslation::LoadTranslations(size_t langidx) {
 	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
 		int idx = SPIntN(*line, "idx", -1);
 		if (idx >= 0 && idx < NUM_COMMON_TEXTS) {
-			texts[idx] = SPStrN(*line, "trans", texts[idx]);
+			texts[idx] = UnicodeStr(SPStrN(*line, "trans", texts[idx]));
 		}
 	}
+}
+
+void CTranslation::ChangeLanguage(size_t langidx) {
+	LoadTranslations(langidx);
+
+	// The course description and name translations are stored in the course files.
+	Course.FreeCourseList();
+	Course.LoadCourseList();
 }
 
 string CTranslation::GetSystemDefaultLang() {
@@ -194,7 +233,7 @@ string CTranslation::GetSystemDefaultLang() {
 	wchar_t buf[10] = {0};
 	GetUserDefaultLocaleName(buf, 10);
 	char buf2[10] = {0};
-	WideCharToMultiByte(CP_ACP, 0, buf, -1, buf2, 10, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, buf, -1, buf2, 10, nullptr, nullptr);
 	string ret = buf2;
 	while (ret.find('-') != string::npos)
 		ret[ret.find('-')] = '_';

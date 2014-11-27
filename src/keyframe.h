@@ -43,7 +43,7 @@ private:
 	double heightcorr;
 	size_t keyidx;
 
-	double interp(double frac, double v1, double v2);
+	static double interp(double frac, double v1, double v2);
 	void InterpolateKeyframe(size_t idx, double frac, CCharShape *shape);
 
 	// test and editing
@@ -57,8 +57,8 @@ public:
 	void Init(const TVector3d& ref_position, double height_correction, CCharShape *shape);
 	void InitTest(const TVector3d& ref_position, CCharShape *shape);
 	void Reset();
-	void Update(double timestep);
-	void UpdateTest(double timestep, CCharShape *shape);
+	void Update(float timestep);
+	void UpdateTest(float timestep, CCharShape *shape);
 	bool Load(const string& dir, const string& filename);
 	void CalcKeyframe(size_t idx, CCharShape *shape, const TVector3d& refpos);
 
@@ -67,7 +67,7 @@ public:
 	static const string& GetHighlightName(size_t idx);
 	static const string& GetJointName(size_t idx);
 	static int GetNumJoints();
-	void SaveTest(const string& dir, const string& filename);
+	void SaveTest(const string& dir, const string& filename) const;
 	void CopyFrame(size_t prim_idx, size_t sec_idx);
 	void AddFrame();
 	size_t  DeleteFrame(size_t idx);

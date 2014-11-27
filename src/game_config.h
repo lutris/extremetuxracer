@@ -56,8 +56,6 @@ struct TParam {
 	int		tux_sphere_divisions;
 	int		tux_shadow_sphere_divisions;
 	int		course_detail_level; // only for quadtree
-	int		audio_freq;
-	int		audio_buffer_size;
 
 	int		use_papercut_font;
 	bool	ice_cursor;

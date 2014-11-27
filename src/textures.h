@@ -50,7 +50,7 @@ GNU General Public License for more details.
 #define MIRROR_BUTT 28
 #define CHAR_BUTT 29
 #define RANDOM_BUTT 30
-#define T_YELLHERRING 31
+
 #define T_TIME 32
 
 
@@ -65,59 +65,22 @@ GNU General Public License for more details.
 
 
 // --------------------------------------------------------------------
-//				class CImage
-// --------------------------------------------------------------------
-
-class CImage {
-private:
-public:
-	CImage();
-	~CImage();
-
-	unsigned char *data;
-	int nx;
-	int ny;
-	int depth;
-	int pitch;
-
-	void DisposeData();
-
-	// load:
-	bool LoadPng(const char *filepath, bool mirroring);
-	bool LoadPng(const char *dir, const char *filepath, bool mirroring);
-
-	// write:
-	bool ReadFrameBuffer_PPM();
-	void ReadFrameBuffer_TGA();
-	void ReadFrameBuffer_BMP();
-	void WritePPM(const char *filepath);
-	void WriteTGA(const char *filepath);
-	void WriteBMP(const char *filepath);
-};
-
-// --------------------------------------------------------------------
 //				class CTexture
 // --------------------------------------------------------------------
 
 class TTexture {
-	TTexture(const TTexture&);
-	TTexture& operator=(const TTexture&);
-
-	GLuint id;
+	sf::Texture texture;
+	friend class CTexture;
 public:
-
-	TTexture() : id(0) {}
-	~TTexture();
-	bool Load(const string& filename);
-	bool Load(const string& dir, const string& filename);
-	bool LoadMipmap(const string& filename, bool repeatable);
-	bool LoadMipmap(const string& dir, const string& filename, bool repeatable);
+	bool Load(const string& filename, bool repeatable = false);
+	bool Load(const string& dir, const string& filename, bool repeatable = false);
+	bool Load(const string& dir, const char* filename, bool repeatable = false) { return Load(dir, string(filename), repeatable); }
 
 	void Bind();
 	void Draw();
 	void Draw(int x, int y, float size, Orientation orientation);
 	void Draw(int x, int y, float width, float height, Orientation orientation);
-	void DrawFrame(int x, int y, double w, double h, int frame, const TColor& col);
+	void DrawFrame(int x, int y, int w, int h, int frame, const sf::Color& col);
 };
 
 class CTexture {
@@ -125,7 +88,7 @@ private:
 	vector<TTexture*> CommonTex;
 	Orientation forientation;
 
-	void DrawNumChr(char c, int x, int y, int w, int h, const TColor& col);
+	void DrawNumChr(char c, int x, int y, int w, int h);
 public:
 	CTexture();
 	~CTexture();
@@ -133,16 +96,17 @@ public:
 	void FreeTextureList();
 
 	TTexture* GetTexture(size_t idx) const;
+	const sf::Texture& GetSFTexture(size_t idx) const;
 	bool BindTex(size_t idx);
 
 	void Draw(size_t idx);
 	void Draw(size_t idx, int x, int y, float size);
 	void Draw(size_t idx, int x, int y, int width, int height);
 
-	void DrawFrame(size_t idx, int x, int y, double w, double h, int frame, const TColor& col);
+	void DrawFrame(size_t idx, int x, int y, double w, double h, int frame, const sf::Color& col);
 
 	void SetOrientation(Orientation orientation);
-	void DrawNumStr(const string& s, int x, int y, float size, const TColor& col);
+	void DrawNumStr(const string& s, int x, int y, float size, const sf::Color& col);
 };
 
 extern CTexture Tex;

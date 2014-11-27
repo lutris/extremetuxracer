@@ -40,26 +40,30 @@ static TWidget* textbuttons[2];
 static TTextField* textfield;
 
 void QuitAndAddPlayer() {
-	if (textfield->Text().size() > 0)
+	if (textfield->Text().getSize() > 0)
 		Players.AddPlayer(textfield->Text(), Players.GetDirectAvatarName(avatar->GetValue()));
 	State::manager.RequestEnterState(Regist);
 }
 
-void CNewPlayer::Keyb_spec(SDL_keysym sym, bool release) {
+void CNewPlayer::Keyb(sf::Keyboard::Key key, bool release, int x, int y) {
 	if (release) return;
 
-	KeyGUI(sym.sym, sym.mod, release);
-	switch (sym.sym) {
-		case SDLK_ESCAPE:
+	KeyGUI(key, release);
+	switch (key) {
+		case sf::Keyboard::Escape:
 			State::manager.RequestEnterState(Regist);
 			break;
-		case SDLK_RETURN:
+		case sf::Keyboard::Return:
 			if (textbuttons[0]->focussed()) State::manager.RequestEnterState(Regist);
 			else QuitAndAddPlayer();
 			break;
 		default:
 			break;
 	}
+}
+
+void CNewPlayer::TextEntered(char text) {
+	TextEnterGUI(text);
 }
 
 void CNewPlayer::Mouse(int button, int state, int x, int y) {
@@ -83,7 +87,7 @@ static int prevleft, prevtop, prevwidth;
 
 void CNewPlayer::Enter() {
 	Winsys.ShowCursor(!param.ice_cursor);
-	Music.Play(param.menu_music, -1);
+	Music.Play(param.menu_music, true);
 
 	int framewidth = 400 * Winsys.scale;
 	int frameheight = 50 * Winsys.scale;
@@ -105,15 +109,11 @@ void CNewPlayer::Enter() {
 	textfield = AddTextField(emptyString, area.left, frametop, framewidth, frameheight);
 }
 
-void CNewPlayer::Loop(double timestep) {
-	int ww = Winsys.resolution.width;
-	int hh = Winsys.resolution.height;
-	TColor col;
+void CNewPlayer::Loop(float timestep) {
+	sf::Color col;
 
-	Music.Update();
-	ClearRenderContext();
 	ScopedRenderMode rm(GUI);
-	SetupGuiDisplay();
+	Winsys.clear();
 
 	if (param.ui_snow) {
 		update_ui_snow(timestep);
@@ -122,11 +122,7 @@ void CNewPlayer::Loop(double timestep) {
 
 	textfield->UpdateCursor(timestep);
 
-	Tex.Draw(BOTTOM_LEFT, 0, hh - 256, 1);
-	Tex.Draw(BOTTOM_RIGHT, ww-256, hh-256, 1);
-	Tex.Draw(TOP_LEFT, 0, 0, 1);
-	Tex.Draw(TOP_RIGHT, ww-256, 0, 1);
-	Tex.Draw(T_TITLE_SMALL, CENTER, AutoYPosN(5), Winsys.scale);
+	DrawGUIBackground(Winsys.scale);
 
 	FT.SetColor(colWhite);
 	FT.AutoSizeN(4);

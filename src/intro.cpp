@@ -38,19 +38,21 @@ GNU General Public License for more details.
 CIntro Intro;
 static CKeyframe *startframe;
 
-void abort_intro(CControl *ctrl) {
-	TVector2d start_pt = Course.GetStartPoint();
-	State::manager.RequestEnterState(Racing);
+void abort_intro() {
+	CControl *ctrl = g_game.player->ctrl;
+	const TVector2d& start_pt = Course.GetStartPoint();
 	ctrl->orientation_initialized = false;
 	ctrl->view_init = false;
 	ctrl->cpos.x = start_pt.x;
 	ctrl->cpos.z = start_pt.y;
+
+	State::manager.RequestEnterState(Racing);
 }
 
 // =================================================================
 void CIntro::Enter() {
 	CControl *ctrl = g_game.player->ctrl;
-	TVector2d start_pt = Course.GetStartPoint();
+	const TVector2d& start_pt = Course.GetStartPoint();
 	ctrl->orientation_initialized = false;
 	ctrl->view_init = false;
 	ctrl->cpos.x = start_pt.x;
@@ -64,7 +66,7 @@ void CIntro::Enter() {
 	// reset of result values
 	g_game.herring = 0;
 	g_game.score = 0;
-	g_game.time = 0.0;
+	g_game.time = 0.f;
 	g_game.race_result = -1;
 	g_game.raceaborted = false;
 
@@ -90,7 +92,7 @@ void CIntro::Enter() {
 	param.show_hud = true;
 }
 
-void CIntro::Loop(double time_step) {
+void CIntro::Loop(float time_step) {
 	CControl *ctrl = g_game.player->ctrl;
 	int width = Winsys.resolution.width;
 	int height = Winsys.resolution.height;
@@ -105,7 +107,6 @@ void CIntro::Loop(double time_step) {
 	update_view(ctrl, time_step);
 	SetupViewFrustum(ctrl);
 
-	Music.Update();
 	Env.DrawSkybox(ctrl->viewpos);
 
 	Env.DrawFog();
@@ -127,8 +128,9 @@ void CIntro::Loop(double time_step) {
 }
 // -----------------------------------------------------------------------
 
-void CIntro::Keyb(unsigned int key, bool special, bool release, int x, int y) {
-	CControl *ctrl = g_game.player->ctrl;
-	if (release) return;
-	abort_intro(ctrl);
+void CIntro::Keyb(sf::Keyboard::Key key, bool release, int x, int y) {
+	if (release)
+		return;
+
+	abort_intro();
 }

@@ -66,59 +66,59 @@ static bool trees = true;
 static int newsound = -1;
 static int lastsound = -1;
 
-void CRacing::Keyb(unsigned int key, bool special, bool release, int x, int y) {
+void CRacing::Keyb(sf::Keyboard::Key key, bool release, int x, int y) {
 	switch (key) {
 		// steering flipflops
-		case SDLK_UP:
+		case sf::Keyboard::Up:
 			key_paddling = !release;
 			break;
-		case SDLK_DOWN:
+		case sf::Keyboard::Down:
 			key_braking = !release;
 			break;
-		case SDLK_LEFT:
+		case sf::Keyboard::Left:
 			left_turn = !release;
 			break;
-		case SDLK_RIGHT:
+		case sf::Keyboard::Right:
 			right_turn = !release;
 			break;
-		case SDLK_SPACE:
+		case sf::Keyboard::Space:
 			key_charging = !release;
 			break;
-		case SDLK_t:
+		case sf::Keyboard::T:
 			trick_modifier = !release;
 			break;
 		// mode changing and other actions
-		case SDLK_ESCAPE:
+		case sf::Keyboard::Escape:
 			if (!release) {
 				g_game.raceaborted = true;
 				g_game.race_result = -1;
 				State::manager.RequestEnterState(GameOver);
 			}
 			break;
-		case SDLK_p:
+		case sf::Keyboard::P:
 			if (!release) State::manager.RequestEnterState(Paused);
 			break;
-		case SDLK_r:
+		case sf::Keyboard::R:
 			if (!release) State::manager.RequestEnterState(Reset);
 			break;
-		case SDLK_s:
+		case sf::Keyboard::S:
 			if (!release) ScreenshotN();
 			break;
 
 		// view changing
-		case SDLK_1:
+		case sf::Keyboard::Num1:
 			if (!release) {
 				set_view_mode(g_game.player->ctrl, ABOVE);
 				param.view_mode = ABOVE;
 			}
 			break;
-		case SDLK_2:
+		case sf::Keyboard::Num2:
 			if (!release) {
 				set_view_mode(g_game.player->ctrl, FOLLOW);
 				param.view_mode = FOLLOW;
 			}
 			break;
-		case SDLK_3:
+		case sf::Keyboard::Num3:
 			if (!release) {
 				set_view_mode(g_game.player->ctrl, BEHIND);
 				param.view_mode = BEHIND;
@@ -126,22 +126,22 @@ void CRacing::Keyb(unsigned int key, bool special, bool release, int x, int y) {
 			break;
 
 		// toggle
-		case SDLK_h:
+		case sf::Keyboard::H:
 			if (!release) param.show_hud = !param.show_hud;
 			break;
-		case SDLK_f:
+		case sf::Keyboard::F:
 			if (!release) param.display_fps = !param.display_fps;
 			break;
-		case SDLK_F5:
+		case sf::Keyboard::F5:
 			if (!release) sky = !sky;
 			break;
-		case SDLK_F6:
+		case sf::Keyboard::F6:
 			if (!release) fog = !fog;
 			break;
-		case SDLK_F7:
+		case sf::Keyboard::F7:
 			if (!release) terr = !terr;
 			break;
-		case SDLK_F8:
+		case sf::Keyboard::F8:
 			if (!release) trees = !trees;
 			break;
 	}
@@ -166,7 +166,7 @@ void CRacing::Jbutt(int button, int state) {
 	}
 }
 
-void CalcJumpEnergy(double time_step) {
+void CalcJumpEnergy(float time_step) {
 	CControl *ctrl = g_game.player->ctrl;
 
 	if (ctrl->jump_charging) {
@@ -181,7 +181,7 @@ void CalcJumpEnergy(double time_step) {
 
 int CalcSoundVol(float fact) {
 	float vv = (float) param.sound_volume * fact;
-	if (vv > 120) vv = 120;
+	if (vv > 100) vv = 100;
 	return (int) vv;
 }
 
@@ -252,7 +252,7 @@ void PlayTerrainSound(CControl *ctrl, bool airborne) {
 }
 
 // ----------------------- controls -----------------------------------
-void CalcSteeringControls(CControl *ctrl, double time_step) {
+void CalcSteeringControls(CControl *ctrl, float time_step) {
 	if (stick_turn) {
 		ctrl->turn_fact = stick_turnfact;
 		ctrl->turn_animation += ctrl->turn_fact * 2 * time_step;
@@ -293,7 +293,7 @@ void CalcSteeringControls(CControl *ctrl, double time_step) {
 	}
 }
 
-void CalcFinishControls(CControl *ctrl, double timestep, bool airborne) {
+void CalcFinishControls(CControl *ctrl, float timestep, bool airborne) {
 	double speed = ctrl->cvel.Length();
 	double dir_angle = RADIANS_TO_ANGLES(atan(ctrl->cvel.x / ctrl->cvel.z));
 
@@ -312,7 +312,7 @@ void CalcFinishControls(CControl *ctrl, double timestep, bool airborne) {
 
 // ----------------------- trick --------------------------------------
 
-void CalcTrickControls(CControl *ctrl, double time_step, bool airborne) {
+void CalcTrickControls(CControl *ctrl, float time_step, bool airborne) {
 	if (airborne && trick_modifier) {
 		if (left_turn) ctrl->roll_left = true;
 		if (right_turn) ctrl->roll_right = true;
@@ -340,14 +340,13 @@ void CalcTrickControls(CControl *ctrl, double time_step, bool airborne) {
 //					loop
 // ====================================================================
 
-void CRacing::Loop(double time_step) {
+void CRacing::Loop(float time_step) {
 	CControl *ctrl = g_game.player->ctrl;
 	double ycoord = Course.FindYCoord(ctrl->cpos.x, ctrl->cpos.z);
 	bool airborne = (bool)(ctrl->cpos.y > (ycoord + JUMP_MAX_START_HEIGHT));
 
 	ClearRenderContext();
 	Env.SetupFog();
-	Music.Update();
 	CalcTrickControls(ctrl, time_step, airborne);
 
 	if (!g_game.finish) CalcSteeringControls(ctrl, time_step);

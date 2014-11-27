@@ -32,7 +32,7 @@ struct TFog {
 	float end;
 	float height;
 	float color[4];
-	TColor part_color;
+	sf::Color part_color;
 };
 
 struct TLight {
@@ -80,7 +80,7 @@ public:
 	void SetupLight();
 	void SetupFog();
 	void DrawFog();
-	const TColor& ParticleColor() const { return fog.part_color; }
+	const sf::Color& ParticleColor() const { return fog.part_color; }
 	size_t GetEnvIdx(const string& tag) const;
 	size_t GetLightIdx(const string& tag) const;
 };

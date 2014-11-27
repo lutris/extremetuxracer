@@ -45,7 +45,7 @@ struct track_quad_t {
 	TVector2d t1, t2, t3, t4;
 	TVector3d n1, n2, n3, n4;
 	track_types_t track_type;
-	double alpha;
+	uint8_t alpha;
 };
 
 struct track_marks_t {
@@ -102,8 +102,8 @@ void DrawTrackmarks() {
 
 	TTexture* textures[NUM_TRACK_TYPES];
 
-	TColor track_colour = colWhite;
-	set_material(track_colour, colBlack, 1.f);
+	sf::Color track_colour = colWhite;
+	set_material(track_colour, colBlack, 1.0);
 	ScopedRenderMode rm(TRACK_MARKS);
 
 	textures[TRACK_HEAD] = Tex.GetTexture(trackid1);
@@ -294,7 +294,7 @@ void add_track_mark(const CControl *ctrl, int *id) {
 			q->t4 = TVector2d(1.0, q->t2.y + tex_end);
 		}
 	}
-	q->alpha = min((2*comp_depth-dist_from_surface)/(4*comp_depth), 1.0);
+	q->alpha = min(static_cast<int>((2*comp_depth-dist_from_surface)/(4*comp_depth)*255), 255);
 	continuing_track = true;
 }
 

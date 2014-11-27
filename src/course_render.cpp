@@ -88,14 +88,14 @@ void DrawTrees() {
 		glNormal3i(0, 0, 1);
 
 		static const GLshort tex[] = {
-			0, 0,
-			1, 0,
-			1, 1,
 			0, 1,
-			0, 0,
-			1, 0,
 			1, 1,
-			0, 1
+			1, 0,
+			0, 0,
+			0, 1,
+			1, 1,
+			1, 0,
+			0, 0
 		};
 
 		const GLfloat vtx[] = {
@@ -123,7 +123,7 @@ void DrawTrees() {
 	}
 
 //  items -----------------------------
-	const TObjectType* item_type = NULL;
+	const TObjectType* item_type = nullptr;
 
 	for (size_t i = 0; i< Course.NocollArr.size(); i++) {
 		if (Course.NocollArr[i].collectable == 0 || Course.NocollArr[i].type.drawable == false) continue;
@@ -154,10 +154,10 @@ void DrawTrees() {
 		normal.Norm();
 
 		static const GLshort tex[] = {
-			0, 0,
-			1, 0,
+			0, 1,
 			1, 1,
-			0, 1
+			1, 0,
+			0, 0
 		};
 
 		const GLfloat vtx[] = {
