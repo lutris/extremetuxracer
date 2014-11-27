@@ -120,15 +120,15 @@ void SetRotation(double x, double y, double z) {
 	zrotation = z;
 }
 
-void CharKeys(unsigned int key, bool special, bool release, int x, int y) {
+void CharKeys(sf::Keyboard::Key key, bool release, int x, int y) {
 	must_render = true;
 
 	if (ToolsFinalStage()) {
-		if (key == SDLK_y || key == SDLK_j) {
+		if (key == sf::Keyboard::Y || key == sf::Keyboard::J) {
 			SaveToolCharacter();
 			SaveToolFrame();
 			State::manager.RequestQuit();
-		} else if (key == SDLK_n) State::manager.RequestQuit();
+		} else if (key == sf::Keyboard::N) State::manager.RequestQuit();
 		return;
 	}
 
@@ -140,97 +140,97 @@ void CharKeys(unsigned int key, bool special, bool release, int x, int y) {
 
 	int type = action->type[curr_act];
 	switch (key) {
-		case SDLK_TAB:
+		case sf::Keyboard::Tab:
 			SetToolMode(1);
 			break;
-		case SDLK_ESCAPE:
-		case SDLK_q:
+		case sf::Keyboard::Escape:
+		case sf::Keyboard::Q:
 			QuitTool();
 			break;
-		case SDLK_F10:
+		case sf::Keyboard::F10:
 			ScreenshotN();
 			break;
-		case SDLK_s:
+		case sf::Keyboard::S:
 			SaveToolCharacter();
 			break;
-		case SDLK_c:
+		case sf::Keyboard::C:
 			ScreenshotN();
 			break;
-		case SDLK_m:
+		case sf::Keyboard::M:
 			TestChar.useMaterials = !TestChar.useMaterials;
 			break;
-		case SDLK_h:
+		case sf::Keyboard::H:
 			TestChar.useHighlighting = !TestChar.useHighlighting;
 			break;
-		case SDLK_r:
+		case sf::Keyboard::R:
 			TestChar.Reset();
 			ReloadToolCharacter();
 			Tools.Enter();
 			break;
-		case SDLK_u:
-			if (action != NULL) {
+		case sf::Keyboard::U:
+			if (action != nullptr) {
 				RecallAction(action);
 				TestChar.RefreshNode(curr_node);
 			}
 			break;
-		case SDLK_PLUS:
-		case SDLK_EQUALS: // zoom in
+		case sf::Keyboard::Add:
+		case sf::Keyboard::Equal: // zoom in
 			zposition += 0.1;
 			xposition -= 0.03;
 			break;
-		case SDLK_MINUS: // zoom out
+		case sf::Keyboard::Dash: // zoom out
 			zposition -= 0.1;
 			xposition += 0.03;
 			break;
 
 		// set rotations for view
-		case SDLK_1:
+		case sf::Keyboard::Num1:
 			SetRotation(0, 0, 0);
 			break;
-		case SDLK_2:
+		case sf::Keyboard::Num2:
 			SetRotation(-50, 180, 15);
 			break;
-		case SDLK_3:
+		case sf::Keyboard::Num3:
 			SetRotation(0, 180, 0);
 			break;
-		case SDLK_4:
+		case sf::Keyboard::Num4:
 			SetRotation(0, -80, 0);
 			break;
 
 		// select node
-		case SDLK_PAGEUP:
+		case sf::Keyboard::PageUp:
 			ChangeNode(-1);
 			break;
-		case SDLK_PAGEDOWN:
+		case sf::Keyboard::PageDown:
 			ChangeNode(1);
 			break;
-		case SDLK_END:
+		case sf::Keyboard::End:
 			ChangeNode(charbase);
 			break;
-		case SDLK_HOME:
+		case sf::Keyboard::Home:
 			ChangeNode(-charbase);
 			break;
 
 		// select action
-		case SDLK_DOWN:
+		case sf::Keyboard::Down:
 			if (curr_act < lastact) curr_act++;
 			if (action->type[curr_act] == 4) comp = 0;
 			else comp = 1;
 			break;
-		case SDLK_UP:
+		case sf::Keyboard::Up:
 			if (curr_act > 0) curr_act--;
 			if (action->type[curr_act] == 4) comp = 0;
 			else comp = 1;
 			break;
-		case SDLK_LEFT:
+		case sf::Keyboard::Left:
 			ChangeValue(type, -1);
 			break;
-		case SDLK_RIGHT:
+		case sf::Keyboard::Right:
 			ChangeValue(type, 1);
 			break;
 
 		// select value
-		case SDLK_SPACE:
+		case sf::Keyboard::Space:
 			if (type == 0 || type == 4) {
 				comp++;
 				if (comp > 3) comp = 0;
@@ -323,7 +323,7 @@ void DrawActionFloat(size_t nr, const string& s, int y, float f) {
 	FT.DrawString(100, y, Float_StrN(f, 2));
 }
 
-void RenderChar(double timestep) {
+void RenderChar(float timestep) {
 	if (!must_render) return;
 	bool is_visible = false;
 
@@ -348,7 +348,7 @@ void RenderChar(double timestep) {
 	drawcount++;
 
 	// --------------- 2d screen --------------------------------------
-	SetupGuiDisplay();
+	Setup2dScene();
 	ScopedRenderMode rm2(TEXFONT);
 
 	FT.SetProps("bold", 20, colYellow);

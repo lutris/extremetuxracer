@@ -27,7 +27,7 @@ GNU General Public License for more details.
 // --------------------------------------------------------------------
 
 void init_ui_snow();
-void update_ui_snow(double time_step);
+void update_ui_snow(float time_step);
 void push_ui_snow(const TVector2i& pos);
 void draw_ui_snow();
 
@@ -36,7 +36,7 @@ void draw_ui_snow();
 // --------------------------------------------------------------------
 
 void create_new_particles(const TVector3d& loc, const TVector3d& vel, int num);
-void update_particles(double time_step);
+void update_particles(float time_step);
 void clear_particles();
 void draw_particles(const CControl *ctrl);
 void generate_particles(const CControl *ctrl, double dtime, const TVector3d& pos, double speed);
@@ -99,7 +99,7 @@ private:
 public:
 	void Init(int grade, const CControl *ctrl);
 	void Reset();
-	void Update(double timestep, const CControl *ctrl);
+	void Update(float timestep, const CControl *ctrl);
 	void Draw(const CControl *ctrl) const;
 };
 
@@ -224,9 +224,9 @@ extern CWind Wind;
 // --------------------------------------------------------------------
 
 void InitSnow(const CControl *ctrl);
-void UpdateSnow(double timestep, const CControl *ctrl);
+void UpdateSnow(float timestep, const CControl *ctrl);
 void DrawSnow(const CControl *ctrl);
 void InitWind();
-void UpdateWind(double timestep);
+void UpdateWind(float timestep);
 
 #endif

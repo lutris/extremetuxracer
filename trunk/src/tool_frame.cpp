@@ -49,7 +49,7 @@ void InitFrameTools() {
 	last_joint = TestFrame.GetNumJoints() -1;
 }
 
-void SingleFrameKeys(unsigned int key, bool special, bool release, int x, int y) {
+void SingleFrameKeys(sf::Keyboard::Key key, bool release, int x, int y) {
 //PrintInt (key);
 	must_render = true;
 	int keyfact;
@@ -57,139 +57,139 @@ void SingleFrameKeys(unsigned int key, bool special, bool release, int x, int y)
 	TKeyframe *frame = TestFrame.GetFrame(curr_frame);
 
 	// setting the camera change state
-	if (key == SDLK_F1) {GluCamera.turnright = !release; return;}
-	else if (key == SDLK_F2) {GluCamera.turnleft = !release; return;}
-	if (key == SDLK_F3) {GluCamera.nearer = !release; return;}
-	else if (key == SDLK_F4) {GluCamera.farther = !release; return;}
+	if (key == sf::Keyboard::F1) {GluCamera.turnright = !release; return;}
+	else if (key == sf::Keyboard::F2) { GluCamera.turnleft = !release; return; }
+	if (key == sf::Keyboard::F3) { GluCamera.nearer = !release; return; }
+	else if (key == sf::Keyboard::F4) { GluCamera.farther = !release; return; }
 
 	// additional keys if needed
-	if (key == SDLK_LSHIFT) shift = !release;
-	if (key == SDLK_LCTRL) control = !release;
-	if (key == SDLK_LALT) alt = !release;
+	if (key == sf::Keyboard::LShift || key == sf::Keyboard::RShift) shift = !release;
+	if (key == sf::Keyboard::LControl) control = !release;
+	if (key == sf::Keyboard::LAlt) alt = !release;
 	if (shift) keyfact = -1;
 	else keyfact = 1;
 
 	if (release) return;
 
 	switch (key) {
-		case SDLK_y:
-		case SDLK_j:
+		case sf::Keyboard::Y:
+		case sf::Keyboard::J:
 			if (ToolsFinalStage()) {
 				SaveToolCharacter();
 				SaveToolFrame();
 				State::manager.RequestQuit();
 			}
 			break;
-		case SDLK_n:
+		case sf::Keyboard::N:
 			if (ToolsFinalStage()) State::manager.RequestQuit();
 			break;
 
-		case SDLK_ESCAPE:
-		case SDLK_q:
+		case sf::Keyboard::Escape:
+		case sf::Keyboard::Q:
 			QuitTool();
 			break;
-		case SDLK_s:
+		case sf::Keyboard::S:
 			SaveToolFrame();
 			break;
-		case SDLK_TAB:
+		case sf::Keyboard::Tab:
 			SetToolMode(0);
 			break;
 
-		case SDLK_a:
+		case sf::Keyboard::A:
 			TestFrame.AddFrame();
 			SetFrameChanged(true);
 			break;
-		case SDLK_INSERT:
+		case sf::Keyboard::Insert:
 			TestFrame.InsertFrame(curr_frame);
 			SetFrameChanged(true);
 			break;
-		case SDLK_DELETE:
+		case sf::Keyboard::Delete:
 			curr_frame = TestFrame.DeleteFrame(curr_frame);
 			SetFrameChanged(true);
 			break;
-		case SDLK_PAGEDOWN:
+		case sf::Keyboard::PageDown:
 			if (curr_frame < TestFrame.numFrames()-1) curr_frame++;
 			break;
-		case SDLK_PAGEUP:
+		case sf::Keyboard::PageUp:
 			if (curr_frame > 0) curr_frame--;
 			break;
-		case SDLK_UP:
+		case sf::Keyboard::Up:
 			if (curr_joint > 0) curr_joint--;
 			break;
-		case SDLK_DOWN:
+		case sf::Keyboard::Down:
 			if (curr_joint < last_joint) curr_joint++;
 			break;
-		case SDLK_RIGHT:
+		case sf::Keyboard::Right:
 			if (curr_joint < 4) frame->val[curr_joint] += 0.05;
 			else frame->val[curr_joint] += 1;
 			SetFrameChanged(true);
 			break;
-		case SDLK_LEFT:
+		case sf::Keyboard::Left:
 			if (curr_joint < 4) frame->val[curr_joint] -= 0.05;
 			else frame->val[curr_joint] -= 1;
 			SetFrameChanged(true);
 			break;
-		case SDLK_0:
+		case sf::Keyboard::Num0:
 			frame->val[curr_joint] = 0.0;
 			SetFrameChanged(true);
 			break;
-		case SDLK_SPACE:
+		case sf::Keyboard::Space:
 			if (curr_joint < 4) frame->val[curr_joint] += 0.05 * keyfact;
 			else frame->val[curr_joint] += 1 * keyfact;
 			SetFrameChanged(true);
 			break;
 
-		case SDLK_RETURN:
+		case sf::Keyboard::Return:
 			TestFrame.InitTest(ref_position, &TestChar);
 			SetToolMode(2);
 			must_render = true;
 			break;
 
-		case SDLK_m:
+		case sf::Keyboard::M :
 			TestChar.useMaterials = !TestChar.useMaterials;
 			break;
-		case SDLK_h:
+		case sf::Keyboard::H:
 			TestChar.useHighlighting = !TestChar.useHighlighting;
 			break;
-		case SDLK_c:
+		case sf::Keyboard::C:
 			if (control) TestFrame.CopyToClipboard(curr_frame);
 			else TestFrame.ClearFrame(curr_frame);
 			SetFrameChanged(true);
 			break;
-		case SDLK_v:
+		case sf::Keyboard::V:
 			if (control) TestFrame.PasteFromClipboard(curr_frame);
 			SetFrameChanged(true);
 			break;
-		case SDLK_p:
+		case sf::Keyboard::P:
 			if (curr_frame>0)
 				TestFrame.CopyFrame(curr_frame-1, curr_frame);
 			break;
-		case SDLK_F10:
+		case sf::Keyboard::F10:
 			ScreenshotN();
 			break;
 
-		case SDLK_1:
+		case sf::Keyboard::Num1:
 			GluCamera.angle = 0;
 			break;
-		case SDLK_2:
+		case sf::Keyboard::Num2:
 			GluCamera.angle = 45;
 			break;
-		case SDLK_3:
+		case sf::Keyboard::Num3:
 			GluCamera.angle = 90;
 			break;
-		case SDLK_4:
+		case sf::Keyboard::Num4:
 			GluCamera.angle = 135;
 			break;
-		case SDLK_5:
+		case sf::Keyboard::Num5:
 			GluCamera.angle = 180;
 			break;
-		case SDLK_6:
+		case sf::Keyboard::Num6:
 			GluCamera.angle = 225;
 			break;
-		case SDLK_7:
+		case sf::Keyboard::Num7:
 			GluCamera.angle = 270;
 			break;
-		case SDLK_8:
+		case sf::Keyboard::Num8:
 			GluCamera.angle = 315;
 			break;
 	}
@@ -225,7 +225,7 @@ void PrintFrameParams(int ytop, TKeyframe *frame) {
 	}
 }
 
-void RenderSingleFrame(double timestep) {
+void RenderSingleFrame(float timestep) {
 	if (!must_render) return;
 
 	// ------------------ 3d scenery ----------------------------------
@@ -244,7 +244,7 @@ void RenderSingleFrame(double timestep) {
 	glPopMatrix();
 
 	// ----------------- 2d screen ------------------------------------
-	SetupGuiDisplay();
+	Setup2dScene();
 	ScopedRenderMode rm2(TEXFONT);
 
 	if (FrameHasChanged()) DrawChanged();
@@ -286,17 +286,17 @@ void RenderSingleFrame(double timestep) {
 //				frame sequence
 // --------------------------------------------------------------------
 
-void SequenceKeys(unsigned int key, bool special, bool release, int x, int y) {
+void SequenceKeys(sf::Keyboard::Key key, bool release, int x, int y) {
 	if (release) return;
 	switch (key) {
-		case SDLK_RETURN:
+		case sf::Keyboard::Return:
 			keyrun = true;
 			break;
-		case SDLK_ESCAPE:
-		case SDLK_TAB:
+		case sf::Keyboard::Escape:
+		case sf::Keyboard::Tab:
 			SetToolMode(1);
 			break;
-		case SDLK_q:
+		case sf::Keyboard::Q:
 			QuitTool();
 			break;
 	}
@@ -305,7 +305,7 @@ void SequenceKeys(unsigned int key, bool special, bool release, int x, int y) {
 void SequenceMouse(int button, int state, int x, int y) {}
 void SequenceMotion(int x, int y) {}
 
-void RenderSequence(double timestep) {
+void RenderSequence(float timestep) {
 	ScopedRenderMode rm(TUX);
 	ClearRenderContext(colDDBackgr);
 

@@ -45,7 +45,7 @@ bool CEvents::LoadEventList() {
 	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
 		int type = SPIntN(*line, "struct", -1);
 		if (type == 0) {
-			RaceList.emplace_back(Course.GetCourse(SPStrN(*line, "course")),
+			RaceList.emplace_back(Course.GetCourse(SPStrN(*line, "group"), SPStrN(*line, "course")),
 			                      Env.GetLightIdx(SPStrN(*line, "light")),
 			                      SPIntN(*line, "snow", 0),
 			                      SPIntN(*line, "wind", 0),
@@ -183,7 +183,7 @@ bool CPlayers::LoadPlayers() {
 		plyr[i].name = SPStrN(*line, "name", "unknown");
 		plyr[i].funlocked = SPStrN(*line, "unlocked");
 		plyr[i].avatar = FindAvatar(SPStrN(*line, "avatar"));
-		plyr[i].ctrl = NULL;
+		plyr[i].ctrl = nullptr;
 		int active = SPIntN(*line, "active", 0);
 		if (active > 0) g_game.start_player = plyr.size()-1;
 	}
@@ -209,7 +209,7 @@ void CPlayers::SavePlayers() const {
 	list.Save(playerfile);
 }
 
-const TAvatar* CPlayers::FindAvatar(const string& name) {
+const TAvatar* CPlayers::FindAvatar(const string& name) const {
 	for (size_t i = 0; i < avatars.size(); i++)
 		if (avatars[i].filename == name)
 			return &avatars[i];
@@ -218,21 +218,21 @@ const TAvatar* CPlayers::FindAvatar(const string& name) {
 
 void CPlayers::AddPassedCup(const string& cup) {
 	if (SPIntN(g_game.player->funlocked, cup, -1) > 0) return;
-	g_game.player->funlocked += " ";
+	g_game.player->funlocked += ' ';
 	g_game.player->funlocked += cup;
 }
 
 void CPlayers::ResetControls() {
 	for (size_t i=0; i<plyr.size(); i++) {
 		delete plyr[i].ctrl;
-		plyr[i].ctrl = NULL;
+		plyr[i].ctrl = nullptr;
 	}
 }
 
 // called in module regist.cpp:
 void CPlayers::AllocControl(size_t player) {
 	if (player >= plyr.size()) return;
-	if (plyr[player].ctrl != NULL) return;
+	if (plyr[player].ctrl != nullptr) return;
 	plyr[player].ctrl = new CControl;
 }
 
@@ -272,7 +272,7 @@ const string& CPlayers::GetDirectAvatarName(size_t avatar) const {
 // ********************************************************************
 
 CKeyframe* TCharacter::GetKeyframe(TFrameType type) {
-	if (type < 0 || type >= NUM_FRAME_TYPES) return NULL;
+	if (type < 0 || type >= NUM_FRAME_TYPES) return nullptr;
 	return &frames[type];
 }
 
@@ -310,7 +310,7 @@ bool CCharacter::LoadCharacterList() {
 
 			TCharacter* ch = &CharList[i];
 			ch->preview = new TTexture();
-			if (!ch->preview->LoadMipmap(previewfile, false)) {
+			if (!ch->preview->Load(previewfile, false)) {
 				Message("could not load previewfile of character");
 //				texid = Tex.TexID (NO_PREVIEW);
 			}
@@ -318,7 +318,7 @@ bool CCharacter::LoadCharacterList() {
 			ch->shape = new CCharShape;
 			if (ch->shape->Load(charpath, "shape.lst", false) == false) {
 				delete ch->shape;
-				ch->shape = NULL;
+				ch->shape = nullptr;
 				Message("could not load character shape");
 			}
 

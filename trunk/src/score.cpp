@@ -20,7 +20,6 @@ GNU General Public License for more details.
 
 #include "score.h"
 #include "ogl.h"
-#include "textures.h"
 #include "audio.h"
 #include "gui.h"
 #include "particles.h"
@@ -29,7 +28,6 @@ GNU General Public License for more details.
 #include "translation.h"
 #include "course.h"
 #include "spx.h"
-#include "game_type_select.h"
 #include "winsys.h"
 
 CScore Score;
@@ -84,7 +82,7 @@ void CScore::PrintScorelist(size_t list_idx) const {
 }
 
 const TScoreList *CScore::GetScorelist(size_t list_idx) const {
-	if (list_idx >= Scorelist.size()) return NULL;
+	if (list_idx >= Scorelist.size()) return nullptr;
 	return &Scorelist[list_idx];
 }
 
@@ -93,12 +91,13 @@ bool CScore::SaveHighScore() const {
 
 	for (size_t li=0; li<Scorelist.size(); li++) {
 		const TScoreList* lst = &Scorelist[li];
-		if (lst != NULL) {
+		if (lst != nullptr) {
 			int num = lst->numScores;
 			if (num > 0) {
 				for (int sc=0; sc<num; sc++) {
 					const TScore& score = lst->scores[sc];
-					string line = "*[course] " + Course.CourseList[li].dir;
+					string line = "*[group] " + Course.currentCourseList->name; // TODO: Save Highscore of all groups
+					line += " [course] " + (*Course.currentCourseList)[li].dir;
 					line += " [plyr] " + score.player;
 					line += " [pts] " + Int_StrN(score.points);
 					line += " [herr] " + Int_StrN(score.herrings);
@@ -118,7 +117,8 @@ bool CScore::SaveHighScore() const {
 bool CScore::LoadHighScore() {
 	CSPList list(520);
 
-	Scorelist.resize(Course.CourseList.size());
+	if (Course.currentCourseList)
+		Scorelist.resize(Course.currentCourseList->size());
 
 	if (!list.Load(param.config_dir, "highscore")) {
 		Message("could not load highscore list");
@@ -126,8 +126,9 @@ bool CScore::LoadHighScore() {
 	}
 
 	for (CSPList::const_iterator line = list.cbegin(); line != list.cend(); ++line) {
+		string group = SPStrN(*line, "group", "default");
 		string course = SPStrN(*line, "course", "unknown");
-		TCourse* cidx = Course.GetCourse(course);
+		TCourse* cidx = Course.GetCourse(group, course);
 
 		AddScore(cidx, TScore(
 		             SPStrN(*line, "plyr", "unknown"),
@@ -161,28 +162,30 @@ int CScore::CalcRaceResult() {
 //				score screen
 // --------------------------------------------------------------------
 
-static TCourse *CourseList;
+static CCourseList *CourseList;
 static TUpDown* course;
 static TWidget* textbutton;
+static TFramedText* courseName;
+static TLabel* headline;
 
-void CScore::Keyb(unsigned int key, bool special, bool release, int x, int y) {
-	KeyGUI(key, 0, release);
+void CScore::Keyb(sf::Keyboard::Key key, bool release, int x, int y) {
+	KeyGUI(key, release);
 	if (release) return;
 	switch (key) {
-		case SDLK_ESCAPE:
-			State::manager.RequestEnterState(GameTypeSelect);
+		case sf::Keyboard::Escape:
+			State::manager.RequestEnterState(*State::manager.PreviousState());
 			break;
-		case SDLK_q:
+		case sf::Keyboard::Q:
 			State::manager.RequestQuit();
 			break;
-		case SDLK_s:
+		case sf::Keyboard::S:
 			Score.SaveHighScore();
 			break;
-		case SDLK_l:
+		case sf::Keyboard::L:
 			Score.LoadHighScore();
 			break;
-		case SDLK_RETURN:
-			State::manager.RequestEnterState(GameTypeSelect);
+		case sf::Keyboard::Return:
+			State::manager.RequestEnterState(*State::manager.PreviousState());
 			break;
 	}
 }
@@ -191,7 +194,7 @@ void CScore::Mouse(int button, int state, int x, int y) {
 	if (state == 1) {
 		TWidget* clicked = ClickGUI(x, y);
 		if (clicked == textbutton)
-			State::manager.RequestEnterState(GameTypeSelect);
+			State::manager.RequestEnterState(*State::manager.PreviousState());
 	}
 }
 
@@ -202,17 +205,16 @@ void CScore::Motion(int x, int y) {
 }
 
 static TArea area;
-static int framewidth, frameheight, frametop;
 static int linedist, listtop;
 static int dd1, dd2, dd3, dd4;
 
 void CScore::Enter() {
 	Winsys.ShowCursor(!param.ice_cursor);
-	Music.Play(param.menu_music, -1);
+	Music.Play(param.menu_music, true);
 
-	framewidth = 550 * Winsys.scale;
-	frameheight = 50 * Winsys.scale;
-	frametop = AutoYPosN(32);
+	int framewidth = 550 * Winsys.scale;
+	int frameheight = 50 * Winsys.scale;
+	int frametop = AutoYPosN(32);
 	area = AutoAreaN(30, 80, framewidth);
 	FT.AutoSizeN(3);
 	linedist = FT.AutoDistanceN(1);
@@ -222,53 +224,41 @@ void CScore::Enter() {
 	dd3 = 250 * Winsys.scale;
 	dd4 = 375 * Winsys.scale;
 
-	CourseList = &Course.CourseList[0];
+	CourseList = Course.currentCourseList;
 
 	ResetGUI();
-	course = AddUpDown(area.right + 8, frametop, 0, (int)Course.CourseList.size()-1, 0);
+	course = AddUpDown(area.right + 8, frametop, 0, (int)Course.currentCourseList->size()-1, 0);
 	int siz = FT.AutoSizeN(5);
 	textbutton = AddTextButton(Trans.Text(64), CENTER, AutoYPosN(80), siz);
+
+	FT.AutoSizeN(7);
+	headline = AddLabel(Trans.Text(62), CENTER, AutoYPosN(22), colWhite);
+
+	FT.AutoSizeN(4);
+	courseName = AddFramedText(area.left, frametop-2, framewidth, frameheight, 3, colMBackgr, "", FT.GetSize(), true);
 }
 
 const string ordinals[10] =
 {"1:st", "2:nd", "3:rd", "4:th", "5:th", "6:th", "7:th", "8:th", "9:th", "10:th"};
 
-void CScore::Loop(double timestep) {
-	int ww = Winsys.resolution.width;
-	int hh = Winsys.resolution.height;
-
-	Music.Update();
-	ClearRenderContext();
+void CScore::Loop(float timestep) {
 	ScopedRenderMode rm(GUI);
-	SetupGuiDisplay();
+	Winsys.clear();
 
 	if (param.ui_snow) {
 		update_ui_snow(timestep);
 		draw_ui_snow();
 	}
 
-	Tex.Draw(BOTTOM_LEFT, 0, hh - 256, 1);
-	Tex.Draw(BOTTOM_RIGHT, ww-256, hh-256, 1);
-	Tex.Draw(TOP_LEFT, 0, 0, 1);
-	Tex.Draw(TOP_RIGHT, ww-256, 0, 1);
-	Tex.Draw(T_TITLE_SMALL, CENTER, AutoYPosN(5), Winsys.scale);
+	DrawGUIBackground(Winsys.scale);
 
-//	DrawFrameX (area.left, area.top, area.right-area.left, area.bottom - area.top,
-//			0, colMBackgr, colBlack, 0.2);
-
-	FT.AutoSizeN(7);
-	FT.SetColor(colWhite);
-	FT.DrawString(CENTER, AutoYPosN(22), Trans.Text(62));
-
-	DrawFrameX(area.left, frametop, framewidth, frameheight, 3, colMBackgr, colDYell, 1.0);
-	FT.AutoSizeN(5);
-	FT.SetColor(colWhite);
-	FT.DrawString(area.left+20, frametop, CourseList[course->GetValue()].name);
+	courseName->Focussed(course->focussed());
+	courseName->SetString((*CourseList)[course->GetValue()].name);
 
 	const TScoreList *list = Score.GetScorelist(course->GetValue());
 
 	FT.SetColor(colWhite);
-	if (list != NULL) {
+	if (list != nullptr) {
 		FT.AutoSizeN(3);
 		if (list->numScores < 1) {
 			FT.DrawString(CENTER, area.top + 140, Trans.Text(63));

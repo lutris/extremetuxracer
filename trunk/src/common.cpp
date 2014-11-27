@@ -30,29 +30,26 @@ GNU General Public License for more details.
 //				color utils
 // --------------------------------------------------------------------
 
-const TColor colWhite(1.0, 1.0, 1.0, 1.0);
-const TColor colDYell(1.0, 0.8, 0.0, 1.0);
-const TColor colDDYell(0.8, 0.6, 0.0, 1.0);
-const TColor colYellow(1.0, 1.0, 0.0, 1.0);
-const TColor colLYell(1.0, 1.0, 0.4, 1.0);
-const TColor colOrange(1.0, 0.5, 0.0, 1.0);
-const TColor colLRed(1.0, 0.3, 0.3, 1.0);
-const TColor colRed(1.0, 0.0, 0.0, 1.0);
-const TColor colDRed(0.8, 0.0, 0.0, 1.0);
-const TColor colGrey(0.5, 0.5, 0.5, 1.0);
-const TColor colLGrey(0.7, 0.7, 0.7, 1.0);
-const TColor colDGrey(0.3, 0.3, 0.3, 1.0);
-const TColor colBlack(0.0, 0.0, 0.0, 1.0);
-const TColor colBlue(0.0, 0.0, 1.0, 1.0);
-const TColor colLBlue(0.5, 0.7, 1.0, 1.0);
-const TColor colDBlue(0.0, 0.0, 0.6, 1.0);
-const TColor colLBackgr(0.5, 0.7, 0.9, 1.0);
-const TColor colBackgr(0.4, 0.6, 0.8, 1.0);
-const TColor colMBackgr(0.35, 0.5, 0.7, 1.0);
-const TColor colDBackgr(0.2, 0.3, 0.6, 1.0);
-const TColor colDDBackgr(0.13, 0.2, 0.4, 1.0);
-const TColor colMess(0.3, 0.3, 0.7, 1.0);
-const TColor colSky(0.82, 0.86, 0.88, 1.0);
+#define TColor(r, g, b, a) sf::Color(r*255, g*255, b*255, a*255)
+const sf::Color colDYell =		TColor(1.0, 0.8, 0.0, 1.0);
+const sf::Color colDDYell =		TColor(0.8, 0.6, 0.0, 1.0);
+const sf::Color colLYell =		TColor(1.0, 1.0, 0.4, 1.0);
+const sf::Color colOrange =		TColor(1.0, 0.5, 0.0, 1.0);
+const sf::Color colLRed =		TColor(1.0, 0.3, 0.3, 1.0);
+const sf::Color colDRed =		TColor(0.8, 0.0, 0.0, 1.0);
+const sf::Color colGrey =		TColor(0.5, 0.5, 0.5, 1.0);
+const sf::Color colLGrey =		TColor(0.7, 0.7, 0.7, 1.0);
+const sf::Color colDGrey =		TColor(0.3, 0.3, 0.3, 1.0);
+const sf::Color colLBlue =		TColor(0.5, 0.7, 1.0, 1.0);
+const sf::Color colDBlue =		TColor(0.0, 0.0, 0.6, 1.0);
+const sf::Color colLBackgr =	TColor(0.5, 0.7, 0.9, 1.0);
+const sf::Color colBackgr =		TColor(0.4, 0.6, 0.8, 1.0);
+const sf::Color colMBackgr =	TColor(0.35, 0.5, 0.7, 1.0);
+const sf::Color colDBackgr =	TColor(0.2, 0.3, 0.6, 1.0);
+const sf::Color colDDBackgr =	TColor(0.13, 0.2, 0.4, 1.0);
+const sf::Color colTBackr =		TColor(0.4, 0.6, 0.8, 0.0);
+const sf::Color colMess =		TColor(0.3, 0.3, 0.7, 1.0);
+const sf::Color colSky =		TColor(0.82, 0.86, 0.88, 1.0);
 
 // --------------------------------------------------------------------
 //				print utils
@@ -84,7 +81,7 @@ void PrintVector4(const TVector4d& v) {
 	cout << v.x << "  " << v.y << "  " << v.z << "  " << v.w << '\n';
 }
 
-void PrintColor(const TColor& v) {
+void PrintColor(const sf::Color& v) {
 	cout.precision(3);
 	cout << v.r << "  " << v.g << "  " << v.b << '\n';
 }
@@ -165,7 +162,7 @@ void Message(const string& msg) {
 bool FileExists(const string& filename) {
 	struct stat stat_info;
 	if (stat(filename.c_str(), &stat_info) != 0) {
-		if (errno != ENOENT) Message("couldn't stat ", filename);
+		if (errno != ENOENT) Message("couldn't stat", filename);
 		return false;
 	} else return true;
 }
@@ -204,14 +201,12 @@ void GetTimeComponents(double time, int *min, int *sec, int *hundr) {
 
 string GetTimeString() {
 	time_t rawtime;
-	struct tm * timeinfo;
-
 	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-//	line = Int_StrN (timeinfo->tm_year-100);
+	struct tm* timeinfo = localtime(&rawtime);
+
 	string line = Int_StrN(timeinfo->tm_mon + 1);
-	line += "_" + Int_StrN(timeinfo->tm_mday);
-	line += "_" + Int_StrN(timeinfo->tm_hour);
+	line += '_' + Int_StrN(timeinfo->tm_mday);
+	line += '_' + Int_StrN(timeinfo->tm_hour);
 	line += Int_StrN(timeinfo->tm_min);
 	line += Int_StrN(timeinfo->tm_sec);
 	return line;

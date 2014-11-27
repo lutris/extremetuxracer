@@ -43,16 +43,16 @@ void SetTestLight() {
 }
 
 
-void COglTest::Keyb(unsigned int key, bool special, bool release, int x, int y) {
+void COglTest::Keyb(sf::Keyboard::Key key, bool release, int x, int y) {
 	if (release) return;
 	switch (key) {
-		case SDLK_ESCAPE:
+		case sf::Keyboard::Escape:
 			State::manager.RequestQuit();
 			break;
 	}
 }
 
-void COglTest::Loop(double timestep) {
+void COglTest::Loop(float timestep) {
 	// ------------- 3d scenery ---------------------------------------
 	ScopedRenderMode rm(TUX);
 	ClearRenderContext(colDDBackgr);
@@ -70,7 +70,7 @@ void COglTest::Loop(double timestep) {
 	glPopMatrix();
 
 	// --------------- 2d screen --------------------------------------
-	SetupGuiDisplay();
+	Setup2dScene();
 	ScopedRenderMode rm2(TEXFONT);
 	FT.SetProps("bold", 24, colWhite);
 	FT.DrawString(CENTER, 10, "Test screen");

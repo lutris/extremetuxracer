@@ -19,10 +19,6 @@ GNU General Public License for more details.
 #include <etr_config.h>
 #endif
 
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-
 #include "keyframe.h"
 #include "course.h"
 #include "spx.h"
@@ -261,7 +257,7 @@ void CKeyframe::CalcKeyframe(size_t idx, CCharShape *shape, const TVector3d& ref
 	shape->RotateNode("right_ankle", 3, vv);
 }
 
-void CKeyframe::Update(double timestep) {
+void CKeyframe::Update(float timestep) {
 	if (!loaded) return;
 	if (!active) return;
 
@@ -298,7 +294,7 @@ void CKeyframe::Update(double timestep) {
 	InterpolateKeyframe(keyidx, frac, shape);
 }
 
-void CKeyframe::UpdateTest(double timestep, CCharShape *shape) {
+void CKeyframe::UpdateTest(float timestep, CCharShape *shape) {
 	if (!active) return;
 
 	keytime += timestep;
@@ -334,7 +330,7 @@ void CKeyframe::ResetFrame2(TKeyframe *frame) {
 }
 
 TKeyframe *CKeyframe::GetFrame(size_t idx) {
-	if (idx >= frames.size()) return NULL;
+	if (idx >= frames.size()) return nullptr;
 	return &frames[idx];
 }
 
@@ -352,11 +348,11 @@ int CKeyframe::GetNumJoints() {
 	return numJoints;
 }
 
-void CKeyframe::SaveTest(const string& dir, const string& filename) {
+void CKeyframe::SaveTest(const string& dir, const string& filename) const {
 	CSPList list(100);
 
 	for (size_t i=0; i<frames.size(); i++) {
-		TKeyframe* frame = &frames[i];
+		const TKeyframe* frame = &frames[i];
 		string line = "*[time] " + Float_StrN(frame->val[0], 1);
 		line += " [pos] " + Float_StrN(frame->val[1], 2);
 		line += " " + Float_StrN(frame->val[2], 2);
@@ -370,27 +366,27 @@ void CKeyframe::SaveTest(const string& dir, const string& filename) {
 		double ll = frame->val[9];
 		double rr = frame->val[10];
 		if (ll != 0 || rr != 0)
-			line += " [sh] " + Int_StrN((int) ll) + " " + Int_StrN((int)rr);
+			line += " [sh] " + Int_StrN((int)ll) + ' ' + Int_StrN((int)rr);
 
 		ll = frame->val[11];
 		rr = frame->val[12];
 		if (ll != 0 || rr != 0)
-			line += " [arm] " + Int_StrN((int)ll) + " " + Int_StrN((int)rr);
+			line += " [arm] " + Int_StrN((int)ll) + ' ' + Int_StrN((int)rr);
 
 		ll = frame->val[13];
 		rr = frame->val[14];
 		if (ll != 0 || rr != 0)
-			line += " [hip] " + Int_StrN((int)ll) + " " + Int_StrN((int)rr);
+			line += " [hip] " + Int_StrN((int)ll) + ' ' + Int_StrN((int)rr);
 
 		ll = frame->val[15];
 		rr = frame->val[16];
 		if (ll != 0 || rr != 0)
-			line += " [knee] " + Int_StrN((int)ll) + " " + Int_StrN((int)rr);
+			line += " [knee] " + Int_StrN((int)ll) + ' ' + Int_StrN((int)rr);
 
 		ll = frame->val[17];
 		rr = frame->val[18];
 		if (ll != 0 || rr != 0)
-			line += " [ankle] " + Int_StrN((int)ll) + " " + Int_StrN((int)rr);
+			line += " [ankle] " + Int_StrN((int)ll) + ' ' + Int_StrN((int)rr);
 
 		list.Add(line);
 	}

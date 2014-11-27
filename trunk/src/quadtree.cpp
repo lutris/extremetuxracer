@@ -3,16 +3,13 @@
 #include <etr_config.h>
 #endif
 
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-
 #include "quadtree.h"
 #include "textures.h"
 #include "course.h"
 #include "ogl.h"
 
 #include <climits>
+#include <cstring>
 
 #define TERRAIN_ERROR_SCALE 0.1f
 #define VERTEX_FORCE_THRESHOLD 100
@@ -60,7 +57,7 @@ static void make_tri_list(void(*tri_func)(int, int, int, int), unsigned char Ena
 	}
 }
 
-GLuint *quadsquare::VertexArrayIndices = NULL;
+GLuint *quadsquare::VertexArrayIndices = nullptr;
 GLuint quadsquare::VertexArrayCounter;
 GLuint quadsquare::VertexArrayMinIdx;
 GLuint quadsquare::VertexArrayMaxIdx;
@@ -73,7 +70,7 @@ quadsquare::quadsquare(quadcornerdata* pcd) {
 	Dirty = true;
 
 	for (int i = 0; i < 4; i++) {
-		Child[i] = (quadsquare*) NULL;
+		Child[i] = (quadsquare*) nullptr;
 	}
 
 	EnabledFlags = 0;
@@ -247,13 +244,13 @@ float quadsquare::RecomputeError(const quadcornerdata& cd) {
 		if (x < RowSize && z < NumRows) {
 
 			if (x < RowSize - 1) {
-				if (Terrain[idx] != Terrain[idx+1]) {
+				if (Fields[idx].terrain != Fields[idx + 1].terrain) {
 					different_terrains = true;
 				}
 			}
 			if (z >= 1) {
 				idx -= RowSize;
-				if (Terrain[idx] != Terrain[idx+1]) {
+				if (Fields[idx].terrain != Fields[idx + 1].terrain) {
 					different_terrains = true;
 				}
 			}
@@ -282,13 +279,13 @@ float quadsquare::RecomputeError(const quadcornerdata& cd) {
 		if (x < RowSize && z < NumRows) {
 
 			if (z >= 1) {
-				if (Terrain[idx] != Terrain[idx-RowSize]) {
+				if (Fields[idx].terrain != Fields[idx - RowSize].terrain) {
 					different_terrains = true;
 				}
 			}
 			if (z >= 1 && x < RowSize - 1) {
 				idx += 1;
-				if (Terrain[idx] != Terrain[idx-RowSize]) {
+				if (Fields[idx].terrain != Fields[idx - RowSize].terrain) {
 					different_terrains = true;
 				}
 			}
@@ -341,7 +338,7 @@ float quadsquare::RecomputeError(const quadcornerdata& cd) {
 				continue;
 			}
 
-			int terrain = (int) Terrain[i + RowSize*j];
+			int terrain = (int) Fields[i + RowSize*j].terrain;
 			terrain_count[ terrain ] += 1;
 		}
 	}
@@ -418,9 +415,9 @@ void quadsquare::StaticCullAux(const quadcornerdata& cd, float ThresholdDetail, 
 		return;
 	}
 	float	size = 2 << cd.Level;	// Edge length.
-	if (Child[0] == NULL && Child[3] == NULL && Error[0] * ThresholdDetail < size) {
+	if (Child[0] == nullptr && Child[3] == nullptr && Error[0] * ThresholdDetail < size) {
 		quadsquare*	s = GetNeighbor(0, cd);
-		if (s == NULL || (s->Child[1] == NULL && s->Child[2] == NULL)) {
+		if (s == nullptr || (s->Child[1] == nullptr && s->Child[2] == nullptr)) {
 
 			float y = (cd.Verts[0].Y + cd.Verts[3].Y) * 0.5f;
 			Vertex[1].Y = y;
@@ -431,9 +428,9 @@ void quadsquare::StaticCullAux(const quadcornerdata& cd, float ThresholdDetail, 
 		}
 	}
 
-	if (Child[2] == NULL && Child[3] == NULL && Error[1] * ThresholdDetail < size) {
+	if (Child[2] == nullptr && Child[3] == nullptr && Error[1] * ThresholdDetail < size) {
 		quadsquare*	s = GetNeighbor(3, cd);
-		if (s == NULL || (s->Child[0] == NULL && s->Child[1] == NULL)) {
+		if (s == nullptr || (s->Child[0] == nullptr && s->Child[1] == nullptr)) {
 			float y = (cd.Verts[2].Y + cd.Verts[3].Y) * 0.5f;
 			Vertex[4].Y = y;
 			Error[1] = 0;
@@ -451,7 +448,7 @@ void quadsquare::StaticCullAux(const quadcornerdata& cd, float ThresholdDetail, 
 		}
 	}
 
-	if (StaticChildren == false && cd.Parent != NULL) {
+	if (StaticChildren == false && cd.Parent != nullptr) {
 		bool NecessaryEdges = false;
 		for (int i = 0; i < 4; i++) {
 			float diff = fabs(Vertex[i+1].Y - (cd.Verts[i].Y
@@ -486,7 +483,7 @@ void quadsquare::EnableEdgeVertex(int index, bool IncrementCount, const quadcorn
 	const quadcornerdata* pcd = &cd;
 	for (;;) {
 		int	ci = pcd->ChildIndex;
-		if (pcd->Parent == NULL || pcd->Parent->Square == NULL) return;
+		if (pcd->Parent == nullptr || pcd->Parent->Square == nullptr) return;
 		p = pcd->Parent->Square;
 		pcd = pcd->Parent;
 
@@ -570,7 +567,7 @@ static float DetailThreshold = 100;
 
 
 bool quadsquare::VertexTest(int x, float y, int z, float error,
-                            const float Viewer[3], int level, vertex_loc_t vertex_loc) {
+                            const float Viewer[3], int level, vertex_loc_t vertex_loc) const {
 	float	dx = fabs(x - Viewer[0]) * fabs(ScaleX);
 	float	dy = fabs(y - Viewer[1]);
 	float	dz = fabs(z - Viewer[2]) * fabs(ScaleZ);
@@ -705,7 +702,7 @@ void quadsquare::UpdateAux(const quadcornerdata& cd,
 	}
 
 	if (EnabledFlags == 0 &&
-	        cd.Parent != NULL &&
+	        cd.Parent != nullptr &&
 	        BoxTest(cd.xorg, cd.zorg, whole, MinY, MaxY, CenterError,
 	                ViewerLocation) == false) {
 		cd.Parent->Square->NotifyChildDisable(*cd.Parent, cd.ChildIndex);
@@ -722,7 +719,7 @@ void quadsquare::InitVert(int i, int x, int z) {
 	int idx = x + RowSize * z;
 
 	VertexIndices[i] = idx;
-	VertexTerrains[i] = Terrain[idx];
+	VertexTerrains[i] = Fields[idx].terrain;
 }
 
 GLubyte *VNCArray;
@@ -750,10 +747,8 @@ void quadsquare::Render(const quadcornerdata& cd, GLubyte *vnc_array) {
 	VNCArray = vnc_array;
 
 	size_t numTerrains = Course.TerrList.size();
-	//	fog_on = is_fog_on ();
-	bool fog_on = true;
 	for (size_t j=0; j<numTerrains; j++) {
-		if (Course.TerrList[j].texture != NULL) {
+		if (Course.TerrList[j].texture != nullptr) {
 			InitArrayCounters();
 			RenderAux(cd, SomeClip, (int)j);
 			if (VertexArrayCounter == 0) continue;
@@ -777,7 +772,8 @@ void quadsquare::Render(const quadcornerdata& cd, GLubyte *vnc_array) {
 			}
 			Course.TerrList[0].texture->Bind();
 			DrawTris();
-			if (fog_on) glEnable(GL_FOG);
+			//if (fog_on)
+			glEnable(GL_FOG);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			for (GLuint i=0; i<VertexArrayCounter; i++) {
 				colorval(VertexArrayIndices[i], 0) = 255;
@@ -791,7 +787,7 @@ void quadsquare::Render(const quadcornerdata& cd, GLubyte *vnc_array) {
 
 					for (GLuint i=0; i<VertexArrayCounter; i++) {
 						colorval(VertexArrayIndices[i], 3) =
-						    (Terrain[VertexArrayIndices[i]] == (char)j) ? 255 : 0;
+						    (Fields[VertexArrayIndices[i]].terrain == (char)j) ? 255 : 0;
 					}
 					DrawTris();
 				}
@@ -990,8 +986,8 @@ void quadsquare::AddHeightMap(const quadcornerdata& cd, const HeightMapInfo& hm)
 	RowSize = hm.RowWidth;
 	NumRows = hm.ZSize;
 
-	if (cd.Parent == NULL) {
-		if (VertexArrayIndices != NULL) {
+	if (cd.Parent == nullptr) {
+		if (VertexArrayIndices != nullptr) {
 			delete VertexArrayIndices;
 		}
 		VertexArrayIndices = new GLuint[6 * RowSize * NumRows];
@@ -1013,7 +1009,7 @@ void quadsquare::AddHeightMap(const quadcornerdata& cd, const HeightMapInfo& hm)
 		quadcornerdata	q;
 		SetupCornerData(&q, cd, i);
 
-		if (Child[i] == NULL && cd.Level > hm.Scale) {
+		if (Child[i] == nullptr && cd.Level > hm.Scale) {
 			Child[i] = new quadsquare(&q);
 		}
 		if (Child[i]) {
@@ -1053,9 +1049,9 @@ void quadsquare::SetScale(double x, double z) {
 	ScaleZ = z;
 }
 
-char* quadsquare::Terrain;
-void quadsquare::SetTerrain(char *t) {
-	Terrain = t;
+CourseFields* quadsquare::Fields;
+void quadsquare::SetFields(CourseFields* t) {
+	Fields = t;
 }
 
 float HeightMapInfo::Sample(int x, int z) const {
@@ -1065,7 +1061,7 @@ float HeightMapInfo::Sample(int x, int z) const {
 	if (z >= ZSize) {
 		z = ZSize - 1;
 	}
-	return Data[ x + z * RowWidth ];
+	return Data[ x + z * RowWidth ].elevation;
 }
 
 // --------------------------------------------------------------------
@@ -1074,13 +1070,13 @@ float HeightMapInfo::Sample(int x, int z) const {
 
 #define CULL_DETAIL_FACTOR 25
 
-static quadsquare *root = (quadsquare*) NULL;
-static quadcornerdata root_corner_data = {(quadcornerdata*)NULL };
+static quadsquare *root = (quadsquare*) nullptr;
+static quadcornerdata root_corner_data = {(quadcornerdata*)nullptr };
 
 void ResetQuadtree() {
-	if (root != NULL) {
+	if (root != nullptr) {
 		delete root;
-		root = (quadsquare*) NULL;
+		root = (quadsquare*) nullptr;
 	}
 }
 
@@ -1092,11 +1088,11 @@ static int get_root_level(int nx, int nz) {
 }
 
 
-void InitQuadtree(double *elevation, int nx, int nz,
+void InitQuadtree(CourseFields* fields, int nx, int nz,
                   double scalex, double scalez, const TVector3d& view_pos, double detail) {
 	HeightMapInfo hm;
 
-	hm.Data = elevation;
+	hm.Data = fields;
 	hm.XOrigin = 0;
 	hm.ZOrigin = 0;
 	hm.XSize = nx;
@@ -1118,7 +1114,7 @@ void InitQuadtree(double *elevation, int nx, int nz,
 	root = new quadsquare(&root_corner_data);
 	root->AddHeightMap(root_corner_data, hm);
 	root->SetScale(scalex, scalez);
-	root->SetTerrain(Course.terrain);
+	root->SetFields(&Course.Fields[0]);
 
 	root->StaticCullData(root_corner_data, CULL_DETAIL_FACTOR);
 

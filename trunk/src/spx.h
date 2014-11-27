@@ -22,8 +22,6 @@ GNU General Public License for more details.
 #include <list>
 #include <map>
 
-using namespace std;
-
 extern const string emptyString;
 extern const string errorString;
 
@@ -51,7 +49,7 @@ template<typename T>
 TVector3<T> Str_Vector3(const string &s, const TVector3<T>& def);
 template<typename T>
 TVector4<T> Str_Vector4(const string &s, const TVector4<T>& def);
-TColor   Str_ColorN(const string &s, const TColor& def);
+sf::Color   Str_ColorN(const string &s, const sf::Color& def);
 TColor3  Str_Color3N(const string &s, const TColor3& def);
 void     Str_ArrN(const string &s, float *arr, size_t count, float def);
 
@@ -75,9 +73,9 @@ template<typename T>
 TVector4<T> SPVector4(const string &s, const string &tag, const TVector4<T>& def);
 static inline TVector4d SPVector4d(const string &s, const string &tag) { return SPVector4(s, tag, NullVec4); }
 static inline TVector4i SPVector4i(const string &s, const string &tag) { return SPVector4(s, tag, NullVec4i); }
-TColor   SPColorN(const string &s, const string &tag, const TColor& def);
-TColor3  SPColor3N(const string &s, const string &tag, const TColor3& def);
-void     SPArrN(const string &s, const string &tag, float *arr, size_t count, float def);
+sf::Color SPColorN(const string &s, const string &tag, const sf::Color& def);
+TColor3   SPColor3N(const string &s, const string &tag, const TColor3& def);
+void      SPArrN(const string &s, const string &tag, float *arr, size_t count, float def);
 
 // ----- making SP strings --------------------------------------------
 void     SPAddIntN(string &s, const string &tag, const int val);

@@ -113,8 +113,8 @@ struct TPlayer {
 	string funlocked;
 	const TAvatar* avatar;
 
-	TPlayer(const string& name_ = emptyString, const TAvatar* avatar_ = NULL)
-		: name(name_), ctrl(NULL), avatar(avatar_)
+	TPlayer(const string& name_ = emptyString, const TAvatar* avatar_ = nullptr)
+		: name(name_), ctrl(nullptr), avatar(avatar_)
 	{}
 };
 
@@ -124,7 +124,7 @@ private:
 	void SetDefaultPlayers();
 	vector<TAvatar> avatars;
 
-	const TAvatar* FindAvatar(const string& name);
+	const TAvatar* FindAvatar(const string& name) const;
 public:
 	~CPlayers();
 

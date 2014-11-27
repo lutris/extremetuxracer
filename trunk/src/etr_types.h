@@ -26,15 +26,9 @@ enum Orientation {
 };
 
 struct TColor3 {
-	double r, g, b;
-	TColor3(double r_ = 0, double g_ = 0, double b_ = 0)
+	uint8_t r, g, b;
+	TColor3(uint8_t r_ = 0, uint8_t g_ = 0, uint8_t b_ = 0)
 		: r(r_), g(g_), b(b_)
-	{}
-};
-struct TColor : public TColor3 {
-	double a;
-	TColor(double r_ = 0, double g_ = 0, double b_ = 0, double a_ = 0)
-		: TColor3(r_, g_, b_), a(a_)
 	{}
 };
 
@@ -66,7 +60,7 @@ struct TCharacter;
 
 struct TGameData {
 	TToolMode toolmode;
-	double time_step;
+	float time_step;
 	TGameType game_type;
 	bool force_treemap;
 	int treesize;
@@ -91,7 +85,7 @@ struct TGameData {
 	size_t theme_id;
 
 	// race results (better in player.ctrl ?)
-	double time;			// reached time
+	float time;				// reached time
 	int score;				// reached score
 	int herring;			// catched herrings during the race
 	int race_result;		// tuxlifes, only for a single race, see game_ctrl
